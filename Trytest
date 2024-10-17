@@ -1,83 +1,73 @@
 from flask import Flask, render_template_string
 import win32com.client
 import pythoncom
-import datetime
 
 app = Flask(__name__)
 
-def fetch_health_status_emails():
-    # Initialize COM
-    pythoncom.CoInitialize()
-
-    try:
-        outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-        inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
-        messages = inbox.Items
-        messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
-
-        emails = []
-
-        for message in messages:
-            emails.append({
-                'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                'subject': message.Subject,
-                'body': message.Body,  # Get the email body
-                'html_body': message.HTMLBody  # Get the email body in HTML format
-            })
-
-        return emails
-
-    finally:
-        # Uninitialize COM
-        pythoncom.CoUninitialize()
-
 # HTML template to list emails
-template_list = '''
+template = '''
     <h1>Health Status Emails</h1>
     <ul>
         {% for email in emails %}
-        <li>
-            <a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a>
-        </li>
+        <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a></li>
         {% endfor %}
     </ul>
 '''
 
-# HTML template to display email content
-template_email = '''
-    <h1>{{ email.subject }}</h1>
+# HTML template to show specific email content
+email_template = '''
+    <h1>Email: {{ email.subject }}</h1>
     <p><strong>Received Time:</strong> {{ email.received_time }}</p>
-    <hr>
-    <div>{{ content | safe }}</div>  <!-- Displaying the formatted email content -->
-    <br>
-    <a href="/">Back to Emails</a>
+    <p><strong>Body:</strong></p>
+    <div style="border: 1px solid #ddd; padding: 10px;">
+        {{ email.body | safe }}
+    </div>
+    <a href="/">Back to email list</a>
 '''
 
-def format_email_content(body):
-    # Basic checks for content types
-    if body:
-        # Check for images using <img> tags in HTML
-        if "<img" in body:
-            return body
-        # Check for tables using <table> tags in HTML
-        elif "<table" in body:
-            return body
-        else:
-            # Otherwise, treat it as plain text and return with <pre> tags
-            return f"<pre>{body}</pre>"
+# Function to fetch health status emails from Outlook
+def fetch_health_status_emails():
+    # Initialize COM for this thread
+    pythoncom.CoInitialize()
+
+    # Connect to Outlook
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    
+    # Access the inbox
+    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
+    messages = inbox.Items
+    messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
+
+    emails = []
+    
+    # Iterate over emails and collect relevant information
+    for message in messages:
+        if message.Class == 43:  # Ensure it's a MailItem
+            if 'UK DPaaS Platform Health Status' in message.Subject:  # Check the subject
+                email_data = {
+                    'subject': message.Subject,
+                    'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),  # Format time
+                    'body': message.HTMLBody if message.BodyFormat == 2 else message.Body  # Use HTMLBody if it's HTML
+                }
+                emails.append(email_data)
+
+    pythoncom.CoUninitialize()  # Uninitialize COM after use
+
+    return emails
 
 @app.route('/')
 def list_emails():
     emails = fetch_health_status_emails()  # Get emails
-    return render_template_string(template_list, emails=emails)
+    return render_template_string(template, emails=emails)
 
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
-    emails = fetch_health_status_emails()  # Get emails again
-    email = emails[email_id]  # Fetch specific email
-    # Format the email content based on its type
-    email_content = format_email_content(email.html_body)  # Using HTML body for formatting
-    return render_template_string(template_email, email=email, content=email_content)
+    emails = fetch_health_status_emails()  # Get emails
+    if email_id < len(emails):
+        email = emails[email_id]
+        return render_template_string(email_template, email=email)
+    else:
+        return "Email not found", 404
 
 if __name__ == '__main__':
     app.run(debug=True)
