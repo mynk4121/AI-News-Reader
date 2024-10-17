@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Template for displaying the email with enhanced table styling
+# Template for displaying only tables with proper styling
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -58,12 +58,6 @@ email_template = '''
             padding: 10px;
             word-wrap: break-word;
         }
-        /* Adjust column sizes to fit largest cell content */
-        table {
-            border-spacing: 0;
-            border: 1px solid #ddd;
-            table-layout: fixed;
-        }
         /* Handle cells with large content */
         table td {
             white-space: normal;
@@ -74,7 +68,6 @@ email_template = '''
 </head>
 <body>
     <div class="container">
-        <h1>{{ email.subject }}</h1>
         <div class="email-body">
             {{ email.body | safe }}
         </div>
@@ -98,28 +91,23 @@ def fetch_health_status_emails():
             email_data = {
                 'subject': message.Subject,
                 'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                'body': clean_up_body(message.HTMLBody if message.BodyFormat == 2 else message.Body)
+                'body': extract_tables(message.HTMLBody if message.BodyFormat == 2 else message.Body)
             }
             emails.append(email_data)
     pythoncom.CoUninitialize()
     return emails
 
-# Function to clean up and enhance the email's HTML body (tables remain unchanged, just styled better)
-def clean_up_body(body):
+# Function to extract only the tables from the email and retain original colors
+def extract_tables(body):
     soup = BeautifulSoup(body, 'html.parser')
 
-    # Ensure that tables are enhanced with better CSS directly in the email
+    # Remove all non-table content
     tables = soup.find_all('table')
 
+    # Clear the soup content and add only tables back
+    soup.clear()
     for table in tables:
-        table['style'] = "width: 100%; border-collapse: collapse; margin-top: 20px;"
-
-        # Apply styles to each table row and cell
-        for th in table.find_all('th'):
-            th['style'] = "background-color: #333; color: white; padding: 10px; border: 1px solid #ddd; text-align: left;"
-        
-        for td in table.find_all('td'):
-            td['style'] = "border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle;"
+        soup.append(table)
 
     return str(soup)
 
@@ -180,7 +168,7 @@ def list_emails():
     </html>
     ''', emails=emails)
 
-# Route to display individual email
+# Route to display individual email with only table content
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
     emails = fetch_health_status_emails()
