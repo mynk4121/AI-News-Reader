@@ -1,118 +1,56 @@
-from flask import Flask, render_template_string, send_file, make_response
+from flask import Flask, render_template_string
 import win32com.client
-import pythoncom
-import pdfkit
-import os
 
 app = Flask(__name__)
 
-# HTML template to list emails in a table
-template = '''
-    <h1>Health Status Emails</h1>
-    <table border="1" cellpadding="10">
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>Received Time</th>
-                <th>Subject</th>
-                <th>View</th>
-                <th>Display PDF</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for email in emails %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ email.received_time }}</td>
-                <td>{{ email.subject }}</td>
-                <td><a href="/email/{{ loop.index0 }}">View Email</a></td>
-                <td><a href="/email/{{ loop.index0 }}/pdf" target="_blank">View PDF</a></td> <!-- Open PDF in new tab -->
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    '''
-
-# Function to fetch health status emails from Outlook
 def fetch_health_status_emails():
-    # Initialize COM for this thread
-    pythoncom.CoInitialize()
-
-    # Connect to Outlook
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    
-    # Access the inbox
     inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
     messages = inbox.Items
-    messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
-
+    # Restrict to emails with the specified subject
+    messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
     emails = []
-    
+
     # Iterate over emails and collect relevant information
     for message in messages:
-        if message.Class == 43:  # Ensure it's a MailItem
-            if 'UK DPaaS Platform Health Status' in message.Subject:  # Manually check the subject
-                email_data = {
-                    'subject': message.Subject,
-                    'received_time': message.ReceivedTime,
-                    'body': message.Body
-                }
-                emails.append(email_data)
-
-    pythoncom.CoUninitialize()  # Uninitialize COM after use
+        emails.append({
+            'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
+            'subject': message.Subject,
+            'body': message.Body  # Get the email body
+        })
 
     return emails
 
+# HTML template to list emails
+template_list = '''
+    <h1>Health Status Emails</h1>
+    <ul>
+        {% for email in emails %}
+        <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a></li>
+        {% endfor %}
+    </ul>
+'''
+
+# HTML template to display email content
+template_email = '''
+    <h1>{{ email.subject }}</h1>
+    <p><strong>Received Time:</strong> {{ email.received_time }}</p>
+    <hr>
+    <pre>{{ email.body }}</pre>  <!-- Preformatted text for the email body -->
+    <br>
+    <a href="/">Back to Emails</a>
+'''
 
 @app.route('/')
 def list_emails():
     emails = fetch_health_status_emails()  # Get emails
-    return render_template_string(template, emails=emails)
-
+    return render_template_string(template_list, emails=emails)
 
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
-    emails = fetch_health_status_emails()  # Get emails
-    if email_id < len(emails):
-        email = emails[email_id]
-        email_template = '''
-        <h1>Email: {{ email.subject }}</h1>
-        <p><strong>Received Time:</strong> {{ email.received_time }}</p>
-        <p><strong>Body:</strong></p>
-        <pre>{{ email.body }}</pre>
-        <a href="/">Back to email list</a>
-        '''
-        return render_template_string(email_template, email=email)
-    else:
-        return "Email not found", 404
-
-
-@app.route('/email/<int:email_id>/pdf')
-def display_email_as_pdf(email_id):
-    emails = fetch_health_status_emails()  # Get emails
-    if email_id < len(emails):
-        email = emails[email_id]
-        
-        # HTML content for the PDF
-        email_html = f'''
-        <h1>Email: {email["subject"]}</h1>
-        <p><strong>Received Time:</strong> {email["received_time"]}</p>
-        <p><strong>Body:</strong></p>
-        <pre>{email["body"]}</pre>
-        '''
-        
-        # Generate the PDF from HTML content
-        pdf_content = pdfkit.from_string(email_html, False)  # Returns the PDF content as a byte string
-
-        # Create a response to display PDF in browser
-        response = make_response(pdf_content)
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = 'inline; filename=email.pdf'  # 'inline' to display in browser
-        
-        return response
-    else:
-        return "Email not found", 404
-
+    emails = fetch_health_status_emails()  # Get emails again
+    email = emails[email_id]  # Fetch specific email
+    return render_template_string(template_email, email=email)
 
 if __name__ == '__main__':
     app.run(debug=True)
