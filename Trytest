@@ -1,27 +1,35 @@
 from flask import Flask, render_template_string
 import win32com.client
+import pythoncom
 import datetime
-import re
 
 app = Flask(__name__)
 
 def fetch_health_status_emails():
-    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
-    messages = inbox.Items
-    messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
-    
-    emails = []
+    # Initialize COM
+    pythoncom.CoInitialize()
 
-    for message in messages:
-        emails.append({
-            'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-            'subject': message.Subject,
-            'body': message.Body,  # Get the email body
-            'html_body': message.HTMLBody  # Get the email body in HTML format
-        })
+    try:
+        outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+        inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
+        messages = inbox.Items
+        messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
 
-    return emails
+        emails = []
+
+        for message in messages:
+            emails.append({
+                'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
+                'subject': message.Subject,
+                'body': message.Body,  # Get the email body
+                'html_body': message.HTMLBody  # Get the email body in HTML format
+            })
+
+        return emails
+
+    finally:
+        # Uninitialize COM
+        pythoncom.CoUninitialize()
 
 # HTML template to list emails
 template_list = '''
@@ -40,7 +48,7 @@ template_email = '''
     <h1>{{ email.subject }}</h1>
     <p><strong>Received Time:</strong> {{ email.received_time }}</p>
     <hr>
-    <div>{{ email.content }}</div>  <!-- Displaying the formatted email content -->
+    <div>{{ content | safe }}</div>  <!-- Displaying the formatted email content -->
     <br>
     <a href="/">Back to Emails</a>
 '''
@@ -50,11 +58,9 @@ def format_email_content(body):
     if body:
         # Check for images using <img> tags in HTML
         if "<img" in body:
-            # If the body contains images, return the HTML content directly
             return body
         # Check for tables using <table> tags in HTML
         elif "<table" in body:
-            # If the body contains a table, return the HTML content directly
             return body
         else:
             # Otherwise, treat it as plain text and return with <pre> tags
