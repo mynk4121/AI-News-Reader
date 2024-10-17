@@ -1,5 +1,6 @@
 from flask import Flask, render_template_string
 import win32com.client
+import datetime
 
 app = Flask(__name__)
 
@@ -7,11 +8,10 @@ def fetch_health_status_emails():
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
     messages = inbox.Items
-    # Restrict to emails with the specified subject
     messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
+    
     emails = []
 
-    # Iterate over emails and collect relevant information
     for message in messages:
         emails.append({
             'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
@@ -26,7 +26,9 @@ template_list = '''
     <h1>Health Status Emails</h1>
     <ul>
         {% for email in emails %}
-        <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a></li>
+        <li>
+            <a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a>
+        </li>
         {% endfor %}
     </ul>
 '''
