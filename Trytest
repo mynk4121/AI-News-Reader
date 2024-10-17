@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Template for displaying the email with the original table styling preserved
+# Template for displaying the email with the original table styling and no extra text
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -43,28 +43,33 @@ email_template = '''
             text-align: left;
             vertical-align: middle;
         }
-        /* Preserve the original email table layout */
-        table th {
-            background-color: #333;
-            color: white;
+        /* Ensure tables fit properly within the container */
+        table {
+            table-layout: auto;
+            width: 100%;
         }
-        /* Handle large cell content while keeping table look consistent */
+        /* Cell border and content alignment */
+        td, th {
+            border-spacing: 0;
+            padding: 10px;
+            word-wrap: break-word;
+        }
+        /* Adjust column sizes to fit largest cell content */
+        table {
+            border-spacing: 0;
+            border: 1px solid #ddd;
+            table-layout: fixed;
+        }
+        /* Handle cells with large content */
         table td {
             white-space: normal;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        /* Maintain original padding and margin from the email */
-        td, th {
-            padding: 10px;
-            word-wrap: break-word;
-            margin: 0;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>{{ email.subject }}</h1>
         <div class="email-body">
             {{ email.body | safe }}
         </div>
@@ -94,22 +99,17 @@ def fetch_health_status_emails():
     pythoncom.CoUninitialize()
     return emails
 
-# Function to clean up the email's HTML body without altering the table's margin or padding
+# Function to clean up and retain only the tables from the email while keeping the original table styles
 def clean_up_body(body):
     soup = BeautifulSoup(body, 'html.parser')
 
-    # Only adjust the basic presentation while keeping the original structure of the table intact
+    # Extract only tables and retain original table colors
     tables = soup.find_all('table')
 
+    # Clear everything and add back just the tables
+    soup.clear()
     for table in tables:
-        table['style'] = "width: 100%; border-collapse: collapse; margin-top: 20px;"
-
-        # Maintain the existing padding and margin for table elements
-        for th in table.find_all('th'):
-            th['style'] = "background-color: #333; color: white; border: 1px solid #ddd; text-align: left; padding: inherit; margin: inherit;"
-        
-        for td in table.find_all('td'):
-            td['style'] = "border: 1px solid #ddd; text-align: left; vertical-align: middle; padding: inherit; margin: inherit;"
+        soup.append(table)
 
     return str(soup)
 
