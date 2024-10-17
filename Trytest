@@ -5,14 +5,14 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Template for displaying the new complete table with preserved styles
+# Template for displaying the email with enhanced table styling
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabular Data</title>
+    <title>{{ email.subject }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,6 +27,11 @@ email_template = '''
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        .email-body {
+            padding: 20px;
+            background-color: #fafafa;
+            overflow: auto;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -36,41 +41,42 @@ email_template = '''
             border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
+            vertical-align: middle;
         }
         table th {
             background-color: #333;
             color: white;
         }
-        table td {
-            vertical-align: middle;
-        }
-        /* Ensure equal alignment of cell borders */
+        /* Ensure tables fit properly within the container */
         table {
             table-layout: auto;
             width: 100%;
         }
-        /* Handle overflowing content */
-        table td {
+        /* Cell border and content alignment */
+        td, th {
+            border-spacing: 0;
+            padding: 10px;
             word-wrap: break-word;
         }
-        /* Adjustments for the table's borders to align perfectly */
+        /* Adjust column sizes to fit largest cell content */
         table {
             border-spacing: 0;
             border: 1px solid #ddd;
+            table-layout: fixed;
         }
-        /* Add space between rows */
-        table tr + tr {
-            margin-top: 15px;
+        /* Handle cells with large content */
+        table td {
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Combined Table Data</h1>
+        <h1>{{ email.subject }}</h1>
         <div class="email-body">
-            <table>
-                {{ email.body | safe }}
-            </table>
+            {{ email.body | safe }}
         </div>
         <a href="/">Back to email list</a>
     </div>
@@ -92,32 +98,30 @@ def fetch_health_status_emails():
             email_data = {
                 'subject': message.Subject,
                 'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                'body': extract_and_merge_tables(message.HTMLBody if message.BodyFormat == 2 else message.Body)
+                'body': clean_up_body(message.HTMLBody if message.BodyFormat == 2 else message.Body)
             }
             emails.append(email_data)
     pythoncom.CoUninitialize()
     return emails
 
-# Extract tables from the email body and merge into a single table
-def extract_and_merge_tables(body):
+# Function to clean up and enhance the email's HTML body (tables remain unchanged, just styled better)
+def clean_up_body(body):
     soup = BeautifulSoup(body, 'html.parser')
 
-    # Extract all table elements
+    # Ensure that tables are enhanced with better CSS directly in the email
     tables = soup.find_all('table')
 
-    merged_table_content = ""
-    
     for table in tables:
-        rows = table.find_all('tr')
-        for row in rows:
-            merged_table_content += '<tr>'
-            for cell in row.find_all(['td', 'th']):
-                style = cell.get('style', '')  # Preserve existing inline styles
-                merged_table_content += f'<{cell.name} style="{style}">{cell.text.strip()}</{cell.name}>'
-            merged_table_content += '</tr>'
+        table['style'] = "width: 100%; border-collapse: collapse; margin-top: 20px;"
 
-    # Return a new table containing all the rows from the original tables
-    return merged_table_content if merged_table_content else "No table data found."
+        # Apply styles to each table row and cell
+        for th in table.find_all('th'):
+            th['style'] = "background-color: #333; color: white; padding: 10px; border: 1px solid #ddd; text-align: left;"
+        
+        for td in table.find_all('td'):
+            td['style'] = "border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle;"
+
+    return str(soup)
 
 # Route to display the email list
 @app.route('/')
