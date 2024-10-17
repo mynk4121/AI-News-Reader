@@ -1,57 +1,40 @@
-from flask import Flask, render_template
-import win32com.client
-import pythoncom
-
-app = Flask(__name__)
-
-# Function to fetch health status emails from Outlook
-def fetch_health_status_emails():
-    # Initialize COM for this thread
-    pythoncom.CoInitialize()
-
-    # Connect to Outlook
-    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    
-    # Access the inbox
-    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
-    messages = inbox.Items
-    messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
-
-    emails = []
-    
-    # Iterate over emails and collect relevant information
-    for message in messages:
-        if message.Class == 43:  # Ensure it's a MailItem
-            if 'UK DPaaS Platform Health Status' in message.Subject:  # Check the subject
-                email_data = {
-                    'subject': message.Subject,
-                    'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'body': message.HTMLBody if message.BodyFormat == 2 else message.Body  # Use HTMLBody if it's HTML
-                }
-                emails.append(email_data)
-
-    pythoncom.CoUninitialize()  # Uninitialize COM after use
-
-    return emails
-
-
-@app.route('/')
-def list_emails():
-    emails = fetch_health_status_emails()  # Get emails
-    return render_template('email_template.html', emails=emails)
-
-
-@app.route('/email/<int:email_id>')
-def show_email(email_id):
-    emails = fetch_health_status_emails()  # Get emails
-    if email_id < len(emails):
-        email = emails[email_id]
-        # Extract tables from the email body if any exist
-        tables = []  # Logic to extract tables (omitted for simplicity)
-        return render_template('email_template.html', email=email, tables=tables)
-    else:
-        return "Email not found", 404
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Email Details</title>
+  </head>
+  <body>
+    <div class="container">
+        <!-- Fixed header with email subject -->
+        <header class="email-header">
+            <h1>Email: {{ email.subject }}</h1>
+            <p><strong>Received Time:</strong> {{ email.received_time }}</p>
+        </header>
+        <!-- Scrollable content -->
+        <div class="content">
+            <div class="table-container">
+                {% if tables %}
+                <h2 class="text-center">Extracted Tables:</h2>
+                {% for table in tables %}
+                    <div class="table-responsive table-wrapper">
+                        {{ table | safe }}
+                    </div>
+                {% else %}
+                    <p class="text-center">No table data found.</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="text-center">
+                <a href="/" class="btn btn-primary">Back to email list</a>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
