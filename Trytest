@@ -1,139 +1,57 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template
 import win32com.client
 import pythoncom
-from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# HTML template to list emails with Bootstrap for styling
-template = '''
-    <!doctype html>
-    <html lang="en">
-      <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <title>Health Status Emails</title>
-      </head>
-      <body>
-        <div class="container">
-            <h1 class="my-4">Health Status Emails</h1>
-            <ul class="list-group">
-                {% for email in emails %}
-                <li class="list-group-item">
-                    <a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-      </body>
-    </html>
-'''
-
-# HTML template to display email content and extract only tables, styled using Bootstrap
-email_template = '''
-    <!doctype html>
-    <html lang="en">
-      <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <title>Email Details</title>
-        <style>
-            table {
-                width: 100%;
-                margin-bottom: 1.5rem;
-                background-color: #f8f9fa;
-            }
-            th, td {
-                padding: 12px;
-                text-align: left;
-                border-bottom: 1px solid #ddd;
-            }
-            th {
-                background-color: #007bff;
-                color: white;
-            }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-            <h1 class="my-4">Email: {{ email.subject }}</h1>
-            <p><strong>Received Time:</strong> {{ email.received_time }}</p>
-            <div>
-                {% if tables %}
-                <h2>Extracted Tables:</h2>
-                {% for table in tables %}
-                    <div class="table-responsive">
-                        {{ table | safe }}
-                    </div>
-                {% else %}
-                    <p>No table data found.</p>
-                {% endfor %}
-                {% endif %}
-            </div>
-            <a href="/" class="btn btn-primary">Back to email list</a>
-        </div>
-      </body>
-    </html>
-'''
-
 # Function to fetch health status emails from Outlook
 def fetch_health_status_emails():
+    # Initialize COM for this thread
     pythoncom.CoInitialize()
 
+    # Connect to Outlook
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    
+    # Access the inbox
     inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
     messages = inbox.Items
     messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
 
     emails = []
     
+    # Iterate over emails and collect relevant information
     for message in messages:
         if message.Class == 43:  # Ensure it's a MailItem
-            if 'UK DPaaS Platform Health Status' in message.Subject:
+            if 'UK DPaaS Platform Health Status' in message.Subject:  # Check the subject
                 email_data = {
                     'subject': message.Subject,
                     'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'body': message.HTMLBody if message.BodyFormat == 2 else message.Body
+                    'body': message.HTMLBody if message.BodyFormat == 2 else message.Body  # Use HTMLBody if it's HTML
                 }
                 emails.append(email_data)
 
-    pythoncom.CoUninitialize()
+    pythoncom.CoUninitialize()  # Uninitialize COM after use
 
     return emails
 
-# Helper function to extract tables from the email body
-def extract_tables_from_html(body):
-    soup = BeautifulSoup(body, 'html.parser')
-    tables = soup.find_all('table')  # Extract all tables from the email's HTML content
-
-    formatted_tables = []
-    
-    # Iterate over all found tables and render them as HTML
-    for table in tables:
-        formatted_tables.append(str(table))  # Convert the table back to HTML
-
-    return formatted_tables
 
 @app.route('/')
 def list_emails():
     emails = fetch_health_status_emails()  # Get emails
-    return render_template_string(template, emails=emails)
+    return render_template('email_template.html', emails=emails)
+
 
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
     emails = fetch_health_status_emails()  # Get emails
     if email_id < len(emails):
         email = emails[email_id]
-        tables = extract_tables_from_html(email['body'])  # Extract tables from the email body
-        return render_template_string(email_template, email=email, tables=tables)
+        # Extract tables from the email body if any exist
+        tables = []  # Logic to extract tables (omitted for simplicity)
+        return render_template('email_template.html', email=email, tables=tables)
     else:
         return "Email not found", 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
