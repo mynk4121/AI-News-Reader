@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Template for displaying the email with the original table styling and no extra text
+# Template for displaying the email with Bootstrap styling
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -13,52 +13,34 @@ email_template = '''
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ email.subject }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
         }
         .container {
-            width: 90%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
         .email-body {
             padding: 20px;
-            background-color: #fafafa;
-            overflow: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            font-size: 16px;
         }
         table th, table td {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 15px;
             text-align: left;
             vertical-align: middle;
-        }
-        /* Ensure tables fit properly within the container */
-        table {
-            table-layout: auto;
-            width: 100%;
-        }
-        /* Cell border and content alignment */
-        td, th {
-            border-spacing: 0;
-            padding: 10px;
-            word-wrap: break-word;
-        }
-        /* Adjust column sizes to fit largest cell content */
-        table {
-            border-spacing: 0;
-            border: 1px solid #ddd;
-            table-layout: fixed;
         }
         /* Handle cells with large content */
         table td {
@@ -70,11 +52,20 @@ email_template = '''
 </head>
 <body>
     <div class="container">
-        <div class="email-body">
-            {{ email.body | safe }}
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                {{ email.subject }}
+            </div>
+            <div class="card-body email-body">
+                {{ email.body | safe }}
+            </div>
+            <div class="card-footer">
+                <a href="/" class="btn btn-secondary">Back to email list</a>
+            </div>
         </div>
-        <a href="/">Back to email list</a>
     </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 '''
@@ -124,48 +115,53 @@ def list_emails():
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Email List</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
+                font-family: 'Arial', sans-serif;
                 background-color: #f4f4f9;
             }
             .container {
-                width: 90%;
-                margin: 20px auto;
-                padding: 20px;
-                background-color: #fff;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                margin-top: 20px;
             }
-            ul {
+            .email-list {
                 list-style-type: none;
                 padding: 0;
             }
-            ul li {
-                margin-bottom: 10px;
+            .email-item {
+                margin-bottom: 15px;
             }
-            a {
-                text-decoration: none;
-                padding: 10px 15px;
+            .email-link {
+                display: block;
+                padding: 15px;
                 background-color: #007bff;
                 color: white;
+                text-decoration: none;
                 border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: background-color 0.2s ease;
             }
-            a:hover {
+            .email-link:hover {
                 background-color: #0056b3;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>UK DPaaS Platform Health Status - Emails</h1>
-            <ul>
+            <h1 class="mb-4">UK DPaaS Platform Health Status - Emails</h1>
+            <ul class="email-list">
                 {% for email in emails %}
-                <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }}</a></li>
+                <li class="email-item">
+                    <a href="/email/{{ loop.index0 }}" class="email-link">
+                        {{ email.received_time }}
+                    </a>
+                </li>
                 {% endfor %}
             </ul>
         </div>
+        <!-- Bootstrap JS and dependencies -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
     </html>
     ''', emails=emails)
