@@ -1,96 +1,18 @@
 from flask import Flask, render_template_string
 import win32com.client
 import pythoncom
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# HTML template with inline CSS
-template = '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .container {
-            width: 90%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .fixed-title {
-            position: sticky;
-            top: 0;
-            background-color: #333;
-            color: #fff;
-            padding: 15px;
-            text-align: center;
-            z-index: 1000;
-        }
-        .email-body {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-top: 10px;
-            background-color: #fafafa;
-            overflow: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        table th {
-            background-color: #333;
-            color: white;
-        }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-        a:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="fixed-title">UK DPaaS Platform Health Status</h1>
-        <ul>
-            {% for email in emails %}
-            <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-</body>
-</html>
-'''
-
-# Template for individual email with inline CSS
+# HTML template for displaying only the tabular data with proper alignment
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ email.subject }}</title>
+    <title>UK DPaaS Platform Health Status</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -105,31 +27,16 @@ email_template = '''
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .fixed-title {
-            position: sticky;
-            top: 0;
-            background-color: #333;
-            color: #fff;
-            padding: 15px;
-            text-align: center;
-            z-index: 1000;
-        }
-        .email-body {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-top: 10px;
-            background-color: #fafafa;
-            overflow: auto;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin: 20px 0;
         }
         table th, table td {
             border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
+            padding: 12px;
+            text-align: center; /* Center alignment for both horizontal and vertical */
+            vertical-align: middle; /* Ensures proper vertical alignment */
         }
         table th {
             background-color: #333;
@@ -151,18 +58,16 @@ email_template = '''
 </head>
 <body>
     <div class="container">
-        <h1 class="fixed-title">{{ email.subject }}</h1>
-        <p><strong>Received Time:</strong> {{ email.received_time }}</p>
-        <div class="email-body">
-            {{ email.body | safe }}
-        </div>
+        {% for table in tables %}
+            {{ table | safe }}
+        {% endfor %}
         <a href="/">Back to email list</a>
     </div>
 </body>
 </html>
 '''
 
-# Function to fetch health status emails from Outlook
+# Function to fetch health status emails from Outlook and extract table content
 def fetch_health_status_emails():
     pythoncom.CoInitialize()
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -173,12 +78,18 @@ def fetch_health_status_emails():
     emails = []
     for message in messages:
         if message.Class == 43 and 'UK DPaaS Platform Health Status' in message.Subject:
-            email_data = {
-                'subject': message.Subject,
-                'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                'body': message.HTMLBody if message.BodyFormat == 2 else message.Body
-            }
-            emails.append(email_data)
+            # Extract HTML body if available
+            email_body = message.HTMLBody if message.BodyFormat == 2 else message.Body
+
+            # Parse the HTML and extract only table content using BeautifulSoup
+            soup = BeautifulSoup(email_body, "html.parser")
+            tables = soup.find_all('table')  # Find all tables in the email content
+
+            # Append each table's HTML to the emails list
+            if tables:
+                tables_html = [str(table) for table in tables]  # Convert tables to HTML strings
+                emails.append(tables_html)
+    
     pythoncom.CoUninitialize()
     return emails
 
@@ -186,15 +97,67 @@ def fetch_health_status_emails():
 @app.route('/')
 def list_emails():
     emails = fetch_health_status_emails()
-    return render_template_string(template, emails=emails)
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Dashboard</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f9;
+            }
+            .container {
+                width: 90%;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            ul {
+                list-style-type: none;
+                padding: 0;
+            }
+            li {
+                margin: 10px 0;
+            }
+            a {
+                display: inline-block;
+                text-decoration: none;
+                padding: 10px 15px;
+                background-color: #007bff;
+                color: white;
+                border-radius: 5px;
+            }
+            a:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>UK DPaaS Platform Health Status</h1>
+            <ul>
+                {% for email in emails %}
+                <li><a href="/email/{{ loop.index0 }}">Email {{ loop.index }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </body>
+    </html>
+    ''', emails=emails)
 
-# Route to display individual email
+# Route to display individual email's tables only
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
     emails = fetch_health_status_emails()
     if email_id < len(emails):
-        email = emails[email_id]
-        return render_template_string(email_template, email=email)
+        tables = emails[email_id]
+        return render_template_string(email_template, tables=tables)
     else:
         return "Email not found", 404
 
