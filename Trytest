@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template_string, url_for
 import win32com.client
 import pythoncom
 
@@ -6,52 +6,39 @@ app = Flask(__name__)
 
 # Function to fetch health status emails from Outlook
 def fetch_health_status_emails():
-    # Initialize COM for this thread
     pythoncom.CoInitialize()
-
-    # Connect to Outlook
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    
-    # Access the inbox
-    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
+    inbox = outlook.GetDefaultFolder(6)  # Access Inbox
     messages = inbox.Items
-    messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
+    messages.Sort("[ReceivedTime]", True)  # Sort by received time
 
     emails = []
-    
-    # Iterate over emails and collect relevant information
     for message in messages:
-        if message.Class == 43:  # Ensure it's a MailItem
-            if 'UK DPaaS Platform Health Status' in message.Subject:  # Check the subject
-                email_data = {
-                    'subject': message.Subject,
-                    'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'body': message.HTMLBody if message.BodyFormat == 2 else message.Body  # Use HTMLBody if it's HTML
-                }
-                emails.append(email_data)
-
-    pythoncom.CoUninitialize()  # Uninitialize COM after use
-
+        if message.Class == 43 and 'UK DPaaS Platform Health Status' in message.Subject:
+            email_data = {
+                'subject': message.Subject,
+                'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
+                'body': message.HTMLBody if message.BodyFormat == 2 else message.Body
+            }
+            emails.append(email_data)
+    pythoncom.CoUninitialize()
     return emails
 
-
+# Route to display the email list
 @app.route('/')
 def list_emails():
-    emails = fetch_health_status_emails()  # Get emails
-    return render_template('email_template.html', emails=emails)
+    emails = fetch_health_status_emails()
+    return render_template_string(open('email_template.html').read(), emails=emails)
 
-
+# Route to display individual email
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
-    emails = fetch_health_status_emails()  # Get emails
+    emails = fetch_health_status_emails()
     if email_id < len(emails):
         email = emails[email_id]
-        # Extract tables from the email body if any exist
-        tables = []  # Logic to extract tables (omitted for simplicity)
-        return render_template('email_template.html', email=email, tables=tables)
+        return render_template_string(open('email_template.html').read(), email=email)
     else:
         return "Email not found", 404
-
 
 if __name__ == '__main__':
     app.run(debug=True)
