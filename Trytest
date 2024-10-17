@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Template for displaying only tables with proper styling
+# Template for displaying the email with the original table styling preserved
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -43,31 +43,28 @@ email_template = '''
             text-align: left;
             vertical-align: middle;
         }
+        /* Preserve the original email table layout */
         table th {
             background-color: #333;
             color: white;
         }
-        /* Ensure tables fit properly within the container */
-        table {
-            table-layout: auto;
-            width: 100%;
-        }
-        /* Cell border and content alignment */
-        td, th {
-            border-spacing: 0;
-            padding: 10px;
-            word-wrap: break-word;
-        }
-        /* Handle cells with large content */
+        /* Handle large cell content while keeping table look consistent */
         table td {
             white-space: normal;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        /* Maintain original padding and margin from the email */
+        td, th {
+            padding: 10px;
+            word-wrap: break-word;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <h1>{{ email.subject }}</h1>
         <div class="email-body">
             {{ email.body | safe }}
         </div>
@@ -91,23 +88,28 @@ def fetch_health_status_emails():
             email_data = {
                 'subject': message.Subject,
                 'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
-                'body': extract_tables(message.HTMLBody if message.BodyFormat == 2 else message.Body)
+                'body': clean_up_body(message.HTMLBody if message.BodyFormat == 2 else message.Body)
             }
             emails.append(email_data)
     pythoncom.CoUninitialize()
     return emails
 
-# Function to extract only the tables from the email and retain original colors
-def extract_tables(body):
+# Function to clean up the email's HTML body without altering the table's margin or padding
+def clean_up_body(body):
     soup = BeautifulSoup(body, 'html.parser')
 
-    # Remove all non-table content
+    # Only adjust the basic presentation while keeping the original structure of the table intact
     tables = soup.find_all('table')
 
-    # Clear the soup content and add only tables back
-    soup.clear()
     for table in tables:
-        soup.append(table)
+        table['style'] = "width: 100%; border-collapse: collapse; margin-top: 20px;"
+
+        # Maintain the existing padding and margin for table elements
+        for th in table.find_all('th'):
+            th['style'] = "background-color: #333; color: white; border: 1px solid #ddd; text-align: left; padding: inherit; margin: inherit;"
+        
+        for td in table.find_all('td'):
+            td['style'] = "border: 1px solid #ddd; text-align: left; vertical-align: middle; padding: inherit; margin: inherit;"
 
     return str(soup)
 
@@ -168,7 +170,7 @@ def list_emails():
     </html>
     ''', emails=emails)
 
-# Route to display individual email with only table content
+# Route to display individual email
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
     emails = fetch_health_status_emails()
