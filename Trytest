@@ -34,19 +34,20 @@ def fetch_health_status_emails():
     # Access the inbox
     inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
     messages = inbox.Items
-    messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
+    messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
 
     emails = []
     
     # Iterate over emails and collect relevant information
     for message in messages:
         if message.Class == 43:  # Ensure it's a MailItem
-            email_data = {
-                'subject': message.Subject,
-                'received_time': message.ReceivedTime,
-                'body': message.Body
-            }
-            emails.append(email_data)
+            if 'UK DPaaS Platform Health Status' in message.Subject:  # Manually check the subject
+                email_data = {
+                    'subject': message.Subject,
+                    'received_time': message.ReceivedTime,
+                    'body': message.Body
+                }
+                emails.append(email_data)
 
     pythoncom.CoUninitialize()  # Uninitialize COM after use
 
