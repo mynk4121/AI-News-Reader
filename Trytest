@@ -1,6 +1,7 @@
 from flask import Flask, render_template_string
 import win32com.client
 import datetime
+import re
 
 app = Flask(__name__)
 
@@ -16,7 +17,8 @@ def fetch_health_status_emails():
         emails.append({
             'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
             'subject': message.Subject,
-            'body': message.Body  # Get the email body
+            'body': message.Body,  # Get the email body
+            'html_body': message.HTMLBody  # Get the email body in HTML format
         })
 
     return emails
@@ -38,10 +40,25 @@ template_email = '''
     <h1>{{ email.subject }}</h1>
     <p><strong>Received Time:</strong> {{ email.received_time }}</p>
     <hr>
-    <pre>{{ email.body }}</pre>  <!-- Preformatted text for the email body -->
+    <div>{{ email.content }}</div>  <!-- Displaying the formatted email content -->
     <br>
     <a href="/">Back to Emails</a>
 '''
+
+def format_email_content(body):
+    # Basic checks for content types
+    if body:
+        # Check for images using <img> tags in HTML
+        if "<img" in body:
+            # If the body contains images, return the HTML content directly
+            return body
+        # Check for tables using <table> tags in HTML
+        elif "<table" in body:
+            # If the body contains a table, return the HTML content directly
+            return body
+        else:
+            # Otherwise, treat it as plain text and return with <pre> tags
+            return f"<pre>{body}</pre>"
 
 @app.route('/')
 def list_emails():
@@ -52,7 +69,9 @@ def list_emails():
 def show_email(email_id):
     emails = fetch_health_status_emails()  # Get emails again
     email = emails[email_id]  # Fetch specific email
-    return render_template_string(template_email, email=email)
+    # Format the email content based on its type
+    email_content = format_email_content(email.html_body)  # Using HTML body for formatting
+    return render_template_string(template_email, email=email, content=email_content)
 
 if __name__ == '__main__':
     app.run(debug=True)
