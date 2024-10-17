@@ -1,26 +1,36 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, send_file, make_response
 import win32com.client
 import pythoncom
+import pdfkit
+import os
 
 app = Flask(__name__)
 
-# HTML template to list emails
+# HTML template to list emails in a table
 template = '''
     <h1>Health Status Emails</h1>
-    <ul>
-        {% for email in emails %}
-        <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a></li>
-        {% endfor %}
-    </ul>
-    '''
-
-# HTML template to show specific email content
-email_template = '''
-    <h1>Email: {{ email.subject }}</h1>
-    <p><strong>Received Time:</strong> {{ email.received_time }}</p>
-    <p><strong>Body:</strong></p>
-    <pre>{{ email.body }}</pre>
-    <a href="/">Back to email list</a>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Received Time</th>
+                <th>Subject</th>
+                <th>View</th>
+                <th>Display PDF</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for email in emails %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ email.received_time }}</td>
+                <td>{{ email.subject }}</td>
+                <td><a href="/email/{{ loop.index0 }}">View Email</a></td>
+                <td><a href="/email/{{ loop.index0 }}/pdf" target="_blank">View PDF</a></td> <!-- Open PDF in new tab -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     '''
 
 # Function to fetch health status emails from Outlook
@@ -65,7 +75,41 @@ def show_email(email_id):
     emails = fetch_health_status_emails()  # Get emails
     if email_id < len(emails):
         email = emails[email_id]
+        email_template = '''
+        <h1>Email: {{ email.subject }}</h1>
+        <p><strong>Received Time:</strong> {{ email.received_time }}</p>
+        <p><strong>Body:</strong></p>
+        <pre>{{ email.body }}</pre>
+        <a href="/">Back to email list</a>
+        '''
         return render_template_string(email_template, email=email)
+    else:
+        return "Email not found", 404
+
+
+@app.route('/email/<int:email_id>/pdf')
+def display_email_as_pdf(email_id):
+    emails = fetch_health_status_emails()  # Get emails
+    if email_id < len(emails):
+        email = emails[email_id]
+        
+        # HTML content for the PDF
+        email_html = f'''
+        <h1>Email: {email["subject"]}</h1>
+        <p><strong>Received Time:</strong> {email["received_time"]}</p>
+        <p><strong>Body:</strong></p>
+        <pre>{email["body"]}</pre>
+        '''
+        
+        # Generate the PDF from HTML content
+        pdf_content = pdfkit.from_string(email_html, False)  # Returns the PDF content as a byte string
+
+        # Create a response to display PDF in browser
+        response = make_response(pdf_content)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'inline; filename=email.pdf'  # 'inline' to display in browser
+        
+        return response
     else:
         return "Email not found", 404
 
