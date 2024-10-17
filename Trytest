@@ -1,18 +1,17 @@
 from flask import Flask, render_template_string
 import win32com.client
 import pythoncom
-from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# HTML template for displaying only the tabular data with proper alignment
+# Template to display only tabular data, with proper styling and alignment
 email_template = '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UK DPaaS Platform Health Status</title>
+    <title>Tabular Data</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,47 +26,54 @@ email_template = '''
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        .email-body {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 10px;
+            background-color: #fafafa;
+            overflow: hidden;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 20px;
         }
         table th, table td {
             border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center; /* Center alignment for both horizontal and vertical */
-            vertical-align: middle; /* Ensures proper vertical alignment */
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
         }
         table th {
             background-color: #333;
             color: white;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
+        /* Ensure table fits within the container */
+        .container table {
+            table-layout: fixed;
         }
-        a:hover {
-            background-color: #0056b3;
+        /* Ensure equal width for each column */
+        table td {
+            min-width: 100px;  /* Adjust this value as needed */
+        }
+        /* Add space between rows */
+        table tr {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        {% for table in tables %}
-            {{ table | safe }}
-        {% endfor %}
+        <div class="email-body">
+            {{ email.body | safe }}
+        </div>
         <a href="/">Back to email list</a>
     </div>
 </body>
 </html>
 '''
 
-# Function to fetch health status emails from Outlook and extract table content
+# Function to fetch health status emails from Outlook
 def fetch_health_status_emails():
     pythoncom.CoInitialize()
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -78,20 +84,28 @@ def fetch_health_status_emails():
     emails = []
     for message in messages:
         if message.Class == 43 and 'UK DPaaS Platform Health Status' in message.Subject:
-            # Extract HTML body if available
-            email_body = message.HTMLBody if message.BodyFormat == 2 else message.Body
-
-            # Parse the HTML and extract only table content using BeautifulSoup
-            soup = BeautifulSoup(email_body, "html.parser")
-            tables = soup.find_all('table')  # Find all tables in the email content
-
-            # Append each table's HTML to the emails list
-            if tables:
-                tables_html = [str(table) for table in tables]  # Convert tables to HTML strings
-                emails.append(tables_html)
-    
+            email_data = {
+                'subject': message.Subject,
+                'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
+                'body': extract_table_from_email(message.HTMLBody if message.BodyFormat == 2 else message.Body)
+            }
+            emails.append(email_data)
     pythoncom.CoUninitialize()
     return emails
+
+# Extract the tables from the email body content
+def extract_table_from_email(body):
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(body, 'html.parser')
+
+    # Extract only table elements
+    tables = soup.find_all('table')
+    if tables:
+        # Convert all tables to HTML and concatenate them
+        extracted_tables = ''.join([str(table) for table in tables])
+        return extracted_tables
+    else:
+        return "No table data found."
 
 # Route to display the email list
 @app.route('/')
@@ -103,7 +117,7 @@ def list_emails():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Dashboard</title>
+        <title>Email List</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -122,11 +136,10 @@ def list_emails():
                 list-style-type: none;
                 padding: 0;
             }
-            li {
-                margin: 10px 0;
+            ul li {
+                margin-bottom: 10px;
             }
             a {
-                display: inline-block;
                 text-decoration: none;
                 padding: 10px 15px;
                 background-color: #007bff;
@@ -140,10 +153,10 @@ def list_emails():
     </head>
     <body>
         <div class="container">
-            <h1>UK DPaaS Platform Health Status</h1>
+            <h1>UK DPaaS Platform Health Status - Emails</h1>
             <ul>
                 {% for email in emails %}
-                <li><a href="/email/{{ loop.index0 }}">Email {{ loop.index }}</a></li>
+                <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -151,13 +164,13 @@ def list_emails():
     </html>
     ''', emails=emails)
 
-# Route to display individual email's tables only
+# Route to display individual email
 @app.route('/email/<int:email_id>')
 def show_email(email_id):
     emails = fetch_health_status_emails()
     if email_id < len(emails):
-        tables = emails[email_id]
-        return render_template_string(email_template, tables=tables)
+        email = emails[email_id]
+        return render_template_string(email_template, email=email)
     else:
         return "Email not found", 404
 
