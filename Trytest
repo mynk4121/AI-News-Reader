@@ -1,6 +1,7 @@
 from flask import Flask, render_template_string
 import win32com.client
 import pythoncom
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
@@ -40,7 +41,7 @@ email_template = '''
         }
         table th, table td {
             border: 1px solid #ddd;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             vertical-align: middle;
         }
@@ -48,17 +49,27 @@ email_template = '''
             background-color: #333;
             color: white;
         }
-        /* Ensure table fits within the container */
-        .container table {
-            table-layout: fixed;
+        /* Ensure equal alignment of cell borders */
+        table {
+            table-layout: auto;
+            width: 100%;
         }
-        /* Ensure equal width for each column */
+        /* Handle overflowing content */
         table td {
-            min-width: 100px;  /* Adjust this value as needed */
+            word-wrap: break-word;
+        }
+        /* Make sure each table row takes up space as needed */
+        table tr {
+            height: auto;
+        }
+        /* Adjustments for the table's borders to align perfectly */
+        table {
+            border-spacing: 0;
+            border: 1px solid #ddd;
         }
         /* Add space between rows */
-        table tr {
-            margin-bottom: 10px;
+        table tr + tr {
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -95,14 +106,19 @@ def fetch_health_status_emails():
 
 # Extract the tables from the email body content
 def extract_table_from_email(body):
-    from bs4 import BeautifulSoup
     soup = BeautifulSoup(body, 'html.parser')
 
-    # Extract only table elements
+    # Extract only valid table elements
     tables = soup.find_all('table')
-    if tables:
-        # Convert all tables to HTML and concatenate them
-        extracted_tables = ''.join([str(table) for table in tables])
+    valid_tables = []
+    for table in tables:
+        # Filter out empty tables or tables that don't have useful content
+        if table.find('tr') and len(table.find_all('td')) > 0:
+            valid_tables.append(table)
+
+    if valid_tables:
+        # Convert all valid tables to HTML and concatenate them
+        extracted_tables = ''.join([str(table) for table in valid_tables])
         return extracted_tables
     else:
         return "No table data found."
