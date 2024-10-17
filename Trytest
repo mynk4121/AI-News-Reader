@@ -1,0 +1,73 @@
+from flask import Flask, render_template_string
+import win32com.client
+import pythoncom
+
+app = Flask(__name__)
+
+# HTML template to list emails
+template = '''
+    <h1>Health Status Emails</h1>
+    <ul>
+        {% for email in emails %}
+        <li><a href="/email/{{ loop.index0 }}">{{ email.received_time }} - {{ email.subject }}</a></li>
+        {% endfor %}
+    </ul>
+    '''
+
+# HTML template to show specific email content
+email_template = '''
+    <h1>Email: {{ email.subject }}</h1>
+    <p><strong>Received Time:</strong> {{ email.received_time }}</p>
+    <p><strong>Body:</strong></p>
+    <pre>{{ email.body }}</pre>
+    <a href="/">Back to email list</a>
+    '''
+
+# Function to fetch health status emails from Outlook
+def fetch_health_status_emails():
+    # Initialize COM for this thread
+    pythoncom.CoInitialize()
+
+    # Connect to Outlook
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    
+    # Access the inbox
+    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
+    messages = inbox.Items
+    messages = messages.Restrict("[Subject] LIKE 'UK DPaaS Platform Health Status%'")
+
+    emails = []
+    
+    # Iterate over emails and collect relevant information
+    for message in messages:
+        if message.Class == 43:  # Ensure it's a MailItem
+            email_data = {
+                'subject': message.Subject,
+                'received_time': message.ReceivedTime,
+                'body': message.Body
+            }
+            emails.append(email_data)
+
+    pythoncom.CoUninitialize()  # Uninitialize COM after use
+
+    return emails
+
+
+@app.route('/')
+def list_emails():
+    emails = fetch_health_status_emails()  # Get emails
+    return render_template_string(template, emails=emails)
+
+
+@app.route('/email/<int:email_id>')
+def show_email(email_id):
+    emails = fetch_health_status_emails()  # Get emails
+    if email_id < len(emails):
+        email = emails[email_id]
+        return render_template_string(email_template, email=email)
+    else:
+        return "Email not found", 404
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
