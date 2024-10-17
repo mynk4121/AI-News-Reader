@@ -1,76 +1,57 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    padding: 20px;
-}
+from flask import Flask, render_template
+import win32com.client
+import pythoncom
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-}
+app = Flask(__name__)
 
-/* Fixed header for the email subject */
-.email-header {
-    background-color: #f8f9fa;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000; /* Make sure it stays above other content */
-    padding: 15px 0;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-}
+# Function to fetch health status emails from Outlook
+def fetch_health_status_emails():
+    # Initialize COM for this thread
+    pythoncom.CoInitialize()
 
-.email-header h1 {
-    color: #007bff;
-    margin: 0;
-    font-size: 1.5rem;
-}
+    # Connect to Outlook
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    
+    # Access the inbox
+    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the inbox
+    messages = inbox.Items
+    messages.Sort("[ReceivedTime]", True)  # Sort by received time in descending order
 
-.email-header p {
-    margin: 5px 0 0 0;
-}
+    emails = []
+    
+    # Iterate over emails and collect relevant information
+    for message in messages:
+        if message.Class == 43:  # Ensure it's a MailItem
+            if 'UK DPaaS Platform Health Status' in message.Subject:  # Check the subject
+                email_data = {
+                    'subject': message.Subject,
+                    'received_time': message.ReceivedTime.strftime('%Y-%m-%d %H:%M:%S'),
+                    'body': message.HTMLBody if message.BodyFormat == 2 else message.Body  # Use HTMLBody if it's HTML
+                }
+                emails.append(email_data)
 
-/* Scrollable content starts below the header */
-.content {
-    padding-top: 100px;  /* Offset the content to account for the fixed header height */
-}
+    pythoncom.CoUninitialize()  # Uninitialize COM after use
 
-.table-container {
-    margin-top: 20px;
-}
+    return emails
 
-/* Scrollable table wrapper */
-.table-wrapper {
-    max-height: 400px;  /* Limit the table height */
-    overflow-x: auto;  /* Allow horizontal scrolling */
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-}
 
-table {
-    width: 100%;
-    margin-bottom: 1.5rem;
-    background-color: #f8f9fa;
-    border-collapse: collapse;
-}
+@app.route('/')
+def list_emails():
+    emails = fetch_health_status_emails()  # Get emails
+    return render_template('email_template.html', emails=emails)
 
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
 
-th {
-    background-color: #007bff;
-    color: white;
-}
+@app.route('/email/<int:email_id>')
+def show_email(email_id):
+    emails = fetch_health_status_emails()  # Get emails
+    if email_id < len(emails):
+        email = emails[email_id]
+        # Extract tables from the email body if any exist
+        tables = []  # Logic to extract tables (omitted for simplicity)
+        return render_template('email_template.html', email=email, tables=tables)
+    else:
+        return "Email not found", 404
 
-.text-center {
-    text-align: center;
-}
 
-a.btn-primary {
-    margin-top: 20px;
-}
+if __name__ == '__main__':
+    app.run(debug=True)
