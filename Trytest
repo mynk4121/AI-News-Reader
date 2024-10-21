@@ -1,9 +1,27 @@
-Have precision in our operations, risk management and controls
+Here are some specific, task-related personal measures of success for each of the global objectives in Section 1 of your self-evaluation:
 
-Global examples
+Objective 1: Drive simplicity and efficiency, seek out every opportunity to automate
+Personal Measure of Success:
 
-Ensure processes you own or contribute to work effectively, delivering your work and areas of responsi bility in line with relevant rules, regulations and codes of conduct.
+Streamlining Journey Framework Tasks: I optimized the retrieval of journey beans by writing SQL queries, automating the identification of unused beans in the REPLICA database. This helped remove unnecessary components, simplifying the workflow and improving API test coverage.
+Increasing Efficiency through Automation: I reduced manual effort by creating a Confluence page with links to source code in Stash, enabling quicker access for team members, thus streamlining review processes and enhancing operational efficiency.
+Objective 2: Focus on businesses and projects where we can excel
+Personal Measure of Success:
 
-Actively follow, improve and strengthen controls wherever possible, by proactively identifying, managing and escalating risks as required.
+Delivering Quality Work for the Onboarding Platform: By understanding NTB Architecture and UX/UI flows, I contributed to designing capabilities that directly impact customer experience, including the Manage Application capability and New Customer Verification capability, both of which support the Barclays Plus Account.
+Long-Term Value Creation: I worked on solutions like decision tree evaluations for onboarding, which ensure long-term compliance with business rules, helping build sustainable client relationships.
+Objective 3: Promote diversity of thought, champion new thinking and challenge the status quo
+Personal Measure of Success:
 
-Deliver accurate and reliable operational activity in line with relevant training, policies, limits and standards.
+Collaborative Problem Solving: I participated in event storming sessions and discussions with team members like Janaki Muralitharan and Kshitish Kumar Dash, which brought together diverse perspectives, improving our approach to onboarding journeys.
+Challenging Existing Processes: Through detailed analysis of the Journey Framework, I identified and removed outdated components like unused journey beans, challenging inefficiencies and improving system performance.
+Objective 4: Provide world-class service to our customers and clients every time
+Personal Measure of Success:
+
+Designing User-Centric Capabilities: The Manage Application and New Customer Verification capabilities I worked on are designed to offer seamless user experiences, ensuring that customers—especially in youth accounts—receive a smooth and efficient onboarding process.
+Supporting Sustainability and Compliance: By ensuring that decision processes like KYC checks and fraud prevention are integrated into the new customer verification capability, I contributed to delivering fair and secure services that align with Barclays' ESG (Environmental, Social, and Corporate Governance) goals.
+Objective 5: Have precision in our operations, risk management, and controls
+Personal Measure of Success:
+
+Ensuring Compliance through Accurate Design: I adhered to NTB onboarding decision tree evaluation processes, ensuring that the solution is compliant with risk management requirements and regulatory checks (like KYC and fraud checks).
+Strengthening Risk Controls: My efforts in identifying and removing unused registration journey beans helped reduce operational risks and improve the accuracy of test coverage, thereby supporting the overall risk management framework.
