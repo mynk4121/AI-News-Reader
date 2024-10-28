@@ -1,103 +1,86 @@
-New Customer Verification - Process API
-The New Customer Verification API for Barclays’ youth account onboarding involves a series of checks designed to validate the applicant’s age, identity, and background. The process interacts with Barclays’ internal systems and third-party services like Onfido to ensure all necessary customer data is validated before allowing account creation.
+Manage Applications Capability
+The "Manage Applications" capability allows users to manage different aspects of customer applications, including creating, updating, and canceling prospects for specific services. This capability is built to support the journey types "BPLUS" and "YPA" with flexible handling for different application statuses. It provides various endpoints to interact with and retrieve application data based on customer or prospect IDs.
 
-Verification Steps Overview
-Age Check – Ensures the applicant is eligible based on age.
-Onfido Document Verification – Validates identification documents through a third-party service.
-Document & Customer Report Matching – Cross-verifies customer details with internal records using fuzzy logic.
-Background Customer Locate Check – Identifies if the applicant exists in Barclays’ database and handles multiple matches.
-1. Age Check
-Purpose: Verify if the applicant falls within the youth account’s eligible age range (16 to 18 years).
-Data Source: Prospect System API (to retrieve Date of Birth from Prospect Data Store).
-Process:
-Fetch customer’s Date of Birth.
-Calculate the applicant’s current age based on the system date.
-Eligibility Check:
-If the applicant is younger than 16 or older than 18, they are informed of ineligibility and the process is terminated.
-Required Data:
+Application Management P-API
+The Application Management P-API (Public API) is the core API that supports application management operations, including retrieval, creation, and update of application and prospect data. Below are the main endpoints available under this API and their respective functions:
 
-Date of Birth (DOB).
-2. Onfido Document Verification
-Purpose: Verify the applicant's identity using official documents through the Onfido API.
-Data Sources: Onfido API for ID verification, Customer System API for retrieving customer data.
-Key Steps:
-
-Document Type Check:
-Confirms if the provided document (e.g., Passport, National ID) is a supported type.
-Blacklist Check:
-Validates the document against a blacklist to prevent fraud.
-Selfie Verification:
-Matches the customer’s live selfie with the ID document photo.
-Outcomes:
-
-Document Approved: If the document and selfie match, the customer proceeds.
-Mismatch or Blacklisted Document: If there’s a selfie mismatch or the document is blacklisted, the process is flagged for manual review.
-Required Data:
-
-Document Type.
-Selfie Photo.
-Customer-entered data (First Name, Last Name, etc.).
-3. Document & Customer Report Matching
-Purpose: Cross-checks the customer’s entered details (e.g., Name, DOB) with Barclays’ internal records.
-Data Sources: Prospect System API for the applicant’s information and document data.
-Process:
-
-The system uses fuzzy logic to handle variations in the customer’s input and internal records.
-Key Data Points Compared:
-First Name (FN), Middle Name (MN), Last Name (LN), Date of Birth (DOB), Address.
-Any mismatches or missing information trigger specific fuzzy rules to attempt to resolve discrepancies before rejecting the match.
-Fuzzy Matching Rules:
-FL001 - Data Cleanup:
-
-Removes spaces and special characters in the customer’s name before comparing it to the internal records.
-A Regular Expression (REGEX) function is applied for uniformity.
-FL002a - Handling Null Fields:
-
-If a name field (e.g., Last Name) is NULL, the system copies the available name into the empty field.
-This rule helps resolve cases where the applicant provides only one name.
-FL002b - Multi-Word Names:
-
-Splits multi-word names into their respective fields:
-The first word is assigned as First Name.
-The remaining words are treated as the Last Name.
-FL003 - Character Threshold Check:
-
-Allows for up to a 10% character difference between the customer-provided name and the document name.
-Minor spelling mistakes (e.g., "Jonh" vs. "John") are tolerated within this threshold.
-FL004 - Exact Match for Non-Null Fields:
-
-When all fields (First Name, Last Name) are non-null, an exact match is expected.
-FL005 - Word Juggling Match:
-
-Separates names into individual words and compares each separately.
-This rule keeps spaces between names and uses split matching techniques to account for name order differences.
-Required Data:
-
-First Name, Middle Name, Last Name, Date of Birth, Address.
-4. Background Customer Locate Check
-Purpose: Search Barclays' internal records to check if the customer already exists.
-Data Source: Customer System API, which accesses the Customer Data Store.
-Key Steps:
-
-The customer’s provided information (First Name, Last Name, Gender, Postcode, Date of Birth) is compared against the internal database.
-Outcomes:
-
-No Match: If no matching record is found, the applicant is offered a Letter Drop Journey, where a verification letter is sent to their address for confirmation.
-Single Match: If a single match is found, the customer proceeds to the next steps.
-Multiple Matches: If multiple records are found (due to similar names, DOBs, or addresses), the application is flagged for branch verification.
-Required Data:
-
-First Name, Last Name, Gender, Postcode, Date of Birth.
-Additional Key Considerations
-All checks must be completed in sequence. Each validation step depends on the success of the previous one.
-External APIs like Onfido are crucial for document and identity validation.
-Barclays’ internal APIs (e.g., Prospect System API, Customer System API) facilitate the retrieval and comparison of customer data.
-Discrepancies in customer information (such as age or name mismatch) will lead to manual review or termination of the process.
-Summary of Fuzzy Matching Rules
-FL001 - Data Cleanup: Ensures data consistency by removing special characters.
-FL002a - Handling Null Fields: Resolves missing name fields by copying available data.
-FL002b - Multi-Word Names: Manages names with multiple words and assigns them to the correct fields.
-FL003 - Character Threshold Check: Allows a 10% character variation to tolerate minor errors.
-FL004 - Exact Match: Requires exact matching when both fields are filled.
-FL005 - Word Juggling: Matches names by breaking them into individual words and comparing them separately.
-This version includes necessary subheadings and clarifies each check with relevant data sources and matching rules. It provides comprehensive details while keeping the structure brief and focused.
+Application Management P-API
+1. GET /applications?journeyType=BPLUS,YPA&&status=ACTIVE,COMPLETED,CANCELLED,EXPIRED
+Purpose: Retrieves a list of applications based on the specified journey types and statuses.
+Query Parameters:
+journeyType: Type of application journey (e.g., BPLUS, YPA).
+status: Application status filter (ACTIVE, COMPLETED, CANCELLED, or EXPIRED).
+Response Scenarios:
+Applications Found:
+Returns a list of applications that match the specified criteria.
+Fields in Response:
+status: Current status of the application.
+introducerCustomerId: Unique ID of the introducer customer.
+productPseudoCode: Code representing the product.
+prospectId: Unique identifier for the prospect.
+customerId: Unique identifier for the customer.
+prospectResumeStatus: Current status of the prospect's resume.
+prospectCreateDate: Date when the prospect was created.
+Applications Not Found:
+Returns a meta code with "No records found" (Code: NAPP100).
+2. GET /prospects/{prospectId}
+Purpose: Retrieves details of a specific prospect based on their prospectId.
+Response Scenarios:
+Prospect Found:
+Returns detailed information about the prospect.
+Fields in Response:
+partyId: Unique ID associated with the party.
+applicationReferenceNumber: Application reference number.
+prospectDetails: Detailed information about the prospect.
+ocrConfirmed: Status of OCR confirmation.
+contactDetails: Contact information, such as mobile number and email.
+marketingPreferences: Preferences for marketing communication (e.g., SMS, email).
+channelType: The channel used for application (e.g., BMBBPLUS).
+prospectStatus, customerStatus, resumeStatus, and applicationStatus: Various statuses of the prospect's journey.
+introducerEligibilityStatus: Eligibility status of the introducer.
+Prospect Not Found:
+Returns a meta code indicating "No records found" (Code: NAPP100).
+3. POST /prospects
+Purpose: Creates a new prospect for the specified journey type.
+Request Body:
+Required fields include journeyType, notificationType, issuedDate, expiryDate, tokenId, and tokenStatus.
+Response Scenarios:
+Prospect Creation Success (Without Push Notification):
+Returns a meta code "SUCCESS" with "Prospect Created" and data including prospectId and applicationReferenceNumber.
+Prospect Creation Success (With Push Notification):
+Similar response as above, with added push notification details.
+Technical Exception:
+Returns an error object with specific errorCodes in case of failure.
+4. PATCH /prospects/{prospectId}
+Purpose: Updates the status of an existing prospect identified by prospectId.
+Request Body:
+Required fields include journeyType, applicationReferenceNumber, and prospectStatus.
+Response Scenarios:
+Update Prospect with Status "In-Progress":
+No content is returned for this scenario.
+Failure due to Decision "In-Progress":
+If the decision is "In-Progress," returns a meta code "FAILURE" with "We Can't Close Prospect" (Code: DECINP100).
+Failure due to Customer "CREATED":
+If customer status is "CREATED," returns a meta code "FAILURE" with "We Can't Close Prospect" (Code: ACC100).
+5. API Headers and Body Requirements
+Headers:
+Content-Type: Must be application/json (mandatory).
+Correlation-ID: Unique request identifier (mandatory).
+System-Id: Identifier for the system initiating the request, e.g., BMBBPLUS (mandatory).
+Authorization: Authorization token (mandatory).
+Customer-Id: Unique customer identifier (mandatory).
+Request Body Fields:
+journeyType (mandatory).
+applicationReferenceNumber (optional).
+Additional fields for POST and PATCH requests, depending on notification and token details.
+6. Response Codes and Metadata
+Success Codes:
+200-OK: For successful retrieval.
+201-Created: For successful creation.
+Error Codes:
+500-Internal Server Error: For technical issues.
+Meta Codes:
+NAPP100: No records found.
+APPEXP01: Prospect expired.
+DECINP100: Decision in progress, cannot close prospect.
+ACC100: Customer created, cannot close prospect.
