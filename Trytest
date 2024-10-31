@@ -1,29 +1,24 @@
-Project Overview
-Why are we doing this?
-The goal is to enable Barclaycard Solus customers to open current accounts digitally via the Barclays App. Currently, the process includes eligibility checks to confirm that customers meet necessary criteria, such as age, residency, and KYC compliance. By transitioning to a digital process, we aim to streamline account openings, allowing customers to complete eligibility and ID verification checks seamlessly within the app.
+S. No	Capability/Feature	Description	Change	Modularized
+1	Product Selection	Allow the customer to view a range of current account products available to them and enable selection to start the onboarding journey. The flow includes options such as Everyday Banking, Premier Banking, Business Banking, Student Accounts, and Young Persons' Accounts.	This capability has been updated to include the selection of various current account products, ensuring introducers can choose the appropriate account type and initiate the onboarding process seamlessly.	No
+2	Customer Eligibility	Checks customer eligibility to apply for a current account, including:
+- Age Check
+- Residency Check
+- KYC Check
+- Geo-location Check
+- Maximum number of accounts (only for joint accounts)
 
-User Experience - Current Pain Points
-Waiting Times: Customers often face delays, with appointments sometimes requiring weeks if necessary documents aren’t available.
-Time-Consuming Process: In-person services currently average about an hour per appointment, impacting convenience.
-Manual ID Verification: The current process involves uploading ID documents for manual verification.
-Dependence on Colleague Support: Account openings need multiple interactions with staff, adding time and effort for customers.
-Expected Benefits of Digital Journey
-Reduced Waiting Times: Customers will open accounts instantly, with no need for scheduling appointments.
-Faster Process: Opening an account in-app can be completed in around 10 minutes, providing a more efficient experience.
-Real-Time ID Verification: The app will perform ID verification in real-time, removing manual steps.
-Self-Service Capability: Customers can complete the entire process independently, freeing up branch and video banking resources.
-Main Business Objectives
-Enable Barclaycard Solus customers to complete eligibility checks, KYC, and ID verification within the app.
-Reduce dependency on in-person or video banking, making the process faster and more accessible.
-Business Benefits
-Customer Base Expansion: The simpler process will attract more customers.
-Enhanced Customer Experience: Faster, digital account opening aligns with customer expectations for convenience.
-Delivery Timeline
-Phase 1: Existing customers applying for Premier Current Accounts in-app.
-Phase 2: Existing customers applying for Business Accounts in-app.
-Phase 3: Existing customers applying for Student Accounts in-app.
-Future Phases: New customers applying for these accounts via the app.
-Scope:
+The system will provide feedback on eligibility before proceeding.	This is a new capability introduced for existing Solus customers, ensuring eligibility checks are comprehensive and clear, allowing customers to understand their eligibility status before applying.	No
+3	ID&V	ID&V includes identity verification, ensuring customers are genuine and their documents are valid. This includes:
+- Customer Liveness Check
+- Valid ID Document Check
+- Image matching with the documents provided
 
-Channels: Barclays App
-Segments: Personal customers
+It verifies the customer's identity before proceeding to the next steps of the application.	This capability will remain as is, ensuring it effectively verifies customer identities in the onboarding journey for current accounts, maintaining a high standard of security.	No
+4	Account Opening	The account opening process includes several verification steps:
+- Employment Verification: Confirming employment status and details.
+- Tax and Income Verification: Assessing tax residency and verifying income.
+- Fraud Checks: Conducting checks to prevent fraudulent activities.
+- Credit Checks: Evaluating the customer’s creditworthiness.
+- Following verification, customers review personal details, set up card preferences, and receive a welcome pack (physical or email) along with a debit card.
+
+This streamlined process ensures quick and efficient onboarding for customers.	This capability has been enhanced to incorporate detailed verification steps for employment, income, fraud, and credit checks, ensuring a thorough assessment during the account opening process.	No
