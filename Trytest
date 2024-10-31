@@ -1,1 +1,29 @@
+Project Overview
+Why are we doing this?
+The goal is to enable Barclaycard Solus customers to open current accounts digitally via the Barclays App. Currently, the process includes eligibility checks to confirm that customers meet necessary criteria, such as age, residency, and KYC compliance. By transitioning to a digital process, we aim to streamline account openings, allowing customers to complete eligibility and ID verification checks seamlessly within the app.
 
+User Experience - Current Pain Points
+Waiting Times: Customers often face delays, with appointments sometimes requiring weeks if necessary documents aren’t available.
+Time-Consuming Process: In-person services currently average about an hour per appointment, impacting convenience.
+Manual ID Verification: The current process involves uploading ID documents for manual verification.
+Dependence on Colleague Support: Account openings need multiple interactions with staff, adding time and effort for customers.
+Expected Benefits of Digital Journey
+Reduced Waiting Times: Customers will open accounts instantly, with no need for scheduling appointments.
+Faster Process: Opening an account in-app can be completed in around 10 minutes, providing a more efficient experience.
+Real-Time ID Verification: The app will perform ID verification in real-time, removing manual steps.
+Self-Service Capability: Customers can complete the entire process independently, freeing up branch and video banking resources.
+Main Business Objectives
+Enable Barclaycard Solus customers to complete eligibility checks, KYC, and ID verification within the app.
+Reduce dependency on in-person or video banking, making the process faster and more accessible.
+Business Benefits
+Customer Base Expansion: The simpler process will attract more customers.
+Enhanced Customer Experience: Faster, digital account opening aligns with customer expectations for convenience.
+Delivery Timeline
+Phase 1: Existing customers applying for Premier Current Accounts in-app.
+Phase 2: Existing customers applying for Business Accounts in-app.
+Phase 3: Existing customers applying for Student Accounts in-app.
+Future Phases: New customers applying for these accounts via the app.
+Scope:
+
+Channels: Barclays App
+Segments: Personal customers
