@@ -1,33 +1,49 @@
-Customer Eligibility Capability Description
-The Customer Eligibility capability ensures that prospective customers meet the necessary criteria to open a current account through the Barclays app. This process is facilitated by integrating various components and databases for seamless verification. Below is a detailed breakdown based on the provided design and tactical event storming details:
+Manage Applications Capability Description
+The Manage Applications capability focuses on handling the lifecycle of a customer's application, including creation, updates, and retrieval of application details. This ensures a streamlined and efficient process for managing customer data while maintaining transparency and user control. Below is the detailed breakdown based on the provided design:
 
-Barclays App Product Selection Screens
+1. Retrieving the Current Account Product Page
+Route: /GET getProductHoldings
+Purpose:
+This service checks if the customer can access the product page for the selected current account.
+It ensures that the relevant product information is fetched accurately and displayed to the user.
+2. Barclays App Gateway
+Role:
+Acts as a middleware layer that facilitates secure communication between the Barclays App Front-End Platform (BAFP) and internal Barclays services.
+Ensures requests are routed and processed efficiently.
+3. Barclays Experience API
+Role:
+A centralized API responsible for managing the lifecycle of application records.
+It handles three core actions:
+Create Applicant: Generates a new application record for a specific customer ID.
+Update Application: Manages updates to application status, including KYC markers, step tracker updates, and cancellation handling.
+Get Applicant Details: Retrieves existing application data from the Prospect Data Store, ensuring consistency and quick access.
+4. TCV API
+Role:
+A REST-based source system API that interacts with the back-end to fetch and update data related to the applicant.
+It ensures that all application-related information is synchronized across systems.
+5. Applicant Data Store
+Role:
+A database that stores all information related to the applicant's application.
+Acts as the central repository for application records, enabling seamless retrieval and updates during the application lifecycle.
+Key Features of the Capability
+Application Creation
 
-This front-end interface, built using React Native, allows customers to select the desired product. In this case, the customer, Liz, chooses the "Everyday Banking" account from the displayed options.
-Barclays App Gateway
+When a customer initiates the application process, an application record is created using the Application Management Create Applicant route (/POST application).
+The customer ID and journey type are stored in the data store for traceability.
+Application Update
 
-Acts as a middle layer using a Spring Controller to connect the app to Barclays' internal services. This ensures secure and efficient communication between the app and backend systems.
-Barclays Experience API
+Updates are managed through the Application Management Update Application route (/PATCH application).
+This includes:
+Modifying KYC markers after identity verification.
+Tracking the progress in the step tracker.
+Handling cancellations or resumption of the application.
+Application Retrieval
 
-A GraphQL API that retrieves the content needed to populate product information and the subsequent steps. It provides Liz with tailored and dynamic product details.
-Applicant Eligibility Check RUF
-
-This service, built with Spring MVC, conducts multiple eligibility checks such as:
-Applicant Age Verification: Ensures the customer meets the minimum age requirement.
-UK Residency Check: Confirms that the applicant resides in the UK.
-Existing Application Check: Verifies if there are no active applications for the same product.
-Applicant Details Retrieval: Fetches stored details to prepopulate the application form.
-Database Interactions
-
-TCV API & DB
-The TCV API (Spring MVC-based REST controller) interacts with the TCV Database (Oracle DB) to retrieve and store critical applicant data. This includes age verification, residency status, and previously failed eligibility checks.
-ODS API & DB
-The ODS API retrieves customer-related information from the ODS Database (MongoDB). This database contains a replica of the customer system, ensuring fast and accurate access to necessary data.
-Step Tracker Updates
-
-As each eligibility check is successfully passed, the status is updated in real time on the application step tracker visible to Liz. Failed checks provide actionable feedback (e.g., "Visit branch for further assistance").
+Customers can view their application details via the Application Management Get Applicant Details route (/GET personal details).
+This ensures the user can access their application data anytime.
 Benefits of the Design
-Real-time Validation: By integrating APIs with underlying databases, all eligibility checks are performed promptly, minimizing delays in the customer journey.
-User-Centric: Dynamic interfaces and step trackers ensure transparency, guiding customers through each step of the process.
-Scalability: The modular structure allows for easy addition or modification of eligibility criteria as business needs evolve.
-This capability ensures Liz's application journey remains smooth, secure, and compliant with regulatory requirements.
+Efficiency: By integrating APIs and a centralized data store, data retrieval and updates are processed in real-time.
+Scalability: The modular design enables the addition of new functionalities with minimal disruption.
+User Transparency: Real-time updates to step trackers and easy access to application details enhance the user experience.
+Data Consistency: The synchronized flow between APIs and databases ensures data integrity across the system.
+This capability ensures that managing Liz's application is seamless, from creation to updates and retrieval, enhancing her overall onboarding experience.
