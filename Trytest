@@ -1,11 +1,33 @@
-Eligibility Verification: Includes age, residency, KYC, fraud, and credit checks specific to the current account requirements.
-Employment & Income: Collects employment status, monthly income, and tax residency details.
-Fraud & Credit Checks: Performs real-time fraud and credit evaluations for secure onboarding.
-Onboarding Steps:
-Review personal details
-Set card preferences (digital or physical)
-Confirm account setup
-Completion:
-Issues a welcome pack (physical or digital)
-Provides a debit card, ready for immediate use
-This streamlined process ensures efficient and thorough account setup for eligible Solus Barclaycard customers.
+Customer Eligibility Capability Description
+The Customer Eligibility capability ensures that prospective customers meet the necessary criteria to open a current account through the Barclays app. This process is facilitated by integrating various components and databases for seamless verification. Below is a detailed breakdown based on the provided design and tactical event storming details:
+
+Barclays App Product Selection Screens
+
+This front-end interface, built using React Native, allows customers to select the desired product. In this case, the customer, Liz, chooses the "Everyday Banking" account from the displayed options.
+Barclays App Gateway
+
+Acts as a middle layer using a Spring Controller to connect the app to Barclays' internal services. This ensures secure and efficient communication between the app and backend systems.
+Barclays Experience API
+
+A GraphQL API that retrieves the content needed to populate product information and the subsequent steps. It provides Liz with tailored and dynamic product details.
+Applicant Eligibility Check RUF
+
+This service, built with Spring MVC, conducts multiple eligibility checks such as:
+Applicant Age Verification: Ensures the customer meets the minimum age requirement.
+UK Residency Check: Confirms that the applicant resides in the UK.
+Existing Application Check: Verifies if there are no active applications for the same product.
+Applicant Details Retrieval: Fetches stored details to prepopulate the application form.
+Database Interactions
+
+TCV API & DB
+The TCV API (Spring MVC-based REST controller) interacts with the TCV Database (Oracle DB) to retrieve and store critical applicant data. This includes age verification, residency status, and previously failed eligibility checks.
+ODS API & DB
+The ODS API retrieves customer-related information from the ODS Database (MongoDB). This database contains a replica of the customer system, ensuring fast and accurate access to necessary data.
+Step Tracker Updates
+
+As each eligibility check is successfully passed, the status is updated in real time on the application step tracker visible to Liz. Failed checks provide actionable feedback (e.g., "Visit branch for further assistance").
+Benefits of the Design
+Real-time Validation: By integrating APIs with underlying databases, all eligibility checks are performed promptly, minimizing delays in the customer journey.
+User-Centric: Dynamic interfaces and step trackers ensure transparency, guiding customers through each step of the process.
+Scalability: The modular structure allows for easy addition or modification of eligibility criteria as business needs evolve.
+This capability ensures Liz's application journey remains smooth, secure, and compliant with regulatory requirements.
