@@ -1,49 +1,64 @@
-Manage Applications Capability Description
-The Manage Applications capability focuses on handling the lifecycle of a customer's application, including creation, updates, and retrieval of application details. This ensures a streamlined and efficient process for managing customer data while maintaining transparency and user control. Below is the detailed breakdown based on the provided design:
+Customer Management Capability Description
+The Customer Management capability is designed to handle the lifecycle of customer records, including their creation and updates. It ensures accurate storage and efficient management of customer information, providing a seamless and secure way to maintain customer data across systems.
 
-1. Retrieving the Current Account Product Page
-Route: /GET getProductHoldings
-Purpose:
-This service checks if the customer can access the product page for the selected current account.
-It ensures that the relevant product information is fetched accurately and displayed to the user.
-2. Barclays App Gateway
+1. BUK Applicant
+Represents the user (BUK applicant) initiating the process through the Barclays app.
+Users interact with the app to manage their customer profile, including creating or updating their customer record.
+2. Barclays App
+The primary interface for users to access customer management features.
+Routes user requests to the Barclays internal system via the Barclays App Gateway.
+3. Barclays App Gateway
 Role:
-Acts as a middleware layer that facilitates secure communication between the Barclays App Front-End Platform (BAFP) and internal Barclays services.
-Ensures requests are routed and processed efficiently.
-3. Barclays Experience API
+Serves as a secure intermediary between the Barclays App and internal systems.
+Ensures reliable and structured communication for all customer-related requests.
+4. Barclays Experience API
 Role:
-A centralized API responsible for managing the lifecycle of application records.
-It handles three core actions:
-Create Applicant: Generates a new application record for a specific customer ID.
-Update Application: Manages updates to application status, including KYC markers, step tracker updates, and cancellation handling.
-Get Applicant Details: Retrieves existing application data from the Prospect Data Store, ensuring consistency and quick access.
-4. TCV API
+Central API responsible for managing customer records.
+Handles both the creation of new customer profiles and updates to existing profiles.
+5. Customer Management Features
+Create Customer
+
+Route: /POST customer/
+Functionality:
+Creates a new customer record based on the specific customer ID provided.
+This includes capturing essential information for customer identification and onboarding.
+Update Customer
+
+Route: /PATCH customer/
+Functionality:
+Updates the existing customer record with new information.
+Supports modifications such as updating KYC details, contact information, or profile settings.
+6. TCV API
 Role:
-A REST-based source system API that interacts with the back-end to fetch and update data related to the applicant.
-It ensures that all application-related information is synchronized across systems.
-5. Applicant Data Store
+REST-based source system API that retrieves and updates customer data from the database.
+Facilitates integration with back-end systems to ensure data consistency.
+7. Customer Data Store
 Role:
-A database that stores all information related to the applicant's application.
-Acts as the central repository for application records, enabling seamless retrieval and updates during the application lifecycle.
+Acts as the primary storage for customer-related data.
+Ensures that all customer records are securely stored and easily retrievable for updates or future reference.
 Key Features of the Capability
-Application Creation
+Seamless Customer Onboarding
 
-When a customer initiates the application process, an application record is created using the Application Management Create Applicant route (/POST application).
-The customer ID and journey type are stored in the data store for traceability.
-Application Update
+The Create Customer feature ensures that new customer records are created efficiently with minimal input required from the user.
+Dynamic Customer Updates
 
-Updates are managed through the Application Management Update Application route (/PATCH application).
-This includes:
-Modifying KYC markers after identity verification.
-Tracking the progress in the step tracker.
-Handling cancellations or resumption of the application.
-Application Retrieval
+The Update Customer functionality allows users to make real-time changes to their profiles, ensuring their information stays up to date.
+Secure Data Management
 
-Customers can view their application details via the Application Management Get Applicant Details route (/GET personal details).
-This ensures the user can access their application data anytime.
+Integration with the TCV API and Customer Data Store ensures all data is securely handled, maintaining user privacy and data integrity.
 Benefits of the Design
-Efficiency: By integrating APIs and a centralized data store, data retrieval and updates are processed in real-time.
-Scalability: The modular design enables the addition of new functionalities with minimal disruption.
-User Transparency: Real-time updates to step trackers and easy access to application details enhance the user experience.
-Data Consistency: The synchronized flow between APIs and databases ensures data integrity across the system.
-This capability ensures that managing Liz's application is seamless, from creation to updates and retrieval, enhancing her overall onboarding experience.
+Efficiency: Streamlined processes for creating and updating customer records.
+Scalability: Designed to accommodate future customer management enhancements.
+Security: End-to-end secure handling of customer data through REST APIs and databases.
+User Experience: Simplifies interactions for the end user, ensuring quick access to customer management features.
+This capability provides the backbone for managing customer profiles, enabling smooth onboarding and robust data maintenance.
+
+
+
+
+
+
+
+
+
+
