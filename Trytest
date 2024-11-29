@@ -1,64 +1,38 @@
-Customer Management Capability Description
-The Customer Management capability is designed to handle the lifecycle of customer records, including their creation and updates. It ensures accurate storage and efficient management of customer information, providing a seamless and secure way to maintain customer data across systems.
+Customer Reviews Legal Documents
 
-1. BUK Applicant
-Represents the user (BUK applicant) initiating the process through the Barclays app.
-Users interact with the app to manage their customer profile, including creating or updating their customer record.
-2. Barclays App
-The primary interface for users to access customer management features.
-Routes user requests to the Barclays internal system via the Barclays App Gateway.
-3. Barclays App Gateway
-Role:
-Serves as a secure intermediary between the Barclays App and internal systems.
-Ensures reliable and structured communication for all customer-related requests.
-4. Barclays Experience API
-Role:
-Central API responsible for managing customer records.
-Handles both the creation of new customer profiles and updates to existing profiles.
-5. Customer Management Features
-Create Customer
+System Involved: Dynamic Forms Agreement, AEM (Adobe Experience Manager).
+Action: Present the legal documents dynamically.
+API Call:
+GET /legal-documents (AEM): Fetch and display the required documents.
+GET /progress-tracker (Customer System): Retrieve the customer's loan application progress.
+Customer Accepts the Legal Documents
 
-Route: /POST customer/
-Functionality:
-Creates a new customer record based on the specific customer ID provided.
-This includes capturing essential information for customer identification and onboarding.
-Update Customer
+System Involved: Dynamic Forms Agreement.
+Action: Customer consents by accepting the legal terms.
+API Call:
+POST /legal-documents/accept: Submit the customer's acceptance of the legal document.
+Update Loan Application Status
 
-Route: /PATCH customer/
-Functionality:
-Updates the existing customer record with new information.
-Supports modifications such as updating KYC details, contact information, or profile settings.
-6. TCV API
-Role:
-REST-based source system API that retrieves and updates customer data from the database.
-Facilitates integration with back-end systems to ensure data consistency.
-7. Customer Data Store
-Role:
-Acts as the primary storage for customer-related data.
-Ensures that all customer records are securely stored and easily retrievable for updates or future reference.
-Key Features of the Capability
-Seamless Customer Onboarding
+System Involved: Manage Applications.
+Action: Update the loan application status to reflect legal document acceptance.
+API Call:
+PUT /applications/{applicationId}/status: Update the status to "Legal Documents Accepted."
+Create Loan Account
 
-The Create Customer feature ensures that new customer records are created efficiently with minimal input required from the user.
-Dynamic Customer Updates
+System Involved: ALS Loan Account Opening.
+Action: Trigger the loan account opening process.
+API Call:
+POST /loan-account: Create a loan account for the customer.
+Generate and Send Email with Documents
 
-The Update Customer functionality allows users to make real-time changes to their profiles, ensuring their information stays up to date.
-Secure Data Management
+System Involved: Email System, AEM.
+Action: Generate the welcome letter and email with legal documents.
+API Call:
+POST /email/send: Send an email to the customer with the welcome letter and legal documents as attachments.
+POST /document/generate (AEM): Generate the welcome letter dynamically.
+Finalize Customer Journey
 
-Integration with the TCV API and Customer Data Store ensures all data is securely handled, maintaining user privacy and data integrity.
-Benefits of the Design
-Efficiency: Streamlined processes for creating and updating customer records.
-Scalability: Designed to accommodate future customer management enhancements.
-Security: End-to-end secure handling of customer data through REST APIs and databases.
-User Experience: Simplifies interactions for the end user, ensuring quick access to customer management features.
-This capability provides the backbone for managing customer profiles, enabling smooth onboarding and robust data maintenance.
-
-
-
-
-
-
-
-
-
-
+System Involved: CIAM (Customer Identity and Access Management).
+Action: Update the customer's profile and ensure loan account details are linked to the customer's account.
+API Call:
+PUT /customer-profile/{customerId}: Update the customer's profile with loan account details.
