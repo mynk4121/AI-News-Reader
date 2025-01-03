@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Charity Finder</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      #search-bar {
+        padding: 10px;
+        background-color: #f4f4f4;
+        display: flex;
+        border-bottom: 1px solid #ddd;
+      }
+      #filters {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      input {
+        margin-right: 10px;
+      }
+      button {
+        cursor: pointer;
+      }
+      #main {
+        display: flex;
+        height: calc(100vh - 120px); /* Adjust height to fit the viewport */
+        overflow: hidden;
+      }
+      #map {
+        flex: 2;
+        height: 100%;
+      }
+      #charity-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-left: 1px solid #ddd;
+      }
+      #charity-list h4 {
+        margin: 0;
+        font-size: 16px;
+      }
+      #charity-list p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+      }
+      #charity-list div {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="search-bar">
+      <input id="postcode" placeholder="Enter postcode" />
+      <button onclick="searchCharities()">Search</button>
+    </div>
+    <div id="filters">
+      <label>
+        <input
+          type="checkbox"
+          value="Financial Hardship"
+          onchange="applyFilters()"
+        />
+        Financial Hardship
+      </label>
+      <label>
+        <input type="checkbox" value="Low Literacy" onchange="applyFilters()" />
+        Low Literacy
+      </label>
+      <label>
+        <input type="checkbox" value="Physical" onchange="applyFilters()" />
+        Physical
+      </label>
+      <label>
+        <input type="checkbox" value="Mental" onchange="applyFilters()" />
+        Mental
+      </label>
+    </div>
+    <div id="main">
+      <div id="map"></div>
+      <div id="charity-list"></div>
+    </div>
+    <script>
+      var map = L.map("map").setView([53.4808, -2.2426], 12);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      let latitude, longitude;
+
+      function searchCharities() {
+        const postcode = document.getElementById("postcode").value;
+        fetch(`https://api.postcodes.io/postcodes/${postcode}`)
+          .then((res) => res.json())
+          .then((data) => {
+            latitude = data.result.latitude;
+            longitude = data.result.longitude;
+            applyFilters();
+          })
+          .catch(() => alert("Invalid postcode"));
+      }
+
+      function applyFilters() {
+        const selectedVulnerabilities = Array.from(
+          document.querySelectorAll("#filters input:checked")
+        ).map((checkbox) => checkbox.value);
+
+        let url = `/search?latitude=${latitude}&longitude=${longitude}`;
+        if (selectedVulnerabilities.length > 0) {
+          url += `&vulnerability=${selectedVulnerabilities.join(",")}`;
+        }
+
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            renderCharities(data);
+            updateMap(data);
+          });
+      }
+
+      function renderCharities(charities) {
+        const uniqueSet = new Set();
+        const uniqueCharities = charities.filter((charity) => {
+          const identifier = `${charity.charity_name}|${charity.address}|${charity.vulnerability}`;
+          if (uniqueSet.has(identifier)) {
+            return false;
+          } else {
+            uniqueSet.add(identifier);
+            return true;
+          }
+        });
+
+        const list = document.getElementById("charity-list");
+        list.innerHTML = uniqueCharities
+          .map(
+            (charity) => `
+      <div>
+        <h4>
+          <a href="https://www.google.com/maps?q=${charity.latitude},${charity.longitude}" target="_blank">
+            ${charity.charity_name}
+          </a>
+        </h4>
+        <p>${charity.address}</p>
+        <p>Vulnerability: ${charity.vulnerability}</p>
+        <p>Distance: ${charity.distance} km</p>
+      </div>
+    `
+          )
+          .join("");
+      }
+
+      function zoomToLocation(lat, lon) {
+        map.setView([lat, lon], 15);
+        L.popup()
+          .setLatLng([lat, lon])
+          .setContent("Selected Location")
+          .openOn(map);
+      }
+
+      function updateMap(charities) {
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Marker) map.removeLayer(layer);
+        });
+
+        charities.forEach((charity) => {
+          L.marker([charity.latitude, charity.longitude])
+            .addTo(map)
+            .bindPopup(
+              `<b>${charity.charity_name}</b><br>${charity.address}<br>${charity.vulnerability}`
+            );
+        });
+      }
+    </script>
+  </body>
+</html>
