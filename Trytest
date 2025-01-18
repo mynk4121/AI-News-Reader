@@ -1,1 +1,42 @@
-The putMimoInterimDay2Flag method manages the Mimo Interim Day 2 feature by checking feature availability, throttling limits, and customer eligibility, and updates the feature's status and configuration accordingly.
+Here are the constants, functions, policies, and sessions in the method:
+
+### **Constants**:
+1. `FeatureToFunction.MimoInterimDay2SubSwitch`
+2. `ConfigurationKeyConstants.MIMO_DAY_TWO_FOR_THROTTLE_MIN`
+3. `ConfigurationKeyConstants.MIMO_DAY_TWO_FOR_THROTTLE_MAX`
+4. `TOGGLE_NUMBER`
+5. `TOGGLE_TIME`
+6. `TOGGLE_WAIT_TIME`
+7. `TOGGLE_NUMBER_KEY`
+8. `TOGGLE_TIME_KEY`
+9. `TOGGLE_WAIT_TIME_KEY`
+10. `TOGGLE_NUMBER_DEFAULT_VALUE`
+11. `TOGGLE_TIME_DEFAULT_VALUE`
+12. `TOGGLE_WAIT_TIME_DEFAULT_VALUE`
+
+### **Functions**:
+1. `putMimoInterimDay2Flag(GetAppPolicyServiceRequest serviceRequest, GetAppPolicyServiceResponse serviceResponse)`  
+   - Main method to determine and set the Mimo Interim Day 2 feature status.
+2. `istsatursAvailable(FeatureToFunction.MimoInterimDay2SubSwitch, serviceRequest)`  
+   - Checks if the Mimo Interim Day 2 sub-switch feature is available.
+3. `featureSwitchService.isMimoInterimDay2Enable()`  
+   - Verifies if the Mimo Interim Day 2 feature is globally enabled.
+4. `throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`  
+   - Checks if the customer is allowed to proceed without throttling based on defined thresholds.
+5. `configValues.getIntegerProperty(key, defaultValue)`  
+   - Retrieves integer configuration values.
+6. `configValues.getStringProperty(key, defaultValue)`  
+   - Retrieves string configuration values.
+7. `serviceRequest.getCustomerContext().getRegisteredCustomer().customerId`  
+   - Fetches the customer ID from the request's customer context.
+8. `putTimeInterimFlag(serviceResponse, serviceRequest)`  
+   - Sets additional interim flags for the service response.
+9. `turnOffFunction(serviceResponse, FeatureToFunction.MimoInterimDay2SubSwitch)`  
+   - Disables the Mimo Interim Day 2 sub-switch feature for the customer.
+
+### **Policy**:
+- The method enforces throttling restrictions using minimum and maximum thresholds, checks feature availability, and ensures the Mimo Interim Day 2 feature is only enabled for eligible customers.
+
+### **Session**:
+- **`serviceRequest.getCustomerContext()`**  
+   - Accesses the customer's context, including details like `customerId` and `isBusinessCustomer`.
