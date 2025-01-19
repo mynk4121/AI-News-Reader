@@ -1,4 +1,30 @@
-setCustomerId() (Sets the customer ID in the choreographer request).
-setMimoEnabled() (Updates the response to indicate if MIMO is enabled).
-setOpStatus() (Sets the operation status in the response).
-setErrorCode() (Assigns an error code to the response).
+The `execute` method updates MIMO preferences by validating feature switches, parsing customer details, and sending choreographer requests while managing exceptions and logging details.  
+
+**Constants:**  
+- **ErrorCodes.UPDATE_MIMO_PREFERENCES_FAILURE**: Indicates failure in updating MIMO preferences.  
+- **ErrorCodes.MSG_OP_SUCCESS**: Represents successful operation execution.  
+- **ErrorCodes.MSG_OP_FAILED**: Represents a general operation failure.  
+- **OperationConstants.MIMO_PREFERENCE_GET_PREFERENCES**: Parameter for retrieving MIMO preferences.  
+- **OperationConstants.SORT_CODE_ACCOUNT_NUMBER_LENGTH**: Length of the sort code and account number.  
+
+**Functions:**  
+- **checkFeatureSwitchOFF()**: Validates if a specific feature switch is turned off.  
+- **getMobileUserContext()**: Fetches the mobile user context.  
+- **getRegisteredService()**: Retrieves details of a registered service, e.g., ServiceCode.BMB.  
+- **getIdentifier()**: Gets the identifier (e.g., account and sort code) for a registered service.  
+- **getCustomerContext()**: Retrieves the current customer context, including registered customer information.  
+- **setMimoEnable()**: Sets the MIMO preference in the choreographer request.  
+- **setAccountNo()**: Assigns the account number to the choreographer request.  
+- **setSortCode()**: Assigns the sort code to the choreographer request.  
+- **setCustomerId()**: Assigns the customer ID to the choreographer request.  
+- **updateMIMOPreference()**: Updates the MIMO preferences using the choreographer.  
+- **setMimoEnabled()**: Updates the response to indicate if MIMO is enabled.  
+- **setOpStatus()**: Sets the operation status in the response.  
+- **setErrorCode()**: Assigns an error code to the response.  
+
+**Policy:**  
+Manages feature switches for PushNotification and MimoInterimDay2SubSwitch to control the operation's behavior.  
+
+**Session:**  
+- **MobileUserContext**: Extracts registered service details like identifier (account number and sort code).  
+- **CustomerContext**: Fetches customer session information, such as customer ID.
