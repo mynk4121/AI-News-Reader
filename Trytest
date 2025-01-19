@@ -1,30 +1,32 @@
-The `execute` method updates MIMO preferences by validating feature switches, parsing customer details, and sending choreographer requests while managing exceptions and logging details.  
+**Half-line description:**  
+The `putEcosystemOffersFlag` method configures app policies for ecosystem offers based on customer context, feature availability, and group restrictions.  
 
 **Constants:**  
-- **ErrorCodes.UPDATE_MIMO_PREFERENCES_FAILURE**: Indicates failure in updating MIMO preferences.  
-- **ErrorCodes.MSG_OP_SUCCESS**: Represents successful operation execution.  
-- **ErrorCodes.MSG_OP_FAILED**: Represents a general operation failure.  
-- **OperationConstants.MIMO_PREFERENCE_GET_PREFERENCES**: Parameter for retrieving MIMO preferences.  
-- **OperationConstants.SORT_CODE_ACCOUNT_NUMBER_LENGTH**: Length of the sort code and account number.  
+- **OperationConstants.MARKETING_ALLOWED**: Determines if marketing is permitted for the customer.  
+- **OperationConstants.BMB_OFFERS_HOMESCREEN_URL**: URL for BMB offers on the home screen.  
+- **OperationConstants.BMB_OFFERS_LANDINGPAGE_URL**: URL for BMB offers landing page.  
+- **OperationConstants.BMB_OFFERS_RETAILERICONS_URL**: URL for retailer icons in BMB offers.  
+- **OperationConstants.BMB_OFFERS_CATEGORYICONS_URL**: URL for category icons in BMB offers.  
+- **OperationConstants.BMB_OFFERS_TOURCARD_DAYS**: Tour card days configuration for BMB offers.  
+- **OperationConstants.BMB_OFFERS_NO_RETAILERS_FOUND_MESSAGE**: Message displayed when no retailers are found.  
+- **OperationConstants.BMB_ECOSYSTEM_REWARDS_PREMIER_HIGHLIGHT_URL**: Highlight URL for premier rewards in the ecosystem.  
+- **ConfigurationKeyConstants.BUSINESS_CUSTOMER**: Customer type configuration for business customers.  
 
 **Functions:**  
-- **checkFeatureSwitchOFF()**: Validates if a specific feature switch is turned off.  
-- **getMobileUserContext()**: Fetches the mobile user context.  
-- **getRegisteredService()**: Retrieves details of a registered service, e.g., ServiceCode.BMB.  
-- **getIdentifier()**: Gets the identifier (e.g., account and sort code) for a registered service.  
-- **getCustomerContext()**: Retrieves the current customer context, including registered customer information.  
-- **setMimoEnable()**: Sets the MIMO preference in the choreographer request.  
-- **setAccountNo()**: Assigns the account number to the choreographer request.  
-- **setSortCode()**: Assigns the sort code to the choreographer request.  
-- **setCustomerId()**: Assigns the customer ID to the choreographer request.  
-- **updateMIMOPreference()**: Updates the MIMO preferences using the choreographer.  
-- **setMimoEnabled()**: Updates the response to indicate if MIMO is enabled.  
-- **setOpStatus()**: Sets the operation status in the response.  
-- **setErrorCode()**: Assigns an error code to the response.  
+- **put()**: Adds key-value pairs to the app policy.  
+- **isMarketingSuppressionMarkerAvailable()**: Checks if marketing suppression applies to the customer.  
+- **getRegisteredCustomerClass()**: Retrieves the customer type (e.g., business or personal).  
+- **isBapMembershipOnly()**: Determines if the customer has BAP membership only.  
+- **turnoffFunction()**: Disables specific features in the app policy.  
+- **isBlueRewardsFeatureDisabledForWealthManagement()**: Checks if Blue Rewards is disabled for wealth customers.  
+- **isFeatureAvailable()**: Checks if a feature is available in the function environment.  
+- **isThrottleInRangeForEcoFeatures()**: Validates if the customer qualifies for ecosystem features based on throttling.  
+- **getStringProperty()**: Retrieves configuration values for specific keys.  
 
 **Policy:**  
-Manages feature switches for PushNotification and MimoInterimDay2SubSwitch to control the operation's behavior.  
+- Handles feature enablement or disablement for ecosystem offers, Blue Rewards, and customer group restrictions.  
 
 **Session:**  
-- **MobileUserContext**: Extracts registered service details like identifier (account number and sort code).  
-- **CustomerContext**: Fetches customer session information, such as customer ID.
+- **CustomerContext**: Provides personal customer details and class.  
+- **FeatureToFunction.EcosystemOffers**: Determines the state of ecosystem offers.  
+- **ServiceRequest**: Fetches customer context and registered customer details.
