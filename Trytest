@@ -1,17 +1,4 @@
-The `execute` method retrieves user preferences by checking feature switches, fetching customer-specific preferences, and managing exceptions with detailed logging.  
-
-**Constants:**  
-ErrorCodes.RETRIEVE_MIMO_PREFERENCES_FAILURE (Indicates failure in retrieving preferences),  
-ErrorCodes.MSG_OP_SUCCESS (Indicates success),  
-ErrorCodes.MSG_OP_FAILED (Indicates operation failure).  
-
-**Functions:**  
-`checkFeatureswitchOFF()` (Verifies if a feature switch is disabled),  
-`getCustomerContext()` (Fetches customer session and details),  
-`getIMIHOPreference()` (Retrieves MIMO preferences for the customer).  
-
-**Policy:**  
-Handles feature switches for PushNotification and MimointerimDay2SubSwitch to determine operation flow.  
-
-**Session:**  
-Accesses the current customer session using `getCustomerContext()` to retrieve registered customer details.
+setCustomerId() (Sets the customer ID in the choreographer request).
+setMimoEnabled() (Updates the response to indicate if MIMO is enabled).
+setOpStatus() (Sets the operation status in the response).
+setErrorCode() (Assigns an error code to the response).
