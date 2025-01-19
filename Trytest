@@ -1,45 +1,46 @@
-**Half-line description:**  
-The `execute` method retrieves the best offer details for specified retailers based on customer context and feature availability.  
+### Half-Line Description of the Method:
+The method retrieves and processes retailer-specific offers, leveraging feature flags and ecosystem services, and handles exceptions.
 
 ---
 
-**Constants:**  
-- **OperationConstants.ECOSYSTEM_OFFERS_RETAILERID**: Retailer ID parameter for ecosystem offers.  
-- **OperationConstants.COMMA_DELIMITER**: Delimiter for splitting multiple retailer IDs.  
-- **ErrorCodes.MSG_OP_SUCCESS**: Represents a successful operation.  
-- **ErrorCodes.MSG_OP_FAILED**: Indicates a failed operation.  
-- **ErrorCodes.ECOSYSTEM_PACKS_MCA_MASTER_SWITCH_DISABLED**: Error code for when the master switch for ecosystem offers is disabled.  
-- **ErrorCodes.ECOSYSTEM_NO_OFFERS_FOUND**: Indicates no offers were found.  
-- **ConfigurationKeyConstants.BMB_ECOSYSTEM_BEST_OFFER_RETRIEVE_RETAILER_SUFFIX**: Key for retrieving the retailer path configuration.  
+### Constants Used:
+1. **OperationConstants.MSG_OP_SUCCESS**: Indicates successful operation execution.
+2. **OperationConstants.MSG_OP_FAILED**: Indicates failed operation execution.
+3. **OperationConstants.ECOSYSTEM_OFFERS_RETAILERID**: Key for retrieving retailer ID.
+4. **ConfigurationKeyConstants.BMB_ECOSYSTEM_OFFERS_RETRIEVE_URL_SUFFIX**: Configuration key for retrieving the service URL.
+5. **OperationConstants.CORRELATION_ID**: Session attribute for tracking requests.
+6. **OperationConstants.IS_OFFERS_AVAILABLE_TRUE**: Indicates that offers are available.
+7. **OperationConstants.BMB_OFFER_ACTIVATION_STATUS**: Represents offer activation status.
 
 ---
 
-**Functions and Descriptions:**  
-1. **LOGGER.debug()**: Logs debug information to trace the method flow.  
-2. **isFeatureAvailable()**: Checks if the specified feature is enabled for the current context.  
-3. **checkMandatoryFieldsArePopulated()**: Validates that all required parameters are populated.  
-4. **StringTokenizer()**: Splits retailer IDs based on the specified delimiter.  
-5. **getBestOfferForRetailerCache()**: Fetches best offers for specified retailers from the cache.  
-6. **isPremierCustomer()**: Determines if the customer qualifies as a premier customer.  
-7. **getFormatedPercentage()**: Formats the percentage value for display.  
-8. **setBestOfferDetail()**: Populates the response with the list of best offer details.  
-9. **setCustomerID()**: Assigns the customer's ID to the request object.  
-10. **setPath()**: Sets the API path in the request.  
-11. **setHttpMethod()**: Specifies the HTTP method (e.g., POST) for the request.  
-12. **setAID()**: Sets the application identifier in the request.  
+### Functions Overview:
+1. **`isFeatureAvailable()`**: Checks if a specific feature is enabled via feature flags.
+2. **`checkMandatoryFieldsArePopulated()`**: Validates that all required parameters are provided.
+3. **`getOffersForRetailer()`**: Calls the MCA service to fetch offers for the specified retailers.
+4. **`getFormattedPercentage()`**: Formats cashback or offer percentages for display.
+5. **`hasUserAcceptedTermsAndConditions()`**: Checks if the user has accepted terms and conditions related to rewards.
+6. **`getStringProperty()`**: Retrieves configuration values for the application.
+7. **`getSession()`**: Accesses session attributes for maintaining user and request context.
 
 ---
 
-**Policy:**  
-- Enforces checks on feature availability through the master switch for ecosystem offers.  
-- Implements customer-specific conditions, such as identifying premier customers and handling retailer-based offers.  
+### Policies:
+1. **Feature Flag Policy**: Ensures operations are only executed if the respective feature is enabled.
+2. **Error Handling Policy**: Gracefully handles service, timeout, and other runtime exceptions, ensuring no sensitive data leakage.
+3. **Session Management Policy**: Uses session attributes to maintain context, such as correlation ID and terms acceptance status.
+4. **Data Validation Policy**: Verifies all necessary parameters and data fields before processing.
 
 ---
 
-**Session:**  
-- **CustomerContext**: Contains details about the registered customer.  
-- **DeviceContext**: Includes device-specific details for the request.  
-- **OperationRequest**: Captures input parameters, such as retailer IDs.  
-- **MCAHandlerServiceRequest**: Manages details for the service request, including path, customer ID, and retailer IDs.  
+### Short Descriptions for Methods:
+1. **`execute()`**: Main method to fetch and process offers for retailers.
+2. **`isFeatureAvailable()`**: Determines if the ecosystem offers feature is enabled.
+3. **`checkMandatoryFieldsArePopulated()`**: Ensures all required input fields are present.
+4. **`getOffersForRetailer()`**: Fetches retailer offers using MCA service.
+5. **`getFormattedPercentage()`**: Converts numerical percentages into formatted strings.
+6. **`hasUserAcceptedTermsAndConditions()`**: Checks terms acceptance for rewards functionality.
+7. **`getSession()`**: Retrieves session attributes for request context.
+8. **`setSessionAttribute()`**: Updates session with new values like MDM ID and terms acceptance.
 
-Let me know if you'd like me to elaborate further on any aspect!
+This structure helps streamline understanding and debugging of the method. Let me know if you'd like detailed explanations for any specific part!
