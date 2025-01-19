@@ -1,32 +1,45 @@
 **Half-line description:**  
-The `putEcosystemOffersFlag` method configures app policies for ecosystem offers based on customer context, feature availability, and group restrictions.  
+The `execute` method retrieves the best offer details for specified retailers based on customer context and feature availability.  
+
+---
 
 **Constants:**  
-- **OperationConstants.MARKETING_ALLOWED**: Determines if marketing is permitted for the customer.  
-- **OperationConstants.BMB_OFFERS_HOMESCREEN_URL**: URL for BMB offers on the home screen.  
-- **OperationConstants.BMB_OFFERS_LANDINGPAGE_URL**: URL for BMB offers landing page.  
-- **OperationConstants.BMB_OFFERS_RETAILERICONS_URL**: URL for retailer icons in BMB offers.  
-- **OperationConstants.BMB_OFFERS_CATEGORYICONS_URL**: URL for category icons in BMB offers.  
-- **OperationConstants.BMB_OFFERS_TOURCARD_DAYS**: Tour card days configuration for BMB offers.  
-- **OperationConstants.BMB_OFFERS_NO_RETAILERS_FOUND_MESSAGE**: Message displayed when no retailers are found.  
-- **OperationConstants.BMB_ECOSYSTEM_REWARDS_PREMIER_HIGHLIGHT_URL**: Highlight URL for premier rewards in the ecosystem.  
-- **ConfigurationKeyConstants.BUSINESS_CUSTOMER**: Customer type configuration for business customers.  
+- **OperationConstants.ECOSYSTEM_OFFERS_RETAILERID**: Retailer ID parameter for ecosystem offers.  
+- **OperationConstants.COMMA_DELIMITER**: Delimiter for splitting multiple retailer IDs.  
+- **ErrorCodes.MSG_OP_SUCCESS**: Represents a successful operation.  
+- **ErrorCodes.MSG_OP_FAILED**: Indicates a failed operation.  
+- **ErrorCodes.ECOSYSTEM_PACKS_MCA_MASTER_SWITCH_DISABLED**: Error code for when the master switch for ecosystem offers is disabled.  
+- **ErrorCodes.ECOSYSTEM_NO_OFFERS_FOUND**: Indicates no offers were found.  
+- **ConfigurationKeyConstants.BMB_ECOSYSTEM_BEST_OFFER_RETRIEVE_RETAILER_SUFFIX**: Key for retrieving the retailer path configuration.  
 
-**Functions:**  
-- **put()**: Adds key-value pairs to the app policy.  
-- **isMarketingSuppressionMarkerAvailable()**: Checks if marketing suppression applies to the customer.  
-- **getRegisteredCustomerClass()**: Retrieves the customer type (e.g., business or personal).  
-- **isBapMembershipOnly()**: Determines if the customer has BAP membership only.  
-- **turnoffFunction()**: Disables specific features in the app policy.  
-- **isBlueRewardsFeatureDisabledForWealthManagement()**: Checks if Blue Rewards is disabled for wealth customers.  
-- **isFeatureAvailable()**: Checks if a feature is available in the function environment.  
-- **isThrottleInRangeForEcoFeatures()**: Validates if the customer qualifies for ecosystem features based on throttling.  
-- **getStringProperty()**: Retrieves configuration values for specific keys.  
+---
+
+**Functions and Descriptions:**  
+1. **LOGGER.debug()**: Logs debug information to trace the method flow.  
+2. **isFeatureAvailable()**: Checks if the specified feature is enabled for the current context.  
+3. **checkMandatoryFieldsArePopulated()**: Validates that all required parameters are populated.  
+4. **StringTokenizer()**: Splits retailer IDs based on the specified delimiter.  
+5. **getBestOfferForRetailerCache()**: Fetches best offers for specified retailers from the cache.  
+6. **isPremierCustomer()**: Determines if the customer qualifies as a premier customer.  
+7. **getFormatedPercentage()**: Formats the percentage value for display.  
+8. **setBestOfferDetail()**: Populates the response with the list of best offer details.  
+9. **setCustomerID()**: Assigns the customer's ID to the request object.  
+10. **setPath()**: Sets the API path in the request.  
+11. **setHttpMethod()**: Specifies the HTTP method (e.g., POST) for the request.  
+12. **setAID()**: Sets the application identifier in the request.  
+
+---
 
 **Policy:**  
-- Handles feature enablement or disablement for ecosystem offers, Blue Rewards, and customer group restrictions.  
+- Enforces checks on feature availability through the master switch for ecosystem offers.  
+- Implements customer-specific conditions, such as identifying premier customers and handling retailer-based offers.  
+
+---
 
 **Session:**  
-- **CustomerContext**: Provides personal customer details and class.  
-- **FeatureToFunction.EcosystemOffers**: Determines the state of ecosystem offers.  
-- **ServiceRequest**: Fetches customer context and registered customer details.
+- **CustomerContext**: Contains details about the registered customer.  
+- **DeviceContext**: Includes device-specific details for the request.  
+- **OperationRequest**: Captures input parameters, such as retailer IDs.  
+- **MCAHandlerServiceRequest**: Manages details for the service request, including path, customer ID, and retailer IDs.  
+
+Let me know if you'd like me to elaborate further on any aspect!
