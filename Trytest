@@ -1,46 +1,53 @@
-### Half-Line Description of the Method:
-The method retrieves and processes retailer-specific offers, leveraging feature flags and ecosystem services, and handles exceptions.
+### **Half-Line Description**
+The `execute()` method retrieves "ending soon" offers for retailers, validates feature flags, and fetches data from an MCA service, returning a response with retailer details and offer information.
 
 ---
 
-### Constants Used:
-1. **OperationConstants.MSG_OP_SUCCESS**: Indicates successful operation execution.
-2. **OperationConstants.MSG_OP_FAILED**: Indicates failed operation execution.
-3. **OperationConstants.ECOSYSTEM_OFFERS_RETAILERID**: Key for retrieving retailer ID.
-4. **ConfigurationKeyConstants.BMB_ECOSYSTEM_OFFERS_RETRIEVE_URL_SUFFIX**: Configuration key for retrieving the service URL.
-5. **OperationConstants.CORRELATION_ID**: Session attribute for tracking requests.
-6. **OperationConstants.IS_OFFERS_AVAILABLE_TRUE**: Indicates that offers are available.
-7. **OperationConstants.BMB_OFFER_ACTIVATION_STATUS**: Represents offer activation status.
+### **Constants Used**
+1. `OperationConstants.NEAR_EXPIRY_FLAG`: Flag to determine if offers are near expiry.
+2. `OperationConstants.IS_OFFERS_AVAILABLE_TRUE`: Denotes available offers.
+3. `ErrorCodes.MSG_OP_SUCCESS`: Success status for the operation.
+4. `ErrorCodes.MSG_OP_FAILED`: Failure status for the operation.
+5. `ConfigurationKeyConstants.BMB_ECOSYSTEM_OFFERS_ENDING_SOON_MCA_SUFFIX`: Configuration key for the MCA service path.
 
 ---
 
-### Functions Overview:
-1. **`isFeatureAvailable()`**: Checks if a specific feature is enabled via feature flags.
-2. **`checkMandatoryFieldsArePopulated()`**: Validates that all required parameters are provided.
-3. **`getOffersForRetailer()`**: Calls the MCA service to fetch offers for the specified retailers.
-4. **`getFormattedPercentage()`**: Formats cashback or offer percentages for display.
-5. **`hasUserAcceptedTermsAndConditions()`**: Checks if the user has accepted terms and conditions related to rewards.
-6. **`getStringProperty()`**: Retrieves configuration values for the application.
-7. **`getSession()`**: Accesses session attributes for maintaining user and request context.
+### **Functions Used**
+1. **`isFeatureAvailable()`**: Checks if a specific feature is enabled.
+   - **Short Description**: Validates if the "ending soon offers" feature is active.
+2. **`getJson()`**: Serializes an object to a JSON string.
+   - **Short Description**: Converts request data to JSON format.
+3. **`getStringProperty()`**: Fetches a configuration property value.
+   - **Short Description**: Retrieves MCA path for "ending soon offers."
+4. **`isPremierCustomer()`**: Determines if a customer is a premier user.
+   - **Short Description**: Checks the customer's premier status.
+5. **`retrieveEndingSoonOffersMCACacheResponse()`**: Fetches offers from MCA cache.
+   - **Short Description**: Retrieves cached "ending soon offers."
+6. **`getFormatedPercentage()`**: Formats a percentage value.
+   - **Short Description**: Formats offer percentages for display.
 
 ---
 
-### Policies:
-1. **Feature Flag Policy**: Ensures operations are only executed if the respective feature is enabled.
-2. **Error Handling Policy**: Gracefully handles service, timeout, and other runtime exceptions, ensuring no sensitive data leakage.
-3. **Session Management Policy**: Uses session attributes to maintain context, such as correlation ID and terms acceptance status.
-4. **Data Validation Policy**: Verifies all necessary parameters and data fields before processing.
+### **Policies Applied**
+1. **Feature Validation**: Validates the availability of the "ending soon offers" feature through feature flags.
+2. **Premier Customer Check**: Ensures additional processing for premier customers.
+3. **MCA Path Validation**: Ensures correct configuration paths are used for the service request.
 
 ---
 
-### Short Descriptions for Methods:
-1. **`execute()`**: Main method to fetch and process offers for retailers.
-2. **`isFeatureAvailable()`**: Determines if the ecosystem offers feature is enabled.
-3. **`checkMandatoryFieldsArePopulated()`**: Ensures all required input fields are present.
-4. **`getOffersForRetailer()`**: Fetches retailer offers using MCA service.
-5. **`getFormattedPercentage()`**: Converts numerical percentages into formatted strings.
-6. **`hasUserAcceptedTermsAndConditions()`**: Checks terms acceptance for rewards functionality.
-7. **`getSession()`**: Retrieves session attributes for request context.
-8. **`setSessionAttribute()`**: Updates session with new values like MDM ID and terms acceptance.
+### **Session Attributes**
+1. **Customer Context**: Holds the registered customer's data (`customerContext`).
+2. **Device Context**: Contains device-specific details (`deviceContext`).
+3. **AID**: Mobile User Context's unique ID (`muc.aid`).
 
-This structure helps streamline understanding and debugging of the method. Let me know if you'd like detailed explanations for any specific part!
+---
+
+### **Short Descriptions for Key Functions**
+1. **`isFeatureAvailable()`**: Verifies if a feature is enabled.
+2. **`setPath()`**: Sets the MCA service endpoint path.
+3. **`setCustomerContext()`**: Attaches customer-specific details.
+4. **`setDeviceContext()`**: Adds device-specific information.
+5. **`retrieveEndingSoonOffersMCACacheResponse()`**: Fetches offers from the MCA service cache.
+6. **`setRetailerList()`**: Populates the response with retailer offer details.
+7. **`debug()`**: Logs debug-level messages for troubleshooting.
+8. **`setMessage()`**: Sets the JSON payload for the service request.
