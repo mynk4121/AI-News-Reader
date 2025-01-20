@@ -1,43 +1,53 @@
-### **Half-Line Description**  
-The `putSmartFutureWealthManagementDayOne()` method determines if the "Smart Future Wealth Management Day One" feature should remain enabled based on the customer's Wealth Management eligibility.
+### **Method Overview**  
+**`execute()`**: Validates feature switches, checks customer eligibility, and performs API calls to fetch or update scalable onboarding statuses based on the customer's type and feature configurations.  
 
 ---
 
-### **Constants Used**  
-1. **`FeatureToFunction.SF_WEALTH_DAY_ONE`**  
-   - Represents the feature toggle for the "Smart Future Wealth Management Day One" functionality.
+### **Constants Used in the Method**  
+1. **`OperationConstants.SMART_FUTURE_GLOBAL`**: Global feature switch constant.  
+2. **`OperationConstants.SMART_FUTURE_ACCOUNT_OPENING`**: Feature switch for account opening.  
+3. **`OperationConstants.SMART_FUTURE_ACCOUNT_OPENING_DAY2`**: Feature switch for day 2 account opening.  
+4. **`OperationConstants.IS_SFAO_R2_ENABLED`**: Session attribute indicating if SFAO R2 is enabled.  
+5. **`ErrorCodes.SMART_FUTURE_FAILED`**: Error code for Smart Future failure.  
+6. **`ErrorCodes.SMART_FUTURE_WEALTH_MANAGEMENT_FAILED`**: Error code for Wealth Management failure.  
 
 ---
 
-### **Functions Used**  
-1. **`isFeatureAvailable()`**  
-   - **Description**: Checks if the feature `SF_WEALTH_DAY_ONE` is enabled for the given service request.
+### **Functions in the Method**  
+1. **`checkFeatureSwitchON()`**: Checks if a specific feature switch is enabled.  
+   * **Description**: Verifies if global and account-opening-related switches are turned on.  
 
-2. **`isWLAWealthManagementCustomer()`**  
-   - **Description**: Validates if the customer qualifies as a Wealth Management customer under WLA.
+2. **`isFeatureSwitchON(request, featureName)`**: Checks a specific feature switch for Wealth Management.  
+   * **Description**: Validates Wealth Management-related feature switches.  
 
-3. **`turnoffFunction()`**  
-   - **Description**: Disables the feature `SF_WEALTH_DAY_ONE` in the service response.
+3. **`checkIfCustomerIsExistingPlanAndInvestCustomer(session)`**: Determines if the customer is an existing Plan and Invest customer.  
+   * **Description**: Retrieves session data to check customer type.  
 
-4. **`LOGGER.debug()`**  
-   - **Description**: Logs debug-level information at various stages of the method's execution.
+4. **`createChoreographerRequest(opReq)`**: Creates a request for the scalable status choreographer.  
+   * **Description**: Builds a request object for further processing.  
 
----
+5. **`scalableStatusChoreographer.getScalableOnboardingStatus(request)`**: Makes an API call to retrieve the onboarding status.  
+   * **Description**: Fetches customer-specific onboarding details from the backend.  
 
-### **Short Descriptions for Key Functions**  
-1. **`isFeatureAvailable()`**: Confirms the availability of the Smart Future Wealth Management feature.  
-2. **`isWLAWealthManagementCustomer()`**: Checks if the customer meets the Wealth Management criteria.  
-3. **`turnoffFunction()`**: Turns off the specified feature in the service response.  
-4. **`LOGGER.debug()`**: Logs method execution details for debugging purposes.
+6. **`prepareOperationResponse(opResponse, choreographerResponse, isExistingCustomer)`**: Prepares the operation response.  
+   * **Description**: Maps choreographer response data to the operation response object.  
 
 ---
 
-### **Session Attributes**  
-- **Customer Context**: Retrieved using `getCustomerContext()` to evaluate the customer’s eligibility for Wealth Management features.
+### **Session Attributes Used**  
+1. **`OperationConstants.IS_SFAO_R2_ENABLED`**: Tracks whether SFAO R2 is enabled.  
+2. **Session object (`this.request.getSession(false)`)**: Holds customer-related session data for validation.  
 
 ---
 
-### **Policies Applied**  
-1. **Feature Availability Check**: Ensures the `SF_WEALTH_DAY_ONE` feature is only enabled for eligible customers.  
-2. **Customer Eligibility**: Validates that the customer belongs to the Wealth Management category under WLA.  
-3. **Logging**: Tracks and logs the decision-making process for monitoring and debugging.
+### **Policies in the Method**  
+1. **Feature Switch Validation**:  
+   - Ensures that required feature switches (e.g., global, account opening) are enabled.  
+
+2. **Customer Eligibility**:  
+   - Checks if the customer is an existing Plan and Invest customer.  
+   - Validates eligibility for Smart Future Wealth Management Day 2.  
+
+---
+
+Let me know if further adjustments are needed!
