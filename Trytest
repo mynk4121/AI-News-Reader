@@ -1,74 +1,57 @@
 ### **Half-Line Description**  
-The `execute()` method processes customer reward eligibility, validates feature switches, checks cashback accounts, and retrieves reward details, including Smart Spend, FAQs, and Value Exchange data.
+The `putWealthManagementBlueRewardsFlag()` method checks if the Wealth Management Blue Rewards feature is available and applies throttling policies based on customer ID range.
 
 ---
 
 ### **Constants Used**  
-1. **`OperationConstants.VE_WALLET_ACCOUNT_DETAILS`**: Session attribute for wallet account details.  
-2. **`OperationConstants.APPLE_TV`**: Feature switch for Apple TV rewards.  
-3. **`OperationConstants.SRP_SERVICING_2`**: Session attribute for SRP Servicing 2 flag.  
-4. **`ErrorCodes.MSG_OP_SUCCESS`**: Indicator for successful operation execution.  
-5. **`ErrorCodes.MSG_OP_FAILED`**: Indicates failure in operation execution.  
-6. **`ConfigurationKeyConstants.BMB_TRADING_ENTITY_BUK_IDENTIFIER`**: Key for retrieving trading entity ID.  
-7. **`DEFAULT_VISA_CASHBACK_ACCOUNT_PRODUCT_CODE`**: Default product code for cashback accounts.
+1. **`FeatureToFunction.WealthManagementBlueRewards`**  
+   - Represents the Wealth Management Blue Rewards feature toggle.
+
+2. **`ConfigurationKeyConstants.BMB_WEALTH_MANAGEMENT_WLA_W11_BLUE_REWARDS_THROTTLING_MIN_LIMIT`**  
+   - Minimum range for customer ID throttling.
+
+3. **`ConfigurationKeyConstants.BMB_WEALTH_MANAGEMENT_WLA_W11_BLUE_REWARDS_THROTTLING_MAX_LIMIT`**  
+   - Maximum range for customer ID throttling.
 
 ---
 
 ### **Functions Used**  
-1. **`getApplicationVersion()`**  
-   - **Description**: Retrieves the application version from the session.  
+1. **`isFeatureAvailable()`**  
+   - **Description**: Checks if the Wealth Management Blue Rewards feature is enabled.  
 
-2. **`getDeviceOS()`**  
-   - **Description**: Retrieves the device operating system from the session.  
+2. **`getIntegerProperty()`**  
+   - **Description**: Fetches configuration properties for throttling limits.  
 
-3. **`isFeatureEnabledForFunction()`**  
-   - **Description**: Checks if a specific feature switch is enabled.  
+3. **`isCustomerAllowedToContinueWithoutThrottling()`**  
+   - **Description**: Determines if the customer falls within the allowed throttle range.  
 
-4. **`getPersonalCustomerDetail()`**  
-   - **Description**: Retrieves customer details from the session.  
+4. **`turnOffFunction()`**  
+   - **Description**: Disables the Wealth Management Blue Rewards feature for throttled customers.  
 
-5. **`validateBlueRewardsCashbackRemovalSwitchAndNAOMarker()`**  
-   - **Description**: Validates Blue Rewards eligibility and feature toggles.  
+5. **`getCustomerContext().getRegisteredCustomer().customerId`**  
+   - **Description**: Retrieves the customer ID from the request context.  
 
-6. **`getRewards()`**  
-   - **Description**: Fetches rewards details via the rewards choreographer.  
-
-7. **`isCustomerAllowedToOptIn()`**  
-   - **Description**: Checks if the customer is eligible for Value Exchange registration.  
-
-8. **`tradingAndLegalEntityHelper.getEntityNameFromMTS()`**  
-   - **Description**: Retrieves the trading entity name from MTS.  
-
-9. **`JSONParser.parse()`**  
-   - **Description**: Parses JSON strings into objects.  
-
-10. **`setVisaRewardCashback()`**  
-    - **Description**: Populates Visa cashback reward details in the response.  
-
----
-
-### **Session Attributes**  
-1. **`VE_WALLET_ACCOUNT_DETAILS`**: Stores wallet account information.  
-2. **`APP_FUNCTION_MAP`**: Contains feature switches for application functionalities.  
-3. **`SRP_SERVICING_2`**: Indicates SRP servicing flag status.  
-
----
-
-### **Policies Applied**  
-1. **Feature Validation**: Ensures feature switches like Apple TV and Blue Rewards are validated before processing.  
-2. **Eligibility Validation**: Confirms customer eligibility for rewards based on account status and feature flags.  
-3. **Cashback Account Check**: Verifies the presence of a valid cashback account for Visa cashback eligibility.  
-4. **Error Handling**: Manages exceptions with specific error codes and messages.  
+6. **`LOGGER.debug()`**  
+   - **Description**: Logs debug information about the customer’s eligibility and throttle range.
 
 ---
 
 ### **Short Descriptions for Key Functions**  
-1. **`getApplicationVersion()`**: Fetches the application version from the session.  
-2. **`getDeviceOS()`**: Retrieves the device OS name from the session.  
-3. **`isFeatureEnabledForFunction()`**: Checks if a feature switch is active.  
-4. **`getRewards()`**: Retrieves customer rewards via the choreographer.  
-5. **`validateBlueRewardsCashbackRemovalSwitchAndNAOMarker()`**: Validates Blue Rewards eligibility.  
-6. **`setVisaRewardCashback()`**: Sets Visa cashback details in the response.  
-7. **`tradingAndLegalEntityHelper.getEntityNameFromMTS()`**: Gets entity names for legal trading purposes.  
-8. **`JSONParser.parse()`**: Converts JSON strings to usable objects.  
-9. **`isCustomerAllowedToOptIn()`**: Checks if a customer can register for Value Exchange.
+1. **`isFeatureAvailable()`**: Validates if the specified feature is toggled on.  
+2. **`getIntegerProperty()`**: Retrieves integer configuration values from properties.  
+3. **`isCustomerAllowedToContinueWithoutThrottling()`**: Checks if a customer can bypass throttling based on their ID.  
+4. **`turnOffFunction()`**: Deactivates a feature for customers who fail the throttling criteria.  
+5. **`LOGGER.debug()`**: Logs debug details for diagnostic purposes.  
+
+---
+
+### **Session Attributes**  
+- Not directly applicable for this method, as it focuses on customer throttling logic.
+
+---
+
+### **Policies Applied**  
+1. **Feature Availability**: Ensures the Wealth Management Blue Rewards feature is enabled before proceeding.  
+2. **Throttling Validation**: Applies customer ID range-based throttling to regulate feature access.  
+3. **Feature Deactivation**: Disables the feature for customers outside the throttle range.  
+4. **Logging**: Captures debug logs for monitoring throttle status and feature availability.  
