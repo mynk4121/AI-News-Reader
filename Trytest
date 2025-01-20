@@ -1,41 +1,39 @@
 ### **Method Overview**  
-**`putSIAOForWealthManagement()`**: Validates if the "SIAO Wealth" feature is enabled, checks customer eligibility against throttling limits, and updates the session or disables the feature accordingly.
+**`putBMBNotificationCentreNTOFlag()`**: Checks if the "Notification Centre NTO" feature is enabled and evaluates customer eligibility for access. Disables the feature if it’s unavailable or the customer lacks proper access.
 
 ---
 
 ### **Constants Used in the Method**  
-1. **`FeatureToFunction.SIAO_WEALTH`**: Represents the "SIAO Wealth" feature.  
-2. **`ConfigurationKeyConstants.BMB_SIAO_WEALTH_MANAGEMENT_THROTTLE_MIN`**: Minimum customer ID range for throttling.  
-3. **`ConfigurationKeyConstants.BMB_SIAO_WEALTH_MANAGEMENT_THROTTLE_MAX`**: Maximum customer ID range for throttling.  
-4. **`OperationConstants.SMART_INVESTOR_AO_WEALTH_MANAGEMENT`**: Session key for tracking SIAO Wealth status.  
+1. **`FeatureToFunction.NotificationCentreNTO`**: Represents the "Notification Centre NTO" feature.  
+2. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: Key for retrieving notification center availability from session parameters.
 
 ---
 
 ### **Functions in the Method**  
 1. **`isFeatureAvailable(feature, serviceRequest)`**: Checks if a feature is enabled.  
-   - **Description**: Confirms if the "SIAO Wealth" feature is turned on for the customer.  
+   - **Description**: Determines if the "Notification Centre NTO" feature is turned on for the customer.  
 
-2. **`configValues.getIntegerProperty(key, defaultValue)`**: Fetches configuration property value.  
-   - **Description**: Retrieves throttling limits (min and max customer ID range).  
+2. **`sessionParameters.get(key)`**: Retrieves session attributes.  
+   - **Description**: Checks whether the notification center is marked as available in the session.  
 
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`**: Verifies if a customer falls within the throttling range.  
-   - **Description**: Determines whether the customer is eligible to bypass throttling.  
+3. **`featureSwitchService.isNotificationCentreNTOFeatureEnabled()`**: Validates feature enablement.  
+   - **Description**: Checks if the notification center NTO feature is enabled via the feature switch service.  
 
 4. **`turnOffFunction(serviceResponse, feature)`**: Disables a specific feature.  
-   - **Description**: Turns off the "SIAO Wealth" feature for ineligible customers.  
+   - **Description**: Turns off the "Notification Centre NTO" feature for ineligible customers.  
 
 ---
 
 ### **Session Attributes Used**  
-1. **`OperationConstants.SMART_INVESTOR_AO_WEALTH_MANAGEMENT`**: Stores whether the "SIAO Wealth" feature is enabled for the session.  
-2. **`this.sessionParameters.put(key, value)`**: Updates session parameters with SIAO Wealth status.  
+1. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: Boolean value indicating if the Notification Centre is available for the session.  
 
 ---
 
 ### **Policies in the Method**  
-1. **Feature Validation**: Ensures that the "SIAO Wealth" feature is enabled for the customer.  
-2. **Throttling Check**: Validates the customer’s eligibility based on configured throttling ID ranges.  
+1. **Feature Validation**: Verifies that the "Notification Centre NTO" feature is enabled.  
+2. **Session Check**: Confirms whether the notification center is marked as available in the session.  
+3. **Access Evaluation**: Uses the feature switch service to check customer access to the notification center.
 
 ---
 
-Let me know if you need further refinements!
+Let me know if you'd like further details or adjustments!
