@@ -1,53 +1,41 @@
 ### **Method Overview**  
-**`execute()`**: Validates feature switches, checks customer eligibility, and performs API calls to fetch or update scalable onboarding statuses based on the customer's type and feature configurations.  
+**`putSIAOForWealthManagement()`**: Validates if the "SIAO Wealth" feature is enabled, checks customer eligibility against throttling limits, and updates the session or disables the feature accordingly.
 
 ---
 
 ### **Constants Used in the Method**  
-1. **`OperationConstants.SMART_FUTURE_GLOBAL`**: Global feature switch constant.  
-2. **`OperationConstants.SMART_FUTURE_ACCOUNT_OPENING`**: Feature switch for account opening.  
-3. **`OperationConstants.SMART_FUTURE_ACCOUNT_OPENING_DAY2`**: Feature switch for day 2 account opening.  
-4. **`OperationConstants.IS_SFAO_R2_ENABLED`**: Session attribute indicating if SFAO R2 is enabled.  
-5. **`ErrorCodes.SMART_FUTURE_FAILED`**: Error code for Smart Future failure.  
-6. **`ErrorCodes.SMART_FUTURE_WEALTH_MANAGEMENT_FAILED`**: Error code for Wealth Management failure.  
+1. **`FeatureToFunction.SIAO_WEALTH`**: Represents the "SIAO Wealth" feature.  
+2. **`ConfigurationKeyConstants.BMB_SIAO_WEALTH_MANAGEMENT_THROTTLE_MIN`**: Minimum customer ID range for throttling.  
+3. **`ConfigurationKeyConstants.BMB_SIAO_WEALTH_MANAGEMENT_THROTTLE_MAX`**: Maximum customer ID range for throttling.  
+4. **`OperationConstants.SMART_INVESTOR_AO_WEALTH_MANAGEMENT`**: Session key for tracking SIAO Wealth status.  
 
 ---
 
 ### **Functions in the Method**  
-1. **`checkFeatureSwitchON()`**: Checks if a specific feature switch is enabled.  
-   * **Description**: Verifies if global and account-opening-related switches are turned on.  
+1. **`isFeatureAvailable(feature, serviceRequest)`**: Checks if a feature is enabled.  
+   - **Description**: Confirms if the "SIAO Wealth" feature is turned on for the customer.  
 
-2. **`isFeatureSwitchON(request, featureName)`**: Checks a specific feature switch for Wealth Management.  
-   * **Description**: Validates Wealth Management-related feature switches.  
+2. **`configValues.getIntegerProperty(key, defaultValue)`**: Fetches configuration property value.  
+   - **Description**: Retrieves throttling limits (min and max customer ID range).  
 
-3. **`checkIfCustomerIsExistingPlanAndInvestCustomer(session)`**: Determines if the customer is an existing Plan and Invest customer.  
-   * **Description**: Retrieves session data to check customer type.  
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`**: Verifies if a customer falls within the throttling range.  
+   - **Description**: Determines whether the customer is eligible to bypass throttling.  
 
-4. **`createChoreographerRequest(opReq)`**: Creates a request for the scalable status choreographer.  
-   * **Description**: Builds a request object for further processing.  
-
-5. **`scalableStatusChoreographer.getScalableOnboardingStatus(request)`**: Makes an API call to retrieve the onboarding status.  
-   * **Description**: Fetches customer-specific onboarding details from the backend.  
-
-6. **`prepareOperationResponse(opResponse, choreographerResponse, isExistingCustomer)`**: Prepares the operation response.  
-   * **Description**: Maps choreographer response data to the operation response object.  
+4. **`turnOffFunction(serviceResponse, feature)`**: Disables a specific feature.  
+   - **Description**: Turns off the "SIAO Wealth" feature for ineligible customers.  
 
 ---
 
 ### **Session Attributes Used**  
-1. **`OperationConstants.IS_SFAO_R2_ENABLED`**: Tracks whether SFAO R2 is enabled.  
-2. **Session object (`this.request.getSession(false)`)**: Holds customer-related session data for validation.  
+1. **`OperationConstants.SMART_INVESTOR_AO_WEALTH_MANAGEMENT`**: Stores whether the "SIAO Wealth" feature is enabled for the session.  
+2. **`this.sessionParameters.put(key, value)`**: Updates session parameters with SIAO Wealth status.  
 
 ---
 
 ### **Policies in the Method**  
-1. **Feature Switch Validation**:  
-   - Ensures that required feature switches (e.g., global, account opening) are enabled.  
-
-2. **Customer Eligibility**:  
-   - Checks if the customer is an existing Plan and Invest customer.  
-   - Validates eligibility for Smart Future Wealth Management Day 2.  
+1. **Feature Validation**: Ensures that the "SIAO Wealth" feature is enabled for the customer.  
+2. **Throttling Check**: Validates the customer’s eligibility based on configured throttling ID ranges.  
 
 ---
 
-Let me know if further adjustments are needed!
+Let me know if you need further refinements!
