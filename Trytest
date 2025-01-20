@@ -1,53 +1,43 @@
 ### **Half-Line Description**  
-The `isBlueRewardsFeatureDisabledForWealthManagement()` method checks if the Wealth Management Blue Rewards feature is disabled for a customer based on their status and policy checks.
+The `putSmartFutureWealthManagementDayOne()` method determines if the "Smart Future Wealth Management Day One" feature should remain enabled based on the customer's Wealth Management eligibility.
 
 ---
 
 ### **Constants Used**  
-1. **`FeatureToFunction.WealthManagementBlueRewards.getNewFeatureName()`**  
-   - Retrieves the new feature name for Wealth Management Blue Rewards.
-
-2. **`Status.OFF`**  
-   - Represents the "OFF" status of a feature.
+1. **`FeatureToFunction.SF_WEALTH_DAY_ONE`**  
+   - Represents the feature toggle for the "Smart Future Wealth Management Day One" functionality.
 
 ---
 
 ### **Functions Used**  
-1. **`getFunction()`**  
-   - **Description**: Retrieves the name of the feature associated with an `AppFunction`.
+1. **`isFeatureAvailable()`**  
+   - **Description**: Checks if the feature `SF_WEALTH_DAY_ONE` is enabled for the given service request.
 
-2. **`getNewFeatureName()`**  
-   - **Description**: Retrieves the new feature name for Wealth Management Blue Rewards.
+2. **`isWLAWealthManagementCustomer()`**  
+   - **Description**: Validates if the customer qualifies as a Wealth Management customer under WLA.
 
-3. **`getStatus()`**  
-   - **Description**: Returns the status (ON/OFF) of the specified feature.
+3. **`turnoffFunction()`**  
+   - **Description**: Disables the feature `SF_WEALTH_DAY_ONE` in the service response.
 
-4. **`isWLAWealthManagementCustomer()`**  
-   - **Description**: Checks if the customer belongs to Wealth Management and WLA categories.
-
-5. **`getCustomerContext().getPersonalCustomer()`**  
-   - **Description**: Fetches the personal customer context from the service request.
-
-6. **`LOGGER.debug()`**  
-   - **Description**: Logs debug information about whether the feature is disabled for Wealth Management.
+4. **`LOGGER.debug()`**  
+   - **Description**: Logs debug-level information at various stages of the method's execution.
 
 ---
 
 ### **Short Descriptions for Key Functions**  
-1. **`getFunction()`**: Gets the name of the current app function.  
-2. **`getNewFeatureName()`**: Fetches the updated name for a feature toggle.  
-3. **`getStatus()`**: Identifies whether a feature is enabled or disabled.  
-4. **`isWLAWealthManagementCustomer()`**: Verifies the customer's eligibility based on Wealth Management and WLA policies.  
-5. **`LOGGER.debug()`**: Captures and logs debug details for diagnostic purposes.  
+1. **`isFeatureAvailable()`**: Confirms the availability of the Smart Future Wealth Management feature.  
+2. **`isWLAWealthManagementCustomer()`**: Checks if the customer meets the Wealth Management criteria.  
+3. **`turnoffFunction()`**: Turns off the specified feature in the service response.  
+4. **`LOGGER.debug()`**: Logs method execution details for debugging purposes.
 
 ---
 
 ### **Session Attributes**  
-- Not directly applicable, as this method evaluates the feature status from the provided request and function list.
+- **Customer Context**: Retrieved using `getCustomerContext()` to evaluate the customer’s eligibility for Wealth Management features.
 
 ---
 
 ### **Policies Applied**  
-1. **Feature Status Check**: Ensures that the Wealth Management Blue Rewards feature is marked as "OFF" before considering it disabled.  
-2. **Customer Eligibility**: Validates whether the customer falls under Wealth Management and WLA criteria.  
-3. **Logging**: Captures debug information about the feature’s disabled status for monitoring purposes.
+1. **Feature Availability Check**: Ensures the `SF_WEALTH_DAY_ONE` feature is only enabled for eligible customers.  
+2. **Customer Eligibility**: Validates that the customer belongs to the Wealth Management category under WLA.  
+3. **Logging**: Tracks and logs the decision-making process for monitoring and debugging.
