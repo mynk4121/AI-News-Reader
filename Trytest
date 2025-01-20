@@ -1,57 +1,53 @@
 ### **Half-Line Description**  
-The `putWealthManagementBlueRewardsFlag()` method checks if the Wealth Management Blue Rewards feature is available and applies throttling policies based on customer ID range.
+The `isBlueRewardsFeatureDisabledForWealthManagement()` method checks if the Wealth Management Blue Rewards feature is disabled for a customer based on their status and policy checks.
 
 ---
 
 ### **Constants Used**  
-1. **`FeatureToFunction.WealthManagementBlueRewards`**  
-   - Represents the Wealth Management Blue Rewards feature toggle.
+1. **`FeatureToFunction.WealthManagementBlueRewards.getNewFeatureName()`**  
+   - Retrieves the new feature name for Wealth Management Blue Rewards.
 
-2. **`ConfigurationKeyConstants.BMB_WEALTH_MANAGEMENT_WLA_W11_BLUE_REWARDS_THROTTLING_MIN_LIMIT`**  
-   - Minimum range for customer ID throttling.
-
-3. **`ConfigurationKeyConstants.BMB_WEALTH_MANAGEMENT_WLA_W11_BLUE_REWARDS_THROTTLING_MAX_LIMIT`**  
-   - Maximum range for customer ID throttling.
+2. **`Status.OFF`**  
+   - Represents the "OFF" status of a feature.
 
 ---
 
 ### **Functions Used**  
-1. **`isFeatureAvailable()`**  
-   - **Description**: Checks if the Wealth Management Blue Rewards feature is enabled.  
+1. **`getFunction()`**  
+   - **Description**: Retrieves the name of the feature associated with an `AppFunction`.
 
-2. **`getIntegerProperty()`**  
-   - **Description**: Fetches configuration properties for throttling limits.  
+2. **`getNewFeatureName()`**  
+   - **Description**: Retrieves the new feature name for Wealth Management Blue Rewards.
 
-3. **`isCustomerAllowedToContinueWithoutThrottling()`**  
-   - **Description**: Determines if the customer falls within the allowed throttle range.  
+3. **`getStatus()`**  
+   - **Description**: Returns the status (ON/OFF) of the specified feature.
 
-4. **`turnOffFunction()`**  
-   - **Description**: Disables the Wealth Management Blue Rewards feature for throttled customers.  
+4. **`isWLAWealthManagementCustomer()`**  
+   - **Description**: Checks if the customer belongs to Wealth Management and WLA categories.
 
-5. **`getCustomerContext().getRegisteredCustomer().customerId`**  
-   - **Description**: Retrieves the customer ID from the request context.  
+5. **`getCustomerContext().getPersonalCustomer()`**  
+   - **Description**: Fetches the personal customer context from the service request.
 
 6. **`LOGGER.debug()`**  
-   - **Description**: Logs debug information about the customer’s eligibility and throttle range.
+   - **Description**: Logs debug information about whether the feature is disabled for Wealth Management.
 
 ---
 
 ### **Short Descriptions for Key Functions**  
-1. **`isFeatureAvailable()`**: Validates if the specified feature is toggled on.  
-2. **`getIntegerProperty()`**: Retrieves integer configuration values from properties.  
-3. **`isCustomerAllowedToContinueWithoutThrottling()`**: Checks if a customer can bypass throttling based on their ID.  
-4. **`turnOffFunction()`**: Deactivates a feature for customers who fail the throttling criteria.  
-5. **`LOGGER.debug()`**: Logs debug details for diagnostic purposes.  
+1. **`getFunction()`**: Gets the name of the current app function.  
+2. **`getNewFeatureName()`**: Fetches the updated name for a feature toggle.  
+3. **`getStatus()`**: Identifies whether a feature is enabled or disabled.  
+4. **`isWLAWealthManagementCustomer()`**: Verifies the customer's eligibility based on Wealth Management and WLA policies.  
+5. **`LOGGER.debug()`**: Captures and logs debug details for diagnostic purposes.  
 
 ---
 
 ### **Session Attributes**  
-- Not directly applicable for this method, as it focuses on customer throttling logic.
+- Not directly applicable, as this method evaluates the feature status from the provided request and function list.
 
 ---
 
 ### **Policies Applied**  
-1. **Feature Availability**: Ensures the Wealth Management Blue Rewards feature is enabled before proceeding.  
-2. **Throttling Validation**: Applies customer ID range-based throttling to regulate feature access.  
-3. **Feature Deactivation**: Disables the feature for customers outside the throttle range.  
-4. **Logging**: Captures debug logs for monitoring throttle status and feature availability.  
+1. **Feature Status Check**: Ensures that the Wealth Management Blue Rewards feature is marked as "OFF" before considering it disabled.  
+2. **Customer Eligibility**: Validates whether the customer falls under Wealth Management and WLA criteria.  
+3. **Logging**: Captures debug information about the feature’s disabled status for monitoring purposes.
