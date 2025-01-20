@@ -1,53 +1,74 @@
-### **Half-Line Description**
-The `execute()` method retrieves "ending soon" offers for retailers, validates feature flags, and fetches data from an MCA service, returning a response with retailer details and offer information.
+### **Half-Line Description**  
+The `execute()` method processes customer reward eligibility, validates feature switches, checks cashback accounts, and retrieves reward details, including Smart Spend, FAQs, and Value Exchange data.
 
 ---
 
-### **Constants Used**
-1. `OperationConstants.NEAR_EXPIRY_FLAG`: Flag to determine if offers are near expiry.
-2. `OperationConstants.IS_OFFERS_AVAILABLE_TRUE`: Denotes available offers.
-3. `ErrorCodes.MSG_OP_SUCCESS`: Success status for the operation.
-4. `ErrorCodes.MSG_OP_FAILED`: Failure status for the operation.
-5. `ConfigurationKeyConstants.BMB_ECOSYSTEM_OFFERS_ENDING_SOON_MCA_SUFFIX`: Configuration key for the MCA service path.
+### **Constants Used**  
+1. **`OperationConstants.VE_WALLET_ACCOUNT_DETAILS`**: Session attribute for wallet account details.  
+2. **`OperationConstants.APPLE_TV`**: Feature switch for Apple TV rewards.  
+3. **`OperationConstants.SRP_SERVICING_2`**: Session attribute for SRP Servicing 2 flag.  
+4. **`ErrorCodes.MSG_OP_SUCCESS`**: Indicator for successful operation execution.  
+5. **`ErrorCodes.MSG_OP_FAILED`**: Indicates failure in operation execution.  
+6. **`ConfigurationKeyConstants.BMB_TRADING_ENTITY_BUK_IDENTIFIER`**: Key for retrieving trading entity ID.  
+7. **`DEFAULT_VISA_CASHBACK_ACCOUNT_PRODUCT_CODE`**: Default product code for cashback accounts.
 
 ---
 
-### **Functions Used**
-1. **`isFeatureAvailable()`**: Checks if a specific feature is enabled.
-   - **Short Description**: Validates if the "ending soon offers" feature is active.
-2. **`getJson()`**: Serializes an object to a JSON string.
-   - **Short Description**: Converts request data to JSON format.
-3. **`getStringProperty()`**: Fetches a configuration property value.
-   - **Short Description**: Retrieves MCA path for "ending soon offers."
-4. **`isPremierCustomer()`**: Determines if a customer is a premier user.
-   - **Short Description**: Checks the customer's premier status.
-5. **`retrieveEndingSoonOffersMCACacheResponse()`**: Fetches offers from MCA cache.
-   - **Short Description**: Retrieves cached "ending soon offers."
-6. **`getFormatedPercentage()`**: Formats a percentage value.
-   - **Short Description**: Formats offer percentages for display.
+### **Functions Used**  
+1. **`getApplicationVersion()`**  
+   - **Description**: Retrieves the application version from the session.  
+
+2. **`getDeviceOS()`**  
+   - **Description**: Retrieves the device operating system from the session.  
+
+3. **`isFeatureEnabledForFunction()`**  
+   - **Description**: Checks if a specific feature switch is enabled.  
+
+4. **`getPersonalCustomerDetail()`**  
+   - **Description**: Retrieves customer details from the session.  
+
+5. **`validateBlueRewardsCashbackRemovalSwitchAndNAOMarker()`**  
+   - **Description**: Validates Blue Rewards eligibility and feature toggles.  
+
+6. **`getRewards()`**  
+   - **Description**: Fetches rewards details via the rewards choreographer.  
+
+7. **`isCustomerAllowedToOptIn()`**  
+   - **Description**: Checks if the customer is eligible for Value Exchange registration.  
+
+8. **`tradingAndLegalEntityHelper.getEntityNameFromMTS()`**  
+   - **Description**: Retrieves the trading entity name from MTS.  
+
+9. **`JSONParser.parse()`**  
+   - **Description**: Parses JSON strings into objects.  
+
+10. **`setVisaRewardCashback()`**  
+    - **Description**: Populates Visa cashback reward details in the response.  
 
 ---
 
-### **Policies Applied**
-1. **Feature Validation**: Validates the availability of the "ending soon offers" feature through feature flags.
-2. **Premier Customer Check**: Ensures additional processing for premier customers.
-3. **MCA Path Validation**: Ensures correct configuration paths are used for the service request.
+### **Session Attributes**  
+1. **`VE_WALLET_ACCOUNT_DETAILS`**: Stores wallet account information.  
+2. **`APP_FUNCTION_MAP`**: Contains feature switches for application functionalities.  
+3. **`SRP_SERVICING_2`**: Indicates SRP servicing flag status.  
 
 ---
 
-### **Session Attributes**
-1. **Customer Context**: Holds the registered customer's data (`customerContext`).
-2. **Device Context**: Contains device-specific details (`deviceContext`).
-3. **AID**: Mobile User Context's unique ID (`muc.aid`).
+### **Policies Applied**  
+1. **Feature Validation**: Ensures feature switches like Apple TV and Blue Rewards are validated before processing.  
+2. **Eligibility Validation**: Confirms customer eligibility for rewards based on account status and feature flags.  
+3. **Cashback Account Check**: Verifies the presence of a valid cashback account for Visa cashback eligibility.  
+4. **Error Handling**: Manages exceptions with specific error codes and messages.  
 
 ---
 
-### **Short Descriptions for Key Functions**
-1. **`isFeatureAvailable()`**: Verifies if a feature is enabled.
-2. **`setPath()`**: Sets the MCA service endpoint path.
-3. **`setCustomerContext()`**: Attaches customer-specific details.
-4. **`setDeviceContext()`**: Adds device-specific information.
-5. **`retrieveEndingSoonOffersMCACacheResponse()`**: Fetches offers from the MCA service cache.
-6. **`setRetailerList()`**: Populates the response with retailer offer details.
-7. **`debug()`**: Logs debug-level messages for troubleshooting.
-8. **`setMessage()`**: Sets the JSON payload for the service request.
+### **Short Descriptions for Key Functions**  
+1. **`getApplicationVersion()`**: Fetches the application version from the session.  
+2. **`getDeviceOS()`**: Retrieves the device OS name from the session.  
+3. **`isFeatureEnabledForFunction()`**: Checks if a feature switch is active.  
+4. **`getRewards()`**: Retrieves customer rewards via the choreographer.  
+5. **`validateBlueRewardsCashbackRemovalSwitchAndNAOMarker()`**: Validates Blue Rewards eligibility.  
+6. **`setVisaRewardCashback()`**: Sets Visa cashback details in the response.  
+7. **`tradingAndLegalEntityHelper.getEntityNameFromMTS()`**: Gets entity names for legal trading purposes.  
+8. **`JSONParser.parse()`**: Converts JSON strings to usable objects.  
+9. **`isCustomerAllowedToOptIn()`**: Checks if a customer can register for Value Exchange.
