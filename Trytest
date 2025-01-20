@@ -1,39 +1,40 @@
 ### **Method Overview**  
-**`putBMBNotificationCentreNTOFlag()`**: Checks if the "Notification Centre NTO" feature is enabled and evaluates customer eligibility for access. Disables the feature if it’s unavailable or the customer lacks proper access.
+**`putBMBNotificationCentreOIDVFlag()`**: Validates the "Notification Centre OIDV" feature and disables it if unavailable or if the customer lacks proper access rights.
 
 ---
 
 ### **Constants Used in the Method**  
-1. **`FeatureToFunction.NotificationCentreNTO`**: Represents the "Notification Centre NTO" feature.  
-2. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: Key for retrieving notification center availability from session parameters.
+1. **`FeatureToFunction.NotificationCentreOIDV`**: Represents the "Notification Centre OIDV" feature.  
+2. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: Key for checking notification center availability in the session.
 
 ---
 
 ### **Functions in the Method**  
-1. **`isFeatureAvailable(feature, serviceRequest)`**: Checks if a feature is enabled.  
-   - **Description**: Determines if the "Notification Centre NTO" feature is turned on for the customer.  
 
-2. **`sessionParameters.get(key)`**: Retrieves session attributes.  
-   - **Description**: Checks whether the notification center is marked as available in the session.  
+1. **`isFeatureAvailable(feature, serviceRequest)`**  
+   - **Description**: Checks if the "Notification Centre OIDV" feature is enabled for the customer.
 
-3. **`featureSwitchService.isNotificationCentreNTOFeatureEnabled()`**: Validates feature enablement.  
-   - **Description**: Checks if the notification center NTO feature is enabled via the feature switch service.  
+2. **`sessionParameters.get(key)`**  
+   - **Description**: Retrieves the "Notification Centre" availability status from the session.
 
-4. **`turnOffFunction(serviceResponse, feature)`**: Disables a specific feature.  
-   - **Description**: Turns off the "Notification Centre NTO" feature for ineligible customers.  
+3. **`featureSwitchService.isNotificationCentreOIDVFeatureEnabled()`**  
+   - **Description**: Validates whether the "Notification Centre OIDV" feature is enabled via the feature switch service.
 
----
-
-### **Session Attributes Used**  
-1. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: Boolean value indicating if the Notification Centre is available for the session.  
+4. **`turnOffFunction(serviceResponse, feature)`**  
+   - **Description**: Turns off the "Notification Centre OIDV" feature for ineligible customers.
 
 ---
 
 ### **Policies in the Method**  
-1. **Feature Validation**: Verifies that the "Notification Centre NTO" feature is enabled.  
-2. **Session Check**: Confirms whether the notification center is marked as available in the session.  
-3. **Access Evaluation**: Uses the feature switch service to check customer access to the notification center.
+1. **Feature Validation**: Confirms that the "Notification Centre OIDV" feature is enabled for the customer.  
+2. **Session Validation**: Checks if the notification center is marked as available in the session.  
+3. **Access Validation**: Ensures customer access rights for the "Notification Centre OIDV" feature through the feature switch service.
 
 ---
 
-Let me know if you'd like further details or adjustments!
+### **Session Attributes Used**  
+1. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: A Boolean value that indicates whether the Notification Centre is available for the customer during the session.
+
+---
+
+Let me know if you need additional explanations or modifications!
