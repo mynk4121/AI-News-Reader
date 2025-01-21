@@ -1,56 +1,62 @@
 ### **Description:**  
 **Method:** `putEcoSystemFeatureStoreFlag`  
-Configures the visibility and availability of the Ecosystem Feature Store for customers based on customer type, throttle range, and feature availability.
+Handles the activation or deactivation of the Ecosystem Feature Store by checking customer type, feature availability, throttling parameters, and application function statuses.
 
 ---
 
 ### **Key Elements:**  
 
 #### **Constants:**  
-- `ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MIN_LIMIT`: Minimum customer ID range for throttling.  
-- `ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MAX_LIMIT`: Maximum customer ID range for throttling.  
-- `ConfigurationKeyConstants.HELD_PACK_INFO_MESSAGE`: Default message for held packs.  
-- `OperationConstants.HELD_PACK_ERROR_MESSAGE`: Held pack error message.  
+1. `ConfigurationKeyConstants.BUSINESS_CUSTOMER`  
+   - Specifies the customer type as a business customer.  
+2. `ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MIN_LIMIT`  
+   - Minimum limit for throttling based on customer ID.  
+3. `ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MAX_LIMIT`  
+   - Maximum limit for throttling based on customer ID.
 
 ---
 
 #### **Functions:**  
 1. **`turnoffFunction(opResponse, FeatureToFunction.EcosystemFeatureStore)`**  
-   - Turns off the Ecosystem Feature Store feature for the customer.  
+   - Turns off the Ecosystem Feature Store for specific customers or conditions.  
 
 2. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)`**  
-   - Checks if the customer's ID is within the allowed throttling range.  
+   - Determines whether a customer’s ID falls within the throttling range.  
 
 3. **`featureSwitchService.isEcoSystemFeatureStoreAvailable(true)`**  
-   - Verifies the availability of the Ecosystem Feature Store feature.  
+   - Checks if the Ecosystem Feature Store is available and enabled.  
 
-4. **`putEcosystemPackageHolding(serviceRequest, opResponse, isFeatureSwitchOn)`**  
-   - Configures package holding behavior based on the feature switch.  
+4. **`appFunction.getFunction().equalsIgnoreCase(OperationConstants.ECOSYSTEM_FEATURESTORE_FUNCTION_ID)`**  
+   - Identifies the Ecosystem Feature Store function in the application’s feature list.  
 
-5. **`putEcoSystemPacksFlagForTGW(serviceRequest, opResponse, isPacksEnable)`**  
-   - Sets the packs flag for TGW customers if applicable.  
+5. **`appFunction.getStatus().equals(Status.ON)`**  
+   - Confirms if the Ecosystem Feature Store function is turned on.  
+
+6. **`LOG.debug("...")`**  
+   - Logs the flow and decision-making steps for debugging purposes.  
 
 ---
 
 #### **Policy:**  
-- **`isFeatureAvailable(FeatureToFunction.EcosystemFeatureStore, serviceRequest)`**  
-   Determines if the Ecosystem Feature Store feature is enabled for the current customer.
+- **`appFunction.getStatus().equals(Status.ON)`**  
+   - Determines if the Ecosystem Feature Store feature is enabled for the current application.  
 
 ---
 
 #### **Session:**  
-- Adds `OperationConstants.HELD_PACK_ERROR_MESSAGE` to `appPolicy` if packs are enabled.
+- No explicit session manipulation in this method.
 
 ---
 
 ### **Function Descriptions (Few Words):**  
-1. **`turnoffFunction`**: Disables a specific feature.  
-2. **`isCustomerAllowedToContinueWithoutThrottling`**: Checks if a customer bypasses throttling.  
-3. **`isEcoSystemFeatureStoreAvailable`**: Confirms if the Ecosystem Feature Store is active.  
-4. **`putEcosystemPackageHolding`**: Updates package holding configuration.  
-5. **`putEcoSystemPacksFlagForTGW`**: Configures TGW-specific packs flag.
+1. **`turnoffFunction`**: Deactivates the feature for specified scenarios.  
+2. **`isCustomerAllowedToContinueWithoutThrottling`**: Checks customer eligibility based on ID range.  
+3. **`isEcoSystemFeatureStoreAvailable`**: Validates the current availability of the feature store.  
+4. **`appFunction.getFunction`**: Matches the function ID with Ecosystem Feature Store.  
+5. **`appFunction.getStatus`**: Indicates whether the function is currently enabled.  
+6. **`LOG.debug`**: Captures execution details for traceability.  
 
 ---
 
 ### **Half-Line Method Description:**  
-Configures Ecosystem Feature Store availability based on customer type, throttling, and feature status.
+Manages Ecosystem Feature Store availability based on customer type, throttling range, and feature activation status.
