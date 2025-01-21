@@ -1,42 +1,60 @@
 ### **Half-Line Description:**  
-The `putCloudItDocumentDownload` method checks the availability of the Cloud It Document Download feature and disables it if it is unavailable.
+The `putDiscoverabilityDoandSTOFlag` method checks the status of the DD and STO feature and disables it based on feature switches, configurations, and lock-in period conditions.
 
 ---
 
 ### **Constants in the Method:**  
-1. **`FeatureToFunction.CloudItDocumentDownload`**  
-   - Represents the feature for Cloud It Document Download.  
+1. **`ConfigurationKeyConstants.BMB_NDAY_STOP_CHECK_DAY_TWO_ENABLE`**  
+   - Key for enabling the N-Day stop check block on day two.  
+2. **`FeatureToFunction.DiscoverabilityDDAndSTO`**  
+   - Represents the Discoverability DD and STO feature.  
 
 ---
 
 ### **Functions in the Method:**  
-1. **`isCloudItDocumentDownloadAvailable`**  
-   - Checks if the Cloud It Document Download feature is enabled.  
-2. **`turnOffFunction`**  
-   - Disables the specified feature for the user or group.  
-3. **`LOGGER.debug`**  
-   - Logs debug-level messages for traceability.  
+1. **`isDDandSTOEnabled`**  
+   - Checks if the Discoverability DD and STO feature switch is enabled.  
+2. **`getBooleanProperty`**  
+   - Fetches boolean configuration values.  
+3. **`isRegistrationInLockPeriod_NDayStopCheckBlock`**  
+   - Determines if the registration is in the lock period for N-Day stop check block.  
+4. **`isRegistrationInLockPeriod`**  
+   - Checks if the registration is in the general lock-in period.  
+5. **`turnOffFunction`**  
+   - Disables the DD and STO feature in the response.  
+6. **`LOGGER.debug`**  
+   - Logs debug information at different stages of the method.  
 
 ---
 
 ### **Policies:**  
 - **`FeatureSwitchPolicy`**  
-   - Ensures the feature switch is enabled or disabled based on group restrictions.  
+   - Manages the feature switches for DD and STO.  
+- **`HighRiskFeaturePolicy`**  
+   - Checks conditions related to high-risk features and lock periods.  
 
 ---
 
 ### **Session/Context:**  
-1. **`GetAppPolicyServiceResponse` (serviceResponse)**  
-   - Represents the response object for application policy services.  
+1. **`GetAppPolicyServiceResponse` (opResponse)**  
+   - Holds the response object for application policy services.  
+2. **`MobileUserContext` (muc)**  
+   - Represents the mobile user session and context.
 
 ---
 
 ### **Short Explanation for Each Function:**  
-1. **`putCloudItDocumentDownload`**  
-   - Checks the status of the Cloud It Document Download feature and updates the response if the feature is turned off.  
-2. **`isCloudItDocumentDownloadAvailable`**  
-   - Determines if the Cloud It Document Download feature is active based on feature switches.  
-3. **`turnOffFunction`**  
-   - Disables the Cloud It Document Download feature in the response object.  
-4. **`LOGGER.debug`**  
-   - Logs details about method entry, feature availability, and actions taken.
+1. **`putDiscoverabilityDoandSTOFlag`**  
+   - Main method to evaluate and disable the DD and STO feature based on configurations and policies.  
+2. **`isDDandSTOEnabled`**  
+   - Checks if the DD and STO feature is enabled.  
+3. **`getBooleanProperty`**  
+   - Retrieves boolean configuration values.  
+4. **`isRegistrationInLockPeriod_NDayStopCheckBlock`**  
+   - Verifies if a user is in the N-Day stop check block period.  
+5. **`isRegistrationInLockPeriod`**  
+   - Checks if the user is in a general lock period for registration.  
+6. **`turnOffFunction`**  
+   - Turns off the specified feature in the response object.  
+7. **`LOGGER.debug`**  
+   - Logs execution flow and decisions for debugging purposes.
