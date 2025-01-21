@@ -1,60 +1,66 @@
 ### **Half-Line Description:**  
-The `putDiscoverabilityDoandSTOFlag` method checks the status of the DD and STO feature and disables it based on feature switches, configurations, and lock-in period conditions.
+The `putWealthCardsHubFlag` method evaluates and disables the WealthKit Cards Hub feature based on feature availability, customer group restrictions, and persona range.
 
 ---
 
 ### **Constants in the Method:**  
-1. **`ConfigurationKeyConstants.BMB_NDAY_STOP_CHECK_DAY_TWO_ENABLE`**  
-   - Key for enabling the N-Day stop check block on day two.  
-2. **`FeatureToFunction.DiscoverabilityDDAndSTO`**  
-   - Represents the Discoverability DD and STO feature.  
+1. **`FeatureToFunction.WealthkitCardsHub`**  
+   - Represents the WealthKit Cards Hub feature.  
+2. **`OperationConstants.PERSONAID`**  
+   - Key for retrieving the Persona ID from the request.
 
 ---
 
 ### **Functions in the Method:**  
-1. **`isDDandSTOEnabled`**  
-   - Checks if the Discoverability DD and STO feature switch is enabled.  
-2. **`getBooleanProperty`**  
-   - Fetches boolean configuration values.  
-3. **`isRegistrationInLockPeriod_NDayStopCheckBlock`**  
-   - Determines if the registration is in the lock period for N-Day stop check block.  
-4. **`isRegistrationInLockPeriod`**  
-   - Checks if the registration is in the general lock-in period.  
-5. **`turnOffFunction`**  
-   - Disables the DD and STO feature in the response.  
-6. **`LOGGER.debug`**  
-   - Logs debug information at different stages of the method.  
+1. **`isWealthkitEnabled`**  
+   - Checks if the WealthKit feature is enabled.  
+2. **`isDebitcardServiceCentreEnabled`**  
+   - Verifies if the Debit Card Service Centre feature is enabled.  
+3. **`isFeatureAvailable`**  
+   - Determines if the specified feature is enabled in the current environment.  
+4. **`isWealthCardsHubAvailable`**  
+   - Checks if the customer group is eligible for the WealthKit Cards Hub feature.  
+5. **`isWealthKitCardsHubCustomerThrottleRange`**  
+   - Validates if the customer's Persona ID is within the allowed throttle range for the WealthKit Cards Hub.  
+6. **`turnOffFunction`**  
+   - Disables the WealthKit Cards Hub feature in the response.  
+7. **`LOGGER.debug`**  
+   - Logs debug messages at various points in the method.  
 
 ---
 
 ### **Policies:**  
-- **`FeatureSwitchPolicy`**  
-   - Manages the feature switches for DD and STO.  
-- **`HighRiskFeaturePolicy`**  
-   - Checks conditions related to high-risk features and lock periods.  
+1. **`FeatureSwitchPolicy`**  
+   - Manages the WealthKit Cards Hub and other feature switches.  
+2. **`CustomerGroupPolicy`**  
+   - Checks eligibility of customer groups for specific features.  
+3. **`ThrottleRangePolicy`**  
+   - Evaluates customer eligibility based on throttle range.  
 
 ---
 
 ### **Session/Context:**  
-1. **`GetAppPolicyServiceResponse` (opResponse)**  
-   - Holds the response object for application policy services.  
-2. **`MobileUserContext` (muc)**  
-   - Represents the mobile user session and context.
+1. **`GetAppPolicyServiceResponse` (serviceResponse)**  
+   - Contains the response object for app policy service.  
+2. **`GetAppPolicyServiceRequest` (serviceRequest)**  
+   - Represents the request object for app policy service.
 
 ---
 
 ### **Short Explanation for Each Function:**  
-1. **`putDiscoverabilityDoandSTOFlag`**  
-   - Main method to evaluate and disable the DD and STO feature based on configurations and policies.  
-2. **`isDDandSTOEnabled`**  
-   - Checks if the DD and STO feature is enabled.  
-3. **`getBooleanProperty`**  
-   - Retrieves boolean configuration values.  
-4. **`isRegistrationInLockPeriod_NDayStopCheckBlock`**  
-   - Verifies if a user is in the N-Day stop check block period.  
-5. **`isRegistrationInLockPeriod`**  
-   - Checks if the user is in a general lock period for registration.  
-6. **`turnOffFunction`**  
-   - Turns off the specified feature in the response object.  
-7. **`LOGGER.debug`**  
-   - Logs execution flow and decisions for debugging purposes.
+1. **`putWealthCardsHubFlag`**  
+   - Main method that evaluates conditions to enable or disable the WealthKit Cards Hub feature.  
+2. **`isWealthkitEnabled`**  
+   - Confirms if the WealthKit feature is turned on.  
+3. **`isDebitcardServiceCentreEnabled`**  
+   - Checks the status of the Debit Card Service Centre feature.  
+4. **`isFeatureAvailable`**  
+   - Ensures the WealthKit Cards Hub feature is enabled in the environment.  
+5. **`isWealthCardsHubAvailable`**  
+   - Verifies the customer group eligibility for the WealthKit Cards Hub feature.  
+6. **`isWealthKitCardsHubCustomerThrottleRange`**  
+   - Ensures the Persona ID falls within the eligible throttle range for the feature.  
+7. **`turnOffFunction`**  
+   - Turns off the specified feature in the response if conditions are not met.  
+8. **`LOGGER.debug`**  
+   - Provides detailed logs for debugging the flow and conditions.  
