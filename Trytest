@@ -1,64 +1,74 @@
 ### **Half-Line Description:**
-The method `putEcoSystemFeatureStoreFlag` determines whether to enable or disable the Ecosystem Feature Store for a customer based on their type, app function status, and throttling rules.
+The `execute` method checks the availability of the Ecosystem Feature Store and updates the operation response based on feature flags and configurations.
 
 ---
 
 ### **Constants in the Method:**
-1. **`ConfigurationKeyConstants.BUSINESS_CUSTOMER`**  
-   - Used to identify business customers.  
-2. **`OperationConstants.ECOSYSTEM_FEATURESTORE_FUNCTION_ID`**  
-   - Represents the function ID for the Ecosystem Feature Store.  
-3. **`ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MIN_LIMIT`**  
-   - Minimum customer ID range for throttling.  
-4. **`ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MAX_LIMIT`**  
-   - Maximum customer ID range for throttling.  
+1. **`SERVICECODE_ECOSYSTEM_FEATURE_STORE`**  
+   - Represents the service code for the Ecosystem Feature Store.  
+2. **`OperationConstants.LITERAL_FALSE`**  
+   - A constant string value representing "false".  
+3. **`OperationConstants.LITERAL_UNAVAILABLE`**  
+   - A constant string value representing "unavailable".  
+4. **`ErrorCodes.ECOSYSTEM_FEATURE_STORE_ERROR`**  
+   - Error code for Ecosystem Feature Store issues.  
+5. **`ErrorCodes.MSG_OP_FAILED`**  
+   - Generic operation failure message.  
+6. **`APPTOWEB`**  
+   - Configuration key for app-to-web availability.  
 
 ---
 
 ### **Functions in the Method:**
-1. **`getIntegerProperty`**  
-   - Fetches configuration values for throttling limits.  
-2. **`isCustomerAllowedToContinueWithoutThrottling`**  
-   - Checks if a customer can bypass throttling based on their ID range.  
-3. **`isEcoSystemFeatureStoreAvailable`**  
-   - Determines if the Ecosystem Feature Store feature is enabled.  
-4. **`turnOffFunction`**  
-   - Disables the specified feature for the customer.  
+1. **`getStringProperty`**  
+   - Fetches a string configuration value (e.g., `APPTOWEB`).  
+2. **`isFeatureAvailable`**  
+   - Checks the availability of the Ecosystem Feature Store feature.  
+3. **`setOpStatus`**  
+   - Sets the operation status in the response object.  
+4. **`getAppFunction`**  
+   - Retrieves the application function related to a feature.  
+5. **`getStatus`**  
+   - Returns the current status (e.g., ON/OFF) of a feature or function.  
+6. **`LOGGER.info`**  
+   - Logs informational messages for debugging and monitoring.  
+7. **`LOGGER.error`**  
+   - Logs error messages when exceptions occur.
 
 ---
 
 ### **Policies:**
-- **`SimpleAppPolicy` (appPolicy)**  
-  - Manages app-level policies for features and functions.  
+- **`FeatureFlagsServiceResponse`**  
+   - Manages feature flags and their status for various functions.
 
 ---
 
 ### **Session/Context:**
 1. **`DeviceContext`**  
-   - Represents the device session information.  
-2. **`AuthenticationChallengeResponseResponse` (opResponse)**  
-   - Holds the customer's app function and status data.  
-3. **`MobileUserContext` (muc)**  
-   - Manages the user's mobile session context.  
-4. **`CustomerContext`**  
-   - Contains information about the customer, including their ID.  
+   - Holds the device-related context for the request.  
+2. **`MobileUserContext` (muc)**  
+   - Manages the mobile session context.  
+3. **`OperationRequest` (opReq)**  
+   - Contains the request parameters for the operation.  
+4. **`OperationResponse` (opResponse)**  
+   - Manages the response status and error codes for the operation.  
 
 ---
 
 ### **Short Explanation for Each Function:**
-1. **`putEcoSystemFeatureStoreFlag`**  
-   - Main method that checks conditions to enable or disable the Ecosystem Feature Store.  
-2. **`getFunction`**  
-   - Retrieves the specific function of an app.  
-3. **`getStatus`**  
-   - Returns the current status (e.g., ON/OFF) of a feature or function.  
-4. **`LOG.debug`**  
-   - Logs debug-level information for traceability.  
-5. **`getIntegerProperty`**  
-   - Fetches integer values from configuration properties.  
-6. **`isCustomerAllowedToContinueWithoutThrottling`**  
-   - Evaluates if the customer can proceed without restrictions.  
-7. **`isEcoSystemFeatureStoreAvailable`**  
-   - Checks the availability of the Ecosystem Feature Store feature.  
-8. **`turnOffFunction`**  
-   - Disables a specific function for a customer.  
+1. **`execute`**  
+   - Main method to validate the Ecosystem Feature Store availability.  
+2. **`getStringProperty`**  
+   - Retrieves string values from configuration.  
+3. **`isFeatureAvailable`**  
+   - Checks if the requested feature is available.  
+4. **`setOpStatus`**  
+   - Updates the status of the operation based on validation.  
+5. **`LOGGER.info`**  
+   - Logs information about key execution steps for traceability.  
+6. **`LOGGER.error`**  
+   - Logs errors when exceptions occur during execution.  
+7. **`getAppFunction`**  
+   - Returns the app function details for the feature being checked.  
+8. **`getStatus`**  
+   - Determines if a feature or function is enabled or disabled.
