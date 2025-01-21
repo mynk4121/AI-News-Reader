@@ -1,49 +1,56 @@
-### **Method Overview**  
-**`isOriginalF5Available()`**: Checks the availability of the "Original F5" feature based on configuration values, ecosystem functionality, and customer membership type, and updates the feature status accordingly.
+### **Description:**  
+**Method:** `putEcoSystemFeatureStoreFlag`  
+Configures the visibility and availability of the Ecosystem Feature Store for customers based on customer type, throttle range, and feature availability.
 
 ---
 
-### **Constants Used in the Method**  
-1. **`ConfigurationKeyConstants.BPB_ORIGINALFS_ECOTHROTTLE`**: Determines if eco-throttling is enabled for Original FS.  
-2. **`ConfigurationKeyConstants.DYNAMIC_PRODUCT_FUNCTIONALITY_SWITCH`**: Indicates if dynamic product functionality is enabled.  
-3. **`FeatureToFunction.EcosystemFeatureStore`**: Represents the Ecosystem Feature Store functionality.  
-4. **`FeatureToFunction.OriginalFS`**: Represents the Original F5 feature.
+### **Key Elements:**  
+
+#### **Constants:**  
+- `ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MIN_LIMIT`: Minimum customer ID range for throttling.  
+- `ConfigurationKeyConstants.ECOSYSTEM_THROTTLING_MAX_LIMIT`: Maximum customer ID range for throttling.  
+- `ConfigurationKeyConstants.HELD_PACK_INFO_MESSAGE`: Default message for held packs.  
+- `OperationConstants.HELD_PACK_ERROR_MESSAGE`: Held pack error message.  
 
 ---
 
-### **Functions in the Method**  
+#### **Functions:**  
+1. **`turnoffFunction(opResponse, FeatureToFunction.EcosystemFeatureStore)`**  
+   - Turns off the Ecosystem Feature Store feature for the customer.  
 
-1. **`isFeatureAvailable(feature, serviceRequest)`**  
-   - **Description**: Checks if a specific feature is enabled for the given request.
+2. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)`**  
+   - Checks if the customer's ID is within the allowed throttling range.  
 
-2. **`configValues.getBooleanProperty(key, defaultValue)`**  
-   - **Description**: Retrieves configuration values for specific keys.
+3. **`featureSwitchService.isEcoSystemFeatureStoreAvailable(true)`**  
+   - Verifies the availability of the Ecosystem Feature Store feature.  
 
-3. **`featureSwitchService.isOriginalFsAvailable()`**  
-   - **Description**: Validates the availability of the "Original F5" feature using the feature switch service.
+4. **`putEcosystemPackageHolding(serviceRequest, opResponse, isFeatureSwitchOn)`**  
+   - Configures package holding behavior based on the feature switch.  
 
-4. **`featureFlagsService.isFeatureAvailable()`**  
-   - **Description**: Checks feature availability via the feature flag service for specified contexts.
-
-5. **`turnOffFunction(serviceResponse, feature)`**  
-   - **Description**: Disables the specified feature in the response.
-
-6. **`serviceResponse.setAppFunctions(appFunctionStatus)`**  
-   - **Description**: Updates the application function status in the service response.
+5. **`putEcoSystemPacksFlagForTGW(serviceRequest, opResponse, isPacksEnable)`**  
+   - Sets the packs flag for TGW customers if applicable.  
 
 ---
 
-### **Policies in the Method**  
-1. **Throttle Validation**: Verifies if eco-throttling is enabled for the "Original F5" feature.  
-2. **Feature Store Validation**: Confirms the availability of the Ecosystem Feature Store.  
-3. **Customer Eligibility Check**: Ensures the customer is eligible for the "Original F5" feature based on membership type.  
-4. **Dynamic Switch Validation**: Handles feature availability based on dynamic product functionality switches.
+#### **Policy:**  
+- **`isFeatureAvailable(FeatureToFunction.EcosystemFeatureStore, serviceRequest)`**  
+   Determines if the Ecosystem Feature Store feature is enabled for the current customer.
 
 ---
 
-### **Session Attributes Used**  
-1. **None explicitly**: The session is not directly modified or retrieved in this method.
+#### **Session:**  
+- Adds `OperationConstants.HELD_PACK_ERROR_MESSAGE` to `appPolicy` if packs are enabled.
 
 ---
 
-Let me know if you need any refinements!
+### **Function Descriptions (Few Words):**  
+1. **`turnoffFunction`**: Disables a specific feature.  
+2. **`isCustomerAllowedToContinueWithoutThrottling`**: Checks if a customer bypasses throttling.  
+3. **`isEcoSystemFeatureStoreAvailable`**: Confirms if the Ecosystem Feature Store is active.  
+4. **`putEcosystemPackageHolding`**: Updates package holding configuration.  
+5. **`putEcoSystemPacksFlagForTGW`**: Configures TGW-specific packs flag.
+
+---
+
+### **Half-Line Method Description:**  
+Configures Ecosystem Feature Store availability based on customer type, throttling, and feature status.
