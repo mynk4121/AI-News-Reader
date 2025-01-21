@@ -1,74 +1,68 @@
-### **Half-Line Description:**
-The `execute` method checks the availability of the Ecosystem Feature Store and updates the operation response based on feature flags and configurations.
+### **Half-Line Description:**  
+The `execute` method processes ecosystem package holding requests, validates feature switches, interacts with services, and handles exceptions while preparing the response.
 
 ---
 
-### **Constants in the Method:**
-1. **`SERVICECODE_ECOSYSTEM_FEATURE_STORE`**  
-   - Represents the service code for the Ecosystem Feature Store.  
-2. **`OperationConstants.LITERAL_FALSE`**  
-   - A constant string value representing "false".  
-3. **`OperationConstants.LITERAL_UNAVAILABLE`**  
-   - A constant string value representing "unavailable".  
-4. **`ErrorCodes.ECOSYSTEM_FEATURE_STORE_ERROR`**  
-   - Error code for Ecosystem Feature Store issues.  
-5. **`ErrorCodes.MSG_OP_FAILED`**  
-   - Generic operation failure message.  
-6. **`APPTOWEB`**  
-   - Configuration key for app-to-web availability.  
+### **Constants in the Method:**  
+1. **`FeatureToFunction.EcosystemFeatureStore.getNewFeatureName()`**  
+   - Feature name for the Ecosystem Feature Store.  
+2. **`FeatureToFunction.EcosystemSolusPacks.getNewFeatureName()`**  
+   - Feature name for the Ecosystem Solus Packs.  
+3. **`ErrorCodes.MSG_OP_FAILED`**  
+   - Error code indicating an operation failure.  
+4. **`ErrorCodes.ECOSYSTEM_PACKS_MCA_MASTER_SWITCH_DISABLED`**  
+   - Error code for disabled MCA master switch.  
+5. **`OperationConstants.MSG_OP_SUCCESS`**  
+   - Indicates a successful operation.
 
 ---
 
-### **Functions in the Method:**
-1. **`getStringProperty`**  
-   - Fetches a string configuration value (e.g., `APPTOWEB`).  
-2. **`isFeatureAvailable`**  
-   - Checks the availability of the Ecosystem Feature Store feature.  
-3. **`setOpStatus`**  
-   - Sets the operation status in the response object.  
-4. **`getAppFunction`**  
-   - Retrieves the application function related to a feature.  
-5. **`getStatus`**  
-   - Returns the current status (e.g., ON/OFF) of a feature or function.  
-6. **`LOGGER.info`**  
-   - Logs informational messages for debugging and monitoring.  
-7. **`LOGGER.error`**  
-   - Logs error messages when exceptions occur.
-
----
-
-### **Policies:**
-- **`FeatureFlagsServiceResponse`**  
-   - Manages feature flags and their status for various functions.
-
----
-
-### **Session/Context:**
-1. **`DeviceContext`**  
-   - Holds the device-related context for the request.  
-2. **`MobileUserContext` (muc)**  
-   - Manages the mobile session context.  
-3. **`OperationRequest` (opReq)**  
-   - Contains the request parameters for the operation.  
-4. **`OperationResponse` (opResponse)**  
-   - Manages the response status and error codes for the operation.  
-
----
-
-### **Short Explanation for Each Function:**
-1. **`execute`**  
-   - Main method to validate the Ecosystem Feature Store availability.  
-2. **`getStringProperty`**  
-   - Retrieves string values from configuration.  
-3. **`isFeatureAvailable`**  
-   - Checks if the requested feature is available.  
+### **Functions in the Method:**  
+1. **`isFeatureSwitchOn`**  
+   - Checks if a specific feature switch is enabled.  
+2. **`createServiceRequest`**  
+   - Prepares a service request object for package holding operations.  
+3. **`fetchPackageHoldings`**  
+   - Fetches package holding data using the service request.  
 4. **`setOpStatus`**  
-   - Updates the status of the operation based on validation.  
-5. **`LOGGER.info`**  
-   - Logs information about key execution steps for traceability.  
+   - Sets the operation status in the response object.  
+5. **`LOGGER.debug`**  
+   - Logs debug messages, including execution time and service interaction.  
 6. **`LOGGER.error`**  
-   - Logs errors when exceptions occur during execution.  
-7. **`getAppFunction`**  
-   - Returns the app function details for the feature being checked.  
-8. **`getStatus`**  
-   - Determines if a feature or function is enabled or disabled.
+   - Logs errors when exceptions occur.  
+
+---
+
+### **Policies:**  
+- **`FeatureSwitchPolicy`**  
+   - Ensures feature switches are enabled or disabled as per configurations.  
+- **`ServiceRequestPolicy`**  
+   - Defines the structure and behavior of service requests.  
+
+---
+
+### **Session/Context:**  
+1. **`OperationRequest` (opReq)**  
+   - Contains the input parameters for the operation.  
+2. **`EcosystemPacksAPIResponse` (opResponse)**  
+   - Manages the operation response, including status and error codes.  
+3. **`ServiceRequest`**  
+   - Represents the request sent to the package holding choreographer service.  
+
+---
+
+### **Short Explanation for Each Function:**  
+1. **`execute`**  
+   - Main method that handles ecosystem package holding operations, validates switches, interacts with services, and returns the response.  
+2. **`isFeatureSwitchOn`**  
+   - Checks if a feature or functionality is active.  
+3. **`createServiceRequest`**  
+   - Initializes and configures the service request for fetching package holdings.  
+4. **`fetchPackageHoldings`**  
+   - Calls the choreographer service to fetch package holding details.  
+5. **`LOGGER.debug`**  
+   - Logs important steps and execution time for debugging purposes.  
+6. **`LOGGER.error`**  
+   - Logs errors with detailed information about exceptions.  
+7. **`setOpStatus`**  
+   - Updates the operation status in the response based on the execution outcome.  
