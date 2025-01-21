@@ -1,40 +1,49 @@
 ### **Method Overview**  
-**`putBMBNotificationCentreOIDVFlag()`**: Validates the "Notification Centre OIDV" feature and disables it if unavailable or if the customer lacks proper access rights.
+**`isOriginalF5Available()`**: Checks the availability of the "Original F5" feature based on configuration values, ecosystem functionality, and customer membership type, and updates the feature status accordingly.
 
 ---
 
 ### **Constants Used in the Method**  
-1. **`FeatureToFunction.NotificationCentreOIDV`**: Represents the "Notification Centre OIDV" feature.  
-2. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: Key for checking notification center availability in the session.
+1. **`ConfigurationKeyConstants.BPB_ORIGINALFS_ECOTHROTTLE`**: Determines if eco-throttling is enabled for Original FS.  
+2. **`ConfigurationKeyConstants.DYNAMIC_PRODUCT_FUNCTIONALITY_SWITCH`**: Indicates if dynamic product functionality is enabled.  
+3. **`FeatureToFunction.EcosystemFeatureStore`**: Represents the Ecosystem Feature Store functionality.  
+4. **`FeatureToFunction.OriginalFS`**: Represents the Original F5 feature.
 
 ---
 
 ### **Functions in the Method**  
 
 1. **`isFeatureAvailable(feature, serviceRequest)`**  
-   - **Description**: Checks if the "Notification Centre OIDV" feature is enabled for the customer.
+   - **Description**: Checks if a specific feature is enabled for the given request.
 
-2. **`sessionParameters.get(key)`**  
-   - **Description**: Retrieves the "Notification Centre" availability status from the session.
+2. **`configValues.getBooleanProperty(key, defaultValue)`**  
+   - **Description**: Retrieves configuration values for specific keys.
 
-3. **`featureSwitchService.isNotificationCentreOIDVFeatureEnabled()`**  
-   - **Description**: Validates whether the "Notification Centre OIDV" feature is enabled via the feature switch service.
+3. **`featureSwitchService.isOriginalFsAvailable()`**  
+   - **Description**: Validates the availability of the "Original F5" feature using the feature switch service.
 
-4. **`turnOffFunction(serviceResponse, feature)`**  
-   - **Description**: Turns off the "Notification Centre OIDV" feature for ineligible customers.
+4. **`featureFlagsService.isFeatureAvailable()`**  
+   - **Description**: Checks feature availability via the feature flag service for specified contexts.
+
+5. **`turnOffFunction(serviceResponse, feature)`**  
+   - **Description**: Disables the specified feature in the response.
+
+6. **`serviceResponse.setAppFunctions(appFunctionStatus)`**  
+   - **Description**: Updates the application function status in the service response.
 
 ---
 
 ### **Policies in the Method**  
-1. **Feature Validation**: Confirms that the "Notification Centre OIDV" feature is enabled for the customer.  
-2. **Session Validation**: Checks if the notification center is marked as available in the session.  
-3. **Access Validation**: Ensures customer access rights for the "Notification Centre OIDV" feature through the feature switch service.
+1. **Throttle Validation**: Verifies if eco-throttling is enabled for the "Original F5" feature.  
+2. **Feature Store Validation**: Confirms the availability of the Ecosystem Feature Store.  
+3. **Customer Eligibility Check**: Ensures the customer is eligible for the "Original F5" feature based on membership type.  
+4. **Dynamic Switch Validation**: Handles feature availability based on dynamic product functionality switches.
 
 ---
 
 ### **Session Attributes Used**  
-1. **`IS_NOTIFICATION_CENTRE_AVAILABLE`**: A Boolean value that indicates whether the Notification Centre is available for the customer during the session.
+1. **None explicitly**: The session is not directly modified or retrieved in this method.
 
 ---
 
-Let me know if you need additional explanations or modifications!
+Let me know if you need any refinements!
