@@ -1,68 +1,42 @@
 ### **Half-Line Description:**  
-The `execute` method processes ecosystem package holding requests, validates feature switches, interacts with services, and handles exceptions while preparing the response.
+The `putCloudItDocumentDownload` method checks the availability of the Cloud It Document Download feature and disables it if it is unavailable.
 
 ---
 
 ### **Constants in the Method:**  
-1. **`FeatureToFunction.EcosystemFeatureStore.getNewFeatureName()`**  
-   - Feature name for the Ecosystem Feature Store.  
-2. **`FeatureToFunction.EcosystemSolusPacks.getNewFeatureName()`**  
-   - Feature name for the Ecosystem Solus Packs.  
-3. **`ErrorCodes.MSG_OP_FAILED`**  
-   - Error code indicating an operation failure.  
-4. **`ErrorCodes.ECOSYSTEM_PACKS_MCA_MASTER_SWITCH_DISABLED`**  
-   - Error code for disabled MCA master switch.  
-5. **`OperationConstants.MSG_OP_SUCCESS`**  
-   - Indicates a successful operation.
+1. **`FeatureToFunction.CloudItDocumentDownload`**  
+   - Represents the feature for Cloud It Document Download.  
 
 ---
 
 ### **Functions in the Method:**  
-1. **`isFeatureSwitchOn`**  
-   - Checks if a specific feature switch is enabled.  
-2. **`createServiceRequest`**  
-   - Prepares a service request object for package holding operations.  
-3. **`fetchPackageHoldings`**  
-   - Fetches package holding data using the service request.  
-4. **`setOpStatus`**  
-   - Sets the operation status in the response object.  
-5. **`LOGGER.debug`**  
-   - Logs debug messages, including execution time and service interaction.  
-6. **`LOGGER.error`**  
-   - Logs errors when exceptions occur.  
+1. **`isCloudItDocumentDownloadAvailable`**  
+   - Checks if the Cloud It Document Download feature is enabled.  
+2. **`turnOffFunction`**  
+   - Disables the specified feature for the user or group.  
+3. **`LOGGER.debug`**  
+   - Logs debug-level messages for traceability.  
 
 ---
 
 ### **Policies:**  
 - **`FeatureSwitchPolicy`**  
-   - Ensures feature switches are enabled or disabled as per configurations.  
-- **`ServiceRequestPolicy`**  
-   - Defines the structure and behavior of service requests.  
+   - Ensures the feature switch is enabled or disabled based on group restrictions.  
 
 ---
 
 ### **Session/Context:**  
-1. **`OperationRequest` (opReq)**  
-   - Contains the input parameters for the operation.  
-2. **`EcosystemPacksAPIResponse` (opResponse)**  
-   - Manages the operation response, including status and error codes.  
-3. **`ServiceRequest`**  
-   - Represents the request sent to the package holding choreographer service.  
+1. **`GetAppPolicyServiceResponse` (serviceResponse)**  
+   - Represents the response object for application policy services.  
 
 ---
 
 ### **Short Explanation for Each Function:**  
-1. **`execute`**  
-   - Main method that handles ecosystem package holding operations, validates switches, interacts with services, and returns the response.  
-2. **`isFeatureSwitchOn`**  
-   - Checks if a feature or functionality is active.  
-3. **`createServiceRequest`**  
-   - Initializes and configures the service request for fetching package holdings.  
-4. **`fetchPackageHoldings`**  
-   - Calls the choreographer service to fetch package holding details.  
-5. **`LOGGER.debug`**  
-   - Logs important steps and execution time for debugging purposes.  
-6. **`LOGGER.error`**  
-   - Logs errors with detailed information about exceptions.  
-7. **`setOpStatus`**  
-   - Updates the operation status in the response based on the execution outcome.  
+1. **`putCloudItDocumentDownload`**  
+   - Checks the status of the Cloud It Document Download feature and updates the response if the feature is turned off.  
+2. **`isCloudItDocumentDownloadAvailable`**  
+   - Determines if the Cloud It Document Download feature is active based on feature switches.  
+3. **`turnOffFunction`**  
+   - Disables the Cloud It Document Download feature in the response object.  
+4. **`LOGGER.debug`**  
+   - Logs details about method entry, feature availability, and actions taken.
