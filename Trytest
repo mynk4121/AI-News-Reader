@@ -1,35 +1,45 @@
 ### **Half-line Description:**  
-Configures policy fields for MPMP Cards banner and fees content.
+Validates and toggles the Statement Preferences feature based on customer eligibility.
 
 ---
 
 ### **Constants in the Method:**  
-1. **`MPMP_CARDS_BANNER_HOST`**: Host URL for the banner JSON file.  
-2. **`MPMP_CARDS_BANNER_URL`**: URL of the banner JSON file.  
-3. **`MPMP_CARDS_BANNER_JSON`**: Name of the banner JSON file.  
-4. **`MPMP_CARDS_OUR_FEES_EXPLAINED_HOST`**: Host URL for "Our Fees Explained" content.  
-5. **`MPMP_CARDS_OUR_FEES_EXPLAINED_URL`**: URL of "Our Fees Explained" JSON file.  
-6. **`MPMP_CARDS_OUR_FEES_EXPLAINED_JSON`**: Name of "Our Fees Explained" JSON file.
+1. **`STATEMENT_PREFERENCES_THROTTLING_MIN_LIMIT`**: Minimum customer ID range for throttling.  
+2. **`STATEMENT_PREFERENCES_THROTTLING_MAX_LIMIT`**: Maximum customer ID range for throttling.  
+3. **`STATEMENT_PREFERENCES_ALLOWED_ACCOUNTLIST_ACCOUNT`**: Maximum allowed accounts for Statement Preferences.  
+4. **`STATEMENT_PREFERENCES_CSEG_MARKER_VALUE`**: Marker for segment identification.  
+5. **`STATEMENT_PREFERENCES_CSEG_MARKER_TOOMANY_ACCOUNT_VALUE`**: Marker for accounts exceeding limits.
 
 ---
 
 ### **Functions in the Method:**  
-1. **`configvalues.getStringProperty()`**:  
-   Retrieves configuration values for specific keys.
-
-2. **`LOGGER.trace()`**:  
-   Logs method start and end for debugging.
-
-3. **`appPolicy.put()`**:  
-   Sets key-value pairs in the application policy.
+1. **`isFeatureAvailable()`**: Checks if the Statement Preferences feature is enabled.  
+2. **`getRegistrationStatus()`**: Retrieves the customer registration status.  
+3. **`isStatementPreferencesAvailable()`**: Verifies feature availability for a customer group.  
+4. **`isCustomerAllowedToContinueWithoutThrottling()`**: Checks if a customer falls within the throttling range.  
+5. **`isCsegMarkerPresent()`**: Checks if a segment marker exists for the customer.  
+6. **`checkWealthAppForStatementPreferences()`**: Determines if the WealthKit feature affects Statement Preferences.  
+7. **`getAccountListForSMP()`**: Retrieves the customer's account list for Statement Preferences.  
+8. **`updateCsegMarker()`**: Updates the segment marker for the customer.  
+9. **`turnOffFunction()`**: Disables the feature for the customer.  
 
 ---
 
 ### **Policy in the Method:**  
-- **`appPolicy`**:  
-  The central storage for application-level configurations, updated with banner and fees-related details.
+- **`sessionParameters`**: Stores the status of the Statement Preferences feature (e.g., SMP flag).  
+- **`appPolicy`**: No explicit updates but indirectly affected through feature toggles.
 
 ---
 
 ### **Session in the Method:**  
-- No explicit session used. The method relies on configuration values and updates application policies directly.
+- **`serviceRequest.getSession()`**: Accesses the customer session for account details.  
+- **`sessionParameters.put(OperationConstants.SMP, stifeatureFlag)`**: Updates the session with the feature status.
+
+---
+
+### **Custom Code Description:**  
+Turns off the **Statement Preferences** feature if:  
+1. Customer is not registered (inactive status).  
+2. Feature is unavailable or throttled for the customer.  
+3. WealthKit applicability is true.  
+4. The customer does not meet account criteria or segment restrictions.  
