@@ -1,45 +1,34 @@
 ### **Half-line Description:**  
-Validates and toggles the Statement Preferences feature based on customer eligibility.
+Checks if the Wealth App is enabled and accessible for a customer.  
 
 ---
 
-### **Constants in the Method:**  
-1. **`STATEMENT_PREFERENCES_THROTTLING_MIN_LIMIT`**: Minimum customer ID range for throttling.  
-2. **`STATEMENT_PREFERENCES_THROTTLING_MAX_LIMIT`**: Maximum customer ID range for throttling.  
-3. **`STATEMENT_PREFERENCES_ALLOWED_ACCOUNTLIST_ACCOUNT`**: Maximum allowed accounts for Statement Preferences.  
-4. **`STATEMENT_PREFERENCES_CSEG_MARKER_VALUE`**: Marker for segment identification.  
-5. **`STATEMENT_PREFERENCES_CSEG_MARKER_TOOMANY_ACCOUNT_VALUE`**: Marker for accounts exceeding limits.
+### **Configuration Constants:**  
+1. **`ApplicationVersion`**: Used to determine if the Wealth App is supported on the current version.  
+2. **`DeviceOSName`**: Specifies the operating system of the device.  
+3. **`DeviceModelName`**: Identifies the device model for Wealth App compatibility.  
+
+---
+
+### **Operation Constants:**  
+1. **`CUSTOMER_GROUP_SESSION_ATTRIBUTE`**: Stores customer group types for session-based validation.  
+2. **`WAPI_BICEP_REPLATFORMING_AVAILABLE`**: Indicates if the Wealth API BICEP replatforming is available.  
 
 ---
 
 ### **Functions in the Method:**  
-1. **`isFeatureAvailable()`**: Checks if the Statement Preferences feature is enabled.  
-2. **`getRegistrationStatus()`**: Retrieves the customer registration status.  
-3. **`isStatementPreferencesAvailable()`**: Verifies feature availability for a customer group.  
-4. **`isCustomerAllowedToContinueWithoutThrottling()`**: Checks if a customer falls within the throttling range.  
-5. **`isCsegMarkerPresent()`**: Checks if a segment marker exists for the customer.  
-6. **`checkWealthAppForStatementPreferences()`**: Determines if the WealthKit feature affects Statement Preferences.  
-7. **`getAccountListForSMP()`**: Retrieves the customer's account list for Statement Preferences.  
-8. **`updateCsegMarker()`**: Updates the segment marker for the customer.  
-9. **`turnOffFunction()`**: Disables the feature for the customer.  
-
----
-
-### **Policy in the Method:**  
-- **`sessionParameters`**: Stores the status of the Statement Preferences feature (e.g., SMP flag).  
-- **`appPolicy`**: No explicit updates but indirectly affected through feature toggles.
-
----
-
-### **Session in the Method:**  
-- **`serviceRequest.getSession()`**: Accesses the customer session for account details.  
-- **`sessionParameters.put(OperationConstants.SMP, stifeatureFlag)`**: Updates the session with the feature status.
+1. **`isWealthAppEnabled()`**: Checks if the Wealth App is enabled for the given device context.  
+2. **`isInvalidCustomerGroupForWealthKit()`**: Validates if the customer group has access to the Wealth App.  
+3. **`processWealthApp()`**: Processes the Wealth App functionality for the customer.  
 
 ---
 
 ### **Custom Code Description:**  
-Turns off the **Statement Preferences** feature if:  
-1. Customer is not registered (inactive status).  
-2. Feature is unavailable or throttled for the customer.  
-3. WealthKit applicability is true.  
-4. The customer does not meet account criteria or segment restrictions.  
+Disables Wealth App access if:  
+1. The app version, device OS, or model is unsupported.  
+2. The customer group type is restricted.  
+3. Wealth API BICEP replatforming is unavailable.  
+
+### **Session Updates:**  
+1. Retrieves **customer group list** from the session for validation.  
+2. Removes `WAPI_BICEP_REPLATFORMING_AVAILABLE` post-processing.
