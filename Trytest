@@ -1,5 +1,35 @@
-Turns off the BFAShowBanner feature if any of the following conditions are true:
+### **Half-line Description:**  
+Configures policy fields for MPMP Cards banner and fees content.
 
-The feature is not enabled in the environment (isFeatureAvailable returns false).
-The customer group is restricted (isBFAShowBannerAvailable returns false).
-The customer ID falls outside the allowed throttling range (isCustomerAllowedToContinueWithoutThrottling returns false).
+---
+
+### **Constants in the Method:**  
+1. **`MPMP_CARDS_BANNER_HOST`**: Host URL for the banner JSON file.  
+2. **`MPMP_CARDS_BANNER_URL`**: URL of the banner JSON file.  
+3. **`MPMP_CARDS_BANNER_JSON`**: Name of the banner JSON file.  
+4. **`MPMP_CARDS_OUR_FEES_EXPLAINED_HOST`**: Host URL for "Our Fees Explained" content.  
+5. **`MPMP_CARDS_OUR_FEES_EXPLAINED_URL`**: URL of "Our Fees Explained" JSON file.  
+6. **`MPMP_CARDS_OUR_FEES_EXPLAINED_JSON`**: Name of "Our Fees Explained" JSON file.
+
+---
+
+### **Functions in the Method:**  
+1. **`configvalues.getStringProperty()`**:  
+   Retrieves configuration values for specific keys.
+
+2. **`LOGGER.trace()`**:  
+   Logs method start and end for debugging.
+
+3. **`appPolicy.put()`**:  
+   Sets key-value pairs in the application policy.
+
+---
+
+### **Policy in the Method:**  
+- **`appPolicy`**:  
+  The central storage for application-level configurations, updated with banner and fees-related details.
+
+---
+
+### **Session in the Method:**  
+- No explicit session used. The method relies on configuration values and updates application policies directly.
