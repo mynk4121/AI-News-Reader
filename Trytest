@@ -1,34 +1,35 @@
 ### **Half-line Description:**  
-Checks if the Wealth App is enabled and accessible for a customer.  
+Sets the BIL Save and Resume feature flag based on customer details and eligibility.  
 
 ---
 
 ### **Configuration Constants:**  
-1. **`ApplicationVersion`**: Used to determine if the Wealth App is supported on the current version.  
-2. **`DeviceOSName`**: Specifies the operating system of the device.  
-3. **`DeviceModelName`**: Identifies the device model for Wealth App compatibility.  
+(None in the provided method).  
 
 ---
 
 ### **Operation Constants:**  
-1. **`CUSTOMER_GROUP_SESSION_ATTRIBUTE`**: Stores customer group types for session-based validation.  
-2. **`WAPI_BICEP_REPLATFORMING_AVAILABLE`**: Indicates if the Wealth API BICEP replatforming is available.  
+1. **`BIL_RESUME_BUSINESS_CUST_ID`**: Stores the Business Customer ID in the session.  
+2. **`BIL_RESUME_BAP_MEMBER`**: Indicates if the customer is a BAP membership-only user.  
+3. **`BIL_RESUME_BUSINESS_MEMBER`**: Identifies if the customer is a Business membership-only user.  
 
 ---
 
 ### **Functions in the Method:**  
-1. **`isWealthAppEnabled()`**: Checks if the Wealth App is enabled for the given device context.  
-2. **`isInvalidCustomerGroupForWealthKit()`**: Validates if the customer group has access to the Wealth App.  
-3. **`processWealthApp()`**: Processes the Wealth App functionality for the customer.  
+1. **`isFeatureAvailable(FeatureToFunction.BILSaveResume, serviceRequest)`**: Checks if the BIL Save and Resume feature is available.  
+2. **`featureSwitchService.isBILSaveResumeEnabledForCustomerGroup()`**: Validates feature availability for the customer's group.  
+3. **`turnoffFunction(serviceResponse, FeatureToFunction.BILSaveResume)`**: Disables the BIL Save and Resume feature if eligibility criteria aren't met.  
 
 ---
 
 ### **Custom Code Description:**  
-Disables Wealth App access if:  
-1. The app version, device OS, or model is unsupported.  
-2. The customer group type is restricted.  
-3. Wealth API BICEP replatforming is unavailable.  
+Enables or disables the **BIL Save and Resume feature** based on:  
+1. **Customer Context Validation**: Checks if the Business Customer ID is valid.  
+2. **Feature Availability**: Confirms feature accessibility for the customer group.  
+3. **Membership Status**: Determines if the customer is a BAP-only or Business-only member.  
+
+---
 
 ### **Session Updates:**  
-1. Retrieves **customer group list** from the session for validation.  
-2. Removes `WAPI_BICEP_REPLATFORMING_AVAILABLE` post-processing.
+1. Saves **Business Customer ID** to the session for later use.  
+2. Adds **BAP membership status** and **Business membership status** for eligibility checks.
