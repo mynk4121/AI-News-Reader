@@ -1,35 +1,43 @@
-### **Half-line Description:**  
-Sets the BIL Save and Resume feature flag based on customer details and eligibility.  
+Here’s a breakdown of all constants in the provided method, categorized into **operation**, **configuration**, and **other constants**:  
 
 ---
 
-### **Configuration Constants:**  
-(None in the provided method).  
+### **Half-line Description:**  
+Sets the Launchpad ChatBot feature flag based on feature status, pilot eligibility, and availability.  
 
 ---
 
 ### **Operation Constants:**  
-1. **`BIL_RESUME_BUSINESS_CUST_ID`**: Stores the Business Customer ID in the session.  
-2. **`BIL_RESUME_BAP_MEMBER`**: Indicates if the customer is a BAP membership-only user.  
-3. **`BIL_RESUME_BUSINESS_MEMBER`**: Identifies if the customer is a Business membership-only user.  
+1. **`OperationConstants.LAUNCHPAD_CHATBOT`**: Holds the status of the Launchpad ChatBot feature flag in the session.  
+
+---
+
+### **Configuration Constants:**  
+(None provided in this method).  
+
+---
+
+### **Other Constants:**  
+1. **`FeatureToFunction.LaunchpadChatBot`**: Represents the Launchpad ChatBot feature in the application.  
+2. **`Status.ON`**: Indicates that the feature is currently active.  
 
 ---
 
 ### **Functions in the Method:**  
-1. **`isFeatureAvailable(FeatureToFunction.BILSaveResume, serviceRequest)`**: Checks if the BIL Save and Resume feature is available.  
-2. **`featureSwitchService.isBILSaveResumeEnabledForCustomerGroup()`**: Validates feature availability for the customer's group.  
-3. **`turnoffFunction(serviceResponse, FeatureToFunction.BILSaveResume)`**: Disables the BIL Save and Resume feature if eligibility criteria aren't met.  
+1. **`FeatureToFunction.LaunchpadChatBot.getNewFeatureName()`**: Retrieves the name of the Launchpad ChatBot feature.  
+2. **`isChatbotPilot.FeatureOn(serviceRequest)`**: Checks if the ChatBot pilot feature is enabled for the customer.  
+3. **`featureSwitchService.isLaunchpadChatBotAvailable()`**: Validates if the ChatBot feature is available for the customer group.  
+4. **`turnoffFunction(serviceResponse, FeatureToFunction.LaunchpadChatBot)`**: Disables the Launchpad ChatBot feature if criteria are unmet.  
 
 ---
 
 ### **Custom Code Description:**  
-Enables or disables the **BIL Save and Resume feature** based on:  
-1. **Customer Context Validation**: Checks if the Business Customer ID is valid.  
-2. **Feature Availability**: Confirms feature accessibility for the customer group.  
-3. **Membership Status**: Determines if the customer is a BAP-only or Business-only member.  
+Enables or disables the **Launchpad ChatBot feature** based on:  
+1. **Function Status**: Confirms if the Launchpad ChatBot feature is active.  
+2. **Pilot Eligibility**: Checks if the customer is eligible for the ChatBot pilot.  
+3. **Feature Availability**: Validates if the ChatBot feature is enabled for the customer group.  
 
 ---
 
 ### **Session Updates:**  
-1. Saves **Business Customer ID** to the session for later use.  
-2. Adds **BAP membership status** and **Business membership status** for eligibility checks.
+Stores the **Launchpad ChatBot feature flag status** in the session for future use.  
