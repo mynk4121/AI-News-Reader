@@ -1,43 +1,37 @@
-Here’s a breakdown of all constants in the provided method, categorized into **operation**, **configuration**, and **other constants**:  
-
----
-
 ### **Half-line Description:**  
-Sets the Launchpad ChatBot feature flag based on feature status, pilot eligibility, and availability.  
+Sets the Recent Payee feature flag based on feature availability for the customer group.
 
 ---
 
 ### **Operation Constants:**  
-1. **`OperationConstants.LAUNCHPAD_CHATBOT`**: Holds the status of the Launchpad ChatBot feature flag in the session.  
+1. **`OperationConstants.RECENTPAYEE`**: Stores the Recent Payee feature flag in the session.
 
 ---
 
 ### **Configuration Constants:**  
-(None provided in this method).  
+(None provided in this method).
 
 ---
 
 ### **Other Constants:**  
-1. **`FeatureToFunction.LaunchpadChatBot`**: Represents the Launchpad ChatBot feature in the application.  
-2. **`Status.ON`**: Indicates that the feature is currently active.  
+1. **`FeatureToFunction.RecentPayee`**: Represents the Recent Payee feature in the application.
 
 ---
 
 ### **Functions in the Method:**  
-1. **`FeatureToFunction.LaunchpadChatBot.getNewFeatureName()`**: Retrieves the name of the Launchpad ChatBot feature.  
-2. **`isChatbotPilot.FeatureOn(serviceRequest)`**: Checks if the ChatBot pilot feature is enabled for the customer.  
-3. **`featureSwitchService.isLaunchpadChatBotAvailable()`**: Validates if the ChatBot feature is available for the customer group.  
-4. **`turnoffFunction(serviceResponse, FeatureToFunction.LaunchpadChatBot)`**: Disables the Launchpad ChatBot feature if criteria are unmet.  
+1. **`isFeatureAvailable(FeatureToFunction.RecentPayee, serviceRequest)`**: Checks if the Recent Payee feature is enabled for the customer.  
+2. **`featureSwitchService.isRecentPayeeEnabledForCustomerGroup()`**: Verifies if the Recent Payee feature is available for the customer group.  
+3. **`turnoffFunction(serviceResponse, FeatureToFunction.RecentPayee)`**: Disables the Recent Payee feature if not enabled.
 
 ---
 
 ### **Custom Code Description:**  
-Enables or disables the **Launchpad ChatBot feature** based on:  
-1. **Function Status**: Confirms if the Launchpad ChatBot feature is active.  
-2. **Pilot Eligibility**: Checks if the customer is eligible for the ChatBot pilot.  
-3. **Feature Availability**: Validates if the ChatBot feature is enabled for the customer group.  
+Determines the availability of the **Recent Payee feature** by:  
+1. Checking **feature status** in the system.  
+2. Validating if the feature is enabled for the customer's group.  
+If unavailable, disables the Recent Payee feature.
 
 ---
 
 ### **Session Updates:**  
-Stores the **Launchpad ChatBot feature flag status** in the session for future use.  
+Updates the session with the **Recent Payee feature flag** to reflect its status.
