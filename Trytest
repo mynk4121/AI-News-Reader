@@ -1,62 +1,86 @@
 ### **Half-Line Description**  
-The method verifies if the device OS and app version meet the minimum requirements for enabling the "Strategic Aggregation V3" feature.
+The method checks whether the "Strategic Aggregation Payment" feature is enabled, validates customer registration delay and eligibility, and disables the feature if necessary.
 
 ---
 
-### **Constants, Functions, and Logic**  
+### **Constants, Functions, Session, and Policy**  
 
 #### **Constants**  
-1. **ConfigurationKeyConstants.STRATEGIC_AGGREGATION_IOS_MIN_APP_VERSION**:  
-   Defines the minimum app version required for iOS devices to support "Strategic Aggregation V3."
+1. **ConfigurationKeyConstants.STRATEGIC_AGGREGATION_PAYMENTS_ENABLED**:  
+   Configuration key that determines if the "Strategic Aggregation Payment" feature is enabled at the gateway level.
 
-2. **ConfigurationKeyConstants.STRATEGIC_AGGREGATION_ANDROID_MIN_APP_VERSION**:  
-   Defines the minimum app version required for Android devices to support "Strategic Aggregation V3."
+2. **OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE**:  
+   Session key used to retrieve customer group types.
 
-3. **OperationConstants.DEVICE_OS_IOS**:  
-   Represents the identifier for the iOS operating system.
+3. **FeatureToFunction.StrategicAggregationPayments**:  
+   Enum or constant representing the "Strategic Aggregation Payment" feature for feature flag checks.
 
-4. **OperationConstants.DEVICE_OS_ANDROID**:  
-   Represents the identifier for the Android operating system.
+4. **METHOD_NAME**:  
+   A constant for logging purposes to identify the method name ("putStrategicAggregationPaymentFeature()").
 
 ---
 
 #### **Functions**  
-1. **configValues.getIntegerProperty(String key, int defaultValue)**:  
-   Retrieves the minimum required app version for a specific OS from configuration values, defaulting to `0` if not defined.
+1. **configValues.isFeatureEnabled(ConfigurationKeyConstants key, boolean defaultValue)**:  
+   Checks if a specific feature (e.g., Strategic Aggregation Payment) is enabled in the configuration.
 
-2. **appVersion.split("_")**:  
-   Splits the app version string using an underscore (`_`) as a delimiter to extract the numerical version.
+2. **isFeatureAvailable(FeatureToFunction feature, ServiceRequest serviceRequest)**:  
+   Validates whether the feature is available for the current service request.
 
-3. **Integer.parseInt(String value)**:  
-   Converts the extracted version string into an integer for comparison purposes.
+3. **strategicAggregationCustomerChecksService.isInStrategicAggregationPaymentsRegistrationDelayPeriod(MobileUserContext userContext)**:  
+   Determines if the customer falls within the registration delay period for the "Strategic Aggregation Payment" feature.
+
+4. **strategicAggregationCustomerChecksService.isStrategicAggregationPaymentsFeatureEnabled(ServiceRequest request, CustomerContext context, boolean featureAvailable, List<CustomerGroupType> customerGroups)**:  
+   Checks if the "Strategic Aggregation Payment" feature is enabled for the customer based on context and feature availability.
+
+5. **turnOffFunction(ServiceResponse serviceResponse, FeatureToFunction feature)**:  
+   Disables the specified feature and updates the service response accordingly.
+
+---
+
+### **Session**  
+- **sessionParameters.get(OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE)**:  
+   Retrieves customer group details from session parameters to validate feature eligibility.
+
+---
+
+### **Policy**  
+1. **GetAppPolicyServiceRequest**:  
+   Represents the request containing feature availability and customer information.
+
+2. **GetAppPolicyServiceResponse**:  
+   The response object updated with the feature status, reflecting if it has been turned off.
+
+3. **CustomerContext**:  
+   Contains customer-specific details such as registration date and personal customer ID.
+
+4. **MobileUserContext**:  
+   Represents mobile-specific user data, such as app and device details.
 
 ---
 
 ### **Logic**  
-1. **Validation for iOS Devices**:  
-   - Checks if the device OS starts with "iOS."
-   - Confirms that the parsed app version exceeds the minimum version defined for iOS.
+1. **Feature Enabled Check**:  
+   - Validates if the "Strategic Aggregation Payment" feature is enabled using the configuration.
 
-2. **Validation for Android Devices**:  
-   - Checks if the device OS starts with "Android."
-   - Confirms that the parsed app version meets or exceeds the minimum version defined for Android.
+2. **Registration Delay Validation**:  
+   - If the customer's registration date falls within the delay period, the feature is not enabled.
 
-3. **Return Values**:  
-   - **`true`**: If the device OS and app version satisfy the minimum requirements.  
-   - **`false`**: If the device OS or app version does not meet the criteria.
+3. **Customer Eligibility**:  
+   - Checks if the feature is enabled for the customer based on context, availability, and customer groups.
+
+4. **Turn Off Feature**:  
+   - If the feature is not enabled or valid for the customer, it is turned off by updating the service response.
 
 ---
 
 ### **Logging**  
-1. **LOGGER.debug**:  
-   Logs entry into the method and information about app version and OS compatibility checks.
+1. **LOGGER.trace**:  
+   Logs the start and end of the method execution.
 
-2. **LOGGER.info**:  
-   Logs details about the app version and device OS being checked.
-
-3. **LOGGER.error**:  
-   Logs an error if the app version or OS does not support "Strategic Aggregation V3."
+2. **LOGGER.debug**:  
+   Logs details about the feature availability, registration delay, and customer eligibility checks.
 
 ---
 
-This method ensures that only compatible devices and app versions can access the "Strategic Aggregation V3" feature.
+This method ensures that the "Strategic Aggregation Payment" feature is dynamically enabled or disabled based on configuration, registration delay rules, and customer eligibility.
