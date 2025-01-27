@@ -1,93 +1,48 @@
-### **Half-Line Description**  
-The method constructs a "Segment Analytics" tag based on various customer group types, appends specific tags, and sets the tag in the service response.
+### **Half-line Description**:  
+The `putBMBHorizonFlag` method checks customer type, configuration, and feature availability to enable or disable the "BMB Horizon" feature.
 
 ---
 
-### **Constants, Functions, Session, and Policy**
-
-#### **Constants**
-1. **OperationConstants**:  
-   - **UNDER16**: Tag for the "Under 16" customer group.
-   - **RASPUTIN_GROUP**: Tag for the "Rasputin Group."
-   - **WEALTH_MANAGEMENT**: Tag for the "Wealth Management" customer group.
-   - **PREMIER_SEG**, **PREMIER_INTERNATIONAL**: Tags for premier groups.
-   - **INSOLVENT**: Tag for "Insolvent" customer group.
-   - **BUSINESS_PERSONAL**, **ONLY_BUSINESS**: Tags for business groups.
-   - **CROSS_BORDER**: Tag for cross-border customer groups.
-   - **LITE_REGISTRATION**: Tag for "Lite Registration" group.
-   - **SOLD_SOLUS**, **SOLD_SOLUS_UKBA**: Tags for sold solus groups.
-   - **INVESTMENT_SOLUS**, **SAVINGS_SOLUS**: Tags for specific solus types.
-   - **SPEEDY_REG_LITE_REGISTRATION**: Tag for "Speedy Registration" group.
-   - **BARCLAYCARD_SOLUS**, **BARCLAYCARD_ONLY**: Tags for Barclaycard-related groups.
-   - **COLLECTIONS**: Tag for collections group.
-   - **WEALTH_INTERMEDIARIES_BUSINESS**: Tag for wealth intermediaries business group.
-   - **PERSONAL_CUSTOMER**: Tag for personal customers.
-   - **UNDERSCORE_DELIMITER**: Used as a delimiter for concatenating tags.
-
-#### **Functions**
-1. **sessionParameters.get(OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE)**:  
-   Fetches the list of customer groups from the session.
-
-2. **customerGroupType.equals(CustomerGroupType.Under16)**:  
-   Checks if the customer group type is "Under 16."
-
-3. **customerGroupType.equals(CustomerGroupType.RasputinGroup)**:  
-   Checks if the customer group type is "Rasputin Group."
-
-4. **customerGroupType.equals(CustomerGroupType.WealthPrivateBank)**:  
-   Checks if the customer group type is "Wealth Private Bank."
-
-5. **customerContext.isBAPMembershipOnly()**:  
-   Checks if the customer has BAP membership only.
-
-6. **customerContext.isPersonal()**:  
-   Checks if the customer is a personal customer.
-
-7. **serviceResponse.setSegmentLevelAnalyticsTag()**:  
-   Sets the constructed "Segment Analytics" tag in the service response.
-
-8. **StringBuilder.deleteCharAt()**:  
-   Removes the last character (underscore) from the `StringBuilder` if necessary.
+### **Constants**
+1. **`OperationConstants.CUSTOMER_TYPE`**  
+   - Holds the customer type (e.g., personal, business).
+2. **`OperationConstants.CUSTOMER_CLASS_BAP`**  
+   - Denotes BAP (Business and Personal) customer class.
+3. **`OperationConstants.BUSINESS_CUST`**  
+   - Represents business customers in the system.
+4. **`ConfigurationKeyConstants.DYNAMIC_PRODUCT_FUNCTIONALITY_SWITCH`**  
+   - Configuration to enable dynamic product functionality.
+5. **`FeatureToFunction.Horizon`**  
+   - Represents the Horizon feature for functionality checks.
 
 ---
 
-#### **Session**
-- **sessionParameters.get(OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE)**:  
-   Retrieves the list of customer group types stored in the session.
+### **Functions**
+1. **`turnoffFunction()`**  
+   - Disables a specific feature for a customer or group.
+2. **`flagsService.isFeatureAvailable()`**  
+   - Checks if a feature is available based on device context.
+3. **`flagsService.isFeatureAvailableVia()`**  
+   - Determines feature availability via dynamic product configuration.
+4. **`featureSwitchService.isBMBHorizonAvailable()`**  
+   - Verifies if the Horizon feature is accessible for a personal customer.
 
 ---
 
-#### **Policy**
-- **GetAppPolicyServiceResponse**:  
-   The response object in which the segment level analytics tag is set.
-
-- **CustomerContext**:  
-   Used to check if the customer is a "Personal" customer or if they are part of specific membership groups like BAP.
-
----
-
-### **Logic**
-1. **Retrieve Customer Group List**:  
-   Fetches the list of customer groups from the session parameters.
-
-2. **Construct Analytics Tag**:  
-   Iterates through the customer group list and appends relevant tags based on the group type. It handles various customer groups such as "Under 16," "Rasputin Group," "Wealth Private Bank," "Premier," and more.
-
-3. **Check for Personal Membership**:  
-   If the customer is personal, it appends the "PERSONAL_CUSTOMER" tag.
-
-4. **Remove Extra Underscore**:  
-   If the tag ends with an underscore, it removes it.
-
-5. **Set the Tag in Response**:  
-   Sets the final constructed segment level analytics tag in the service response.
+### **Policies**
+1. **Customer Class Policy**  
+   - Business customers under BAP cannot access the Horizon feature.
+2. **Dynamic Functionality Policy**  
+   - Horizon feature availability is determined dynamically if enabled.
+3. **Default Feature Availability**  
+   - Horizon is unavailable unless explicitly marked as accessible.
 
 ---
 
-### **Logging**
-1. **LOGGER.debug**:  
-   Logs the customer group list and the final segment level analytics tag for debugging.
-
----
-
-This method ensures that a segment analytics tag is dynamically created based on the customer's group types, and this tag is then used to categorize the customer in various segments for analytics purposes.
+### **Session**
+1. **`sessionParameters.get(OperationConstants.CUSTOMER_TYPE)`**  
+   - Retrieves the current customer type from session attributes.
+2. **`serviceRequest.getCustomerContext()`**  
+   - Accesses the registered customer class and personal customer data.
+3. **`serviceRequest.getProductClassCodes()`**  
+   - Fetches product class codes tied to the customer or session.
