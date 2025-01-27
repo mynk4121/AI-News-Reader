@@ -1,37 +1,44 @@
-### **Half-line Description:**  
-Sets the Recent Payee feature flag based on feature availability for the customer group.
+### **Half-Line Description**  
+The method checks if the "Launchpad PocketSize" feature is enabled for a customer group, updates session parameters accordingly, and turns off the feature if unavailable.
 
 ---
 
-### **Operation Constants:**  
-1. **`OperationConstants.RECENTPAYEE`**: Stores the Recent Payee feature flag in the session.
+### **Constants, Functions, Session, and Policy**  
+
+#### **Constants**  
+- **OperationConstants.LAUNCHPAD_POCKETSIZE**:  
+  Represents the session parameter key for the "Launchpad PocketSize" feature.
+
+- **FeatureToFunction.LaunchpadPocketSize**:  
+  Enum or constant representing the "Launchpad PocketSize" feature for feature flag checks.
 
 ---
 
-### **Configuration Constants:**  
-(None provided in this method).
+#### **Functions**  
+1. **isFeatureAvailable(FeatureToFunction feature, ServiceRequest serviceRequest)**:  
+   Checks whether a given feature is available based on the service request.
+
+2. **featureSwitchService.isLaunchpadPocketSizeFlagForCustomerGroup()**:  
+   Determines if the "Launchpad PocketSize" feature is enabled for a specific customer group.
+
+3. **turnOffFunction(ServiceResponse serviceResponse, FeatureToFunction feature)**:  
+   Disables a specific feature and updates the service response accordingly.
 
 ---
 
-### **Other Constants:**  
-1. **`FeatureToFunction.RecentPayee`**: Represents the Recent Payee feature in the application.
+#### **Session**  
+- **this.sessionParameters.put(OperationConstants.LAUNCHPAD_POCKETSIZE, isLaunchpadPocketSizeFlag)**:  
+  Updates session parameters to reflect the status of the "Launchpad PocketSize" feature.
 
 ---
 
-### **Functions in the Method:**  
-1. **`isFeatureAvailable(FeatureToFunction.RecentPayee, serviceRequest)`**: Checks if the Recent Payee feature is enabled for the customer.  
-2. **`featureSwitchService.isRecentPayeeEnabledForCustomerGroup()`**: Verifies if the Recent Payee feature is available for the customer group.  
-3. **`turnoffFunction(serviceResponse, FeatureToFunction.RecentPayee)`**: Disables the Recent Payee feature if not enabled.
+#### **Policy**  
+- **GetAppPolicyServiceRequest**:  
+  Represents the request containing details and context to determine feature availability.
+
+- **GetAppPolicyServiceResponse**:  
+  Represents the response object updated with feature status information.
 
 ---
 
-### **Custom Code Description:**  
-Determines the availability of the **Recent Payee feature** by:  
-1. Checking **feature status** in the system.  
-2. Validating if the feature is enabled for the customer's group.  
-If unavailable, disables the Recent Payee feature.
-
----
-
-### **Session Updates:**  
-Updates the session with the **Recent Payee feature flag** to reflect its status.
+Each function and constant collectively ensures that the feature availability logic adheres to defined policies and dynamically manages feature toggling.
