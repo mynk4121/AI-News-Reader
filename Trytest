@@ -1,16 +1,16 @@
 ### **Half-Line Description**  
-The method checks if the "Launchpad PocketSize" feature is enabled for a customer group, updates session parameters accordingly, and turns off the feature if unavailable.
+The method verifies if the "Launchpad Preview" feature is enabled for a customer group, updates session parameters, and disables the feature if unavailable.
 
 ---
 
 ### **Constants, Functions, Session, and Policy**  
 
 #### **Constants**  
-- **OperationConstants.LAUNCHPAD_POCKETSIZE**:  
-  Represents the session parameter key for the "Launchpad PocketSize" feature.
+- **OperationConstants.LAUNCHPAD_PREVIEW**:  
+  Represents the session parameter key for the "Launchpad Preview" feature.
 
-- **FeatureToFunction.LaunchpadPocketSize**:  
-  Enum or constant representing the "Launchpad PocketSize" feature for feature flag checks.
+- **FeatureToFunction.LaunchpadPreview**:  
+  Enum or constant representing the "Launchpad Preview" feature for feature flag checks.
 
 ---
 
@@ -18,8 +18,8 @@ The method checks if the "Launchpad PocketSize" feature is enabled for a custome
 1. **isFeatureAvailable(FeatureToFunction feature, ServiceRequest serviceRequest)**:  
    Checks whether a given feature is available based on the service request.
 
-2. **featureSwitchService.isLaunchpadPocketSizeFlagForCustomerGroup()**:  
-   Determines if the "Launchpad PocketSize" feature is enabled for a specific customer group.
+2. **featureSwitchService.isLaunchpadPreviewForCustomerGroup()**:  
+   Determines if the "Launchpad Preview" feature is enabled for a specific customer group.
 
 3. **turnOffFunction(ServiceResponse serviceResponse, FeatureToFunction feature)**:  
    Disables a specific feature and updates the service response accordingly.
@@ -27,8 +27,8 @@ The method checks if the "Launchpad PocketSize" feature is enabled for a custome
 ---
 
 #### **Session**  
-- **this.sessionParameters.put(OperationConstants.LAUNCHPAD_POCKETSIZE, isLaunchpadPocketSizeFlag)**:  
-  Updates session parameters to reflect the status of the "Launchpad PocketSize" feature.
+- **this.sessionParameters.put(OperationConstants.LAUNCHPAD_PREVIEW, isLaunchpadPreviewFlag)**:  
+  Updates session parameters to reflect the status of the "Launchpad Preview" feature.
 
 ---
 
@@ -41,4 +41,4 @@ The method checks if the "Launchpad PocketSize" feature is enabled for a custome
 
 ---
 
-Each function and constant collectively ensures that the feature availability logic adheres to defined policies and dynamically manages feature toggling.
+Each function ensures that the feature availability logic is dynamically managed, adhering to business policies while updating the session and response based on feature status.
