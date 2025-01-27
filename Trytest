@@ -1,88 +1,78 @@
 ### **Half-Line Description**  
-The method determines the availability of the "SRP Payment FX" feature based on customer eligibility, throttle range, and feature configuration, enabling or disabling it accordingly.
+The method checks the status of the "Segment Analytics" feature in the response, and if it's enabled, it triggers the setting of a flag for segment analytics.
 
 ---
 
 ### **Constants, Functions, Session, and Policy**
 
 #### **Constants**
-1. **ConfigurationKeyConstants.SRP_PAYMENTFX_THROTTLING_MIN_LIMIT**:  
-   Configuration key for the minimum customer ID range for throttling.
+1. **FeatureToFunction.SegmentAnalytics**:  
+   Enum or identifier for the "Segment Analytics" feature.
 
-2. **ConfigurationKeyConstants.SRP_PAYMENTFX_THROTTLING_MAX_LIMIT**:  
-   Configuration key for the maximum customer ID range for throttling.
-
-3. **FeatureToFunction.SRPPaymentFX**:  
-   Enum or identifier representing the "SRP Payment FX" feature.
-
-4. **OperationConstants.SRP_PAYMENTFX**:  
-   Session parameter key to store the SRP Payment FX flag.
+2. **Status.O**:  
+   Represents the status where the feature is enabled or switched on in the environment.
 
 ---
 
 #### **Functions**
-1. **isFeatureAvailable(FeatureToFunction feature, GetAppPolicyServiceRequest serviceRequest)**:  
-   Checks if a specific feature is available for the current request.
+1. **serviceResponse.getAppFunctions()**:  
+   Retrieves the list of app functions from the service response.
 
-2. **configValues.getIntegerProperty(String key, int defaultValue)**:  
-   Retrieves the value of a configuration key as an integer, defaulting to a specific value if the key is not found.
+2. **appFunction.getFunction()**:  
+   Gets the function associated with the current app function.
 
-3. **featureSwitchService.isSRPPaymentFXEnabledForCustomerGroup()**:  
-   Checks if the SRP Payment FX feature is enabled for the customer's group.
+3. **FeatureToFunction.SegmentAnalytics.getNewFeatureTag()**:  
+   Retrieves the tag associated with the "Segment Analytics" feature.
 
-4. **throttlingService.isCustomerAllowedToContinueWithoutThrottling(String customerId, int minRange, int maxRange)**:  
-   Verifies if the customer falls within the throttle range to proceed without restrictions.
+4. **appFunction.getStatus()**:  
+   Gets the current status of the app function.
 
-5. **turnOffFunction(GetAppPolicyServiceResponse serviceResponse, FeatureToFunction feature)**:  
-   Disables the specified feature and updates the response object.
+5. **BetSegmentLevelAnalyticsTag(GetAppPolicyServiceResponse serviceResponse, CustomerContext customerContext)**:  
+   A method (presumably defined elsewhere) to set or trigger the "Segment Analytics" flag or tag.
 
 ---
 
 #### **Session**
-- **this.sessionParameters.put(OperationConstants.SRP_PAYMENTFX, srpPaymentFXFlag)**:  
-   Stores the SRP Payment FX flag in the session parameters.
+- **None explicitly shown**: This method operates directly with the `serviceResponse` and `customerContext` to process the feature flag.
 
 ---
 
 #### **Policy**
 1. **GetAppPolicyServiceRequest**:  
-   The request object containing information about the feature and customer context.
+   The request object (though not directly referenced here, it's implied) containing details about the app functions and the customer.
 
 2. **GetAppPolicyServiceResponse**:  
-   The response object to reflect the enabled or disabled status of the feature.
+   Contains the status and functions of the app, which is evaluated to determine the flag's status.
 
 3. **CustomerContext**:  
-   Contains customer-specific data, such as their ID and registration details.
+   Contains customer-specific data, used to set or process the analytics tag.
 
 ---
 
 ### **Logic**
 
-1. **Feature Availability Check**:  
-   - Determines if the "SRP Payment FX" feature is available for the request.
+1. **Retrieve App Functions**:  
+   - Fetches the list of app functions from the service response.
 
-2. **Throttle Range Validation**:  
-   - Verifies if the customer's ID falls within the throttling range specified in the configuration.
+2. **Check for Segment Analytics Function**:  
+   - Loops through the app functions and checks if the function is related to "Segment Analytics."
 
-3. **Customer Group Eligibility**:  
-   - Checks if the customer group is eligible for the feature.
+3. **Status Check**:  
+   - If the "Segment Analytics" feature is enabled (`Status.O`), the flag is set using the `BetSegmentLevelAnalyticsTag` function.
 
-4. **Enable Feature**:  
-   - If the feature is available, and the customer is within the throttle range, the feature is enabled by setting `srpPaymentFXFlag` to `true`.
+4. **Feature Already Off**:  
+   - If the feature is already off, a log message is generated, and the loop breaks.
 
-5. **Disable Feature**:  
-   - If the feature is not available or the customer is outside the throttle range, the feature is disabled by calling `turnOffFunction`.
-
-6. **Session Update**:  
-   - Updates the session parameter with the current status of the SRP Payment FX flag.
+5. **Logging**:  
+   - Logs the start, end, and intermediate steps, indicating whether the "Segment Analytics" feature is on or off.
 
 ---
 
 ### **Logging**
 
 1. **LOGGER.debug**:  
-   Logs the entry, exit, and intermediate steps, such as throttle range checks, feature availability, and enabling or disabling the feature.
+   Logs the start and end of the method execution, and logs whether the "Segment Analytics" feature is switched on or already off.
 
 ---
 
-This method ensures the "SRP Payment FX" feature operates dynamically, considering eligibility, throttling, and configuration values.
+This method ensures that the "Segment Analytics" flag is processed only if the feature is enabled in the app functions and prevents redundant operations if the feature is already off.
