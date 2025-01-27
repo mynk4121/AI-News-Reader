@@ -1,78 +1,93 @@
 ### **Half-Line Description**  
-The method checks the status of the "Segment Analytics" feature in the response, and if it's enabled, it triggers the setting of a flag for segment analytics.
+The method constructs a "Segment Analytics" tag based on various customer group types, appends specific tags, and sets the tag in the service response.
 
 ---
 
 ### **Constants, Functions, Session, and Policy**
 
 #### **Constants**
-1. **FeatureToFunction.SegmentAnalytics**:  
-   Enum or identifier for the "Segment Analytics" feature.
-
-2. **Status.O**:  
-   Represents the status where the feature is enabled or switched on in the environment.
-
----
+1. **OperationConstants**:  
+   - **UNDER16**: Tag for the "Under 16" customer group.
+   - **RASPUTIN_GROUP**: Tag for the "Rasputin Group."
+   - **WEALTH_MANAGEMENT**: Tag for the "Wealth Management" customer group.
+   - **PREMIER_SEG**, **PREMIER_INTERNATIONAL**: Tags for premier groups.
+   - **INSOLVENT**: Tag for "Insolvent" customer group.
+   - **BUSINESS_PERSONAL**, **ONLY_BUSINESS**: Tags for business groups.
+   - **CROSS_BORDER**: Tag for cross-border customer groups.
+   - **LITE_REGISTRATION**: Tag for "Lite Registration" group.
+   - **SOLD_SOLUS**, **SOLD_SOLUS_UKBA**: Tags for sold solus groups.
+   - **INVESTMENT_SOLUS**, **SAVINGS_SOLUS**: Tags for specific solus types.
+   - **SPEEDY_REG_LITE_REGISTRATION**: Tag for "Speedy Registration" group.
+   - **BARCLAYCARD_SOLUS**, **BARCLAYCARD_ONLY**: Tags for Barclaycard-related groups.
+   - **COLLECTIONS**: Tag for collections group.
+   - **WEALTH_INTERMEDIARIES_BUSINESS**: Tag for wealth intermediaries business group.
+   - **PERSONAL_CUSTOMER**: Tag for personal customers.
+   - **UNDERSCORE_DELIMITER**: Used as a delimiter for concatenating tags.
 
 #### **Functions**
-1. **serviceResponse.getAppFunctions()**:  
-   Retrieves the list of app functions from the service response.
+1. **sessionParameters.get(OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE)**:  
+   Fetches the list of customer groups from the session.
 
-2. **appFunction.getFunction()**:  
-   Gets the function associated with the current app function.
+2. **customerGroupType.equals(CustomerGroupType.Under16)**:  
+   Checks if the customer group type is "Under 16."
 
-3. **FeatureToFunction.SegmentAnalytics.getNewFeatureTag()**:  
-   Retrieves the tag associated with the "Segment Analytics" feature.
+3. **customerGroupType.equals(CustomerGroupType.RasputinGroup)**:  
+   Checks if the customer group type is "Rasputin Group."
 
-4. **appFunction.getStatus()**:  
-   Gets the current status of the app function.
+4. **customerGroupType.equals(CustomerGroupType.WealthPrivateBank)**:  
+   Checks if the customer group type is "Wealth Private Bank."
 
-5. **BetSegmentLevelAnalyticsTag(GetAppPolicyServiceResponse serviceResponse, CustomerContext customerContext)**:  
-   A method (presumably defined elsewhere) to set or trigger the "Segment Analytics" flag or tag.
+5. **customerContext.isBAPMembershipOnly()**:  
+   Checks if the customer has BAP membership only.
+
+6. **customerContext.isPersonal()**:  
+   Checks if the customer is a personal customer.
+
+7. **serviceResponse.setSegmentLevelAnalyticsTag()**:  
+   Sets the constructed "Segment Analytics" tag in the service response.
+
+8. **StringBuilder.deleteCharAt()**:  
+   Removes the last character (underscore) from the `StringBuilder` if necessary.
 
 ---
 
 #### **Session**
-- **None explicitly shown**: This method operates directly with the `serviceResponse` and `customerContext` to process the feature flag.
+- **sessionParameters.get(OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE)**:  
+   Retrieves the list of customer group types stored in the session.
 
 ---
 
 #### **Policy**
-1. **GetAppPolicyServiceRequest**:  
-   The request object (though not directly referenced here, it's implied) containing details about the app functions and the customer.
+- **GetAppPolicyServiceResponse**:  
+   The response object in which the segment level analytics tag is set.
 
-2. **GetAppPolicyServiceResponse**:  
-   Contains the status and functions of the app, which is evaluated to determine the flag's status.
-
-3. **CustomerContext**:  
-   Contains customer-specific data, used to set or process the analytics tag.
+- **CustomerContext**:  
+   Used to check if the customer is a "Personal" customer or if they are part of specific membership groups like BAP.
 
 ---
 
 ### **Logic**
+1. **Retrieve Customer Group List**:  
+   Fetches the list of customer groups from the session parameters.
 
-1. **Retrieve App Functions**:  
-   - Fetches the list of app functions from the service response.
+2. **Construct Analytics Tag**:  
+   Iterates through the customer group list and appends relevant tags based on the group type. It handles various customer groups such as "Under 16," "Rasputin Group," "Wealth Private Bank," "Premier," and more.
 
-2. **Check for Segment Analytics Function**:  
-   - Loops through the app functions and checks if the function is related to "Segment Analytics."
+3. **Check for Personal Membership**:  
+   If the customer is personal, it appends the "PERSONAL_CUSTOMER" tag.
 
-3. **Status Check**:  
-   - If the "Segment Analytics" feature is enabled (`Status.O`), the flag is set using the `BetSegmentLevelAnalyticsTag` function.
+4. **Remove Extra Underscore**:  
+   If the tag ends with an underscore, it removes it.
 
-4. **Feature Already Off**:  
-   - If the feature is already off, a log message is generated, and the loop breaks.
-
-5. **Logging**:  
-   - Logs the start, end, and intermediate steps, indicating whether the "Segment Analytics" feature is on or off.
+5. **Set the Tag in Response**:  
+   Sets the final constructed segment level analytics tag in the service response.
 
 ---
 
 ### **Logging**
-
 1. **LOGGER.debug**:  
-   Logs the start and end of the method execution, and logs whether the "Segment Analytics" feature is switched on or already off.
+   Logs the customer group list and the final segment level analytics tag for debugging.
 
 ---
 
-This method ensures that the "Segment Analytics" flag is processed only if the feature is enabled in the app functions and prevents redundant operations if the feature is already off.
+This method ensures that a segment analytics tag is dynamically created based on the customer's group types, and this tag is then used to categorize the customer in various segments for analytics purposes.
