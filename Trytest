@@ -1,115 +1,88 @@
 ### **Half-Line Description**  
-The method determines whether to enable or disable the "Strategic Aggregation" feature based on configuration, customer context, registration delay, and specific rules like 'O' mode and Wealth Terms & Conditions.
+The method determines the availability of the "SRP Payment FX" feature based on customer eligibility, throttle range, and feature configuration, enabling or disabling it accordingly.
 
 ---
 
-### **Constants, Functions, Session, and Policy**  
+### **Constants, Functions, Session, and Policy**
 
-#### **Constants**  
-1. **ConfigurationKeyConstants.SRP_OUTAGE_SWITCH_STATUS**:  
-   Configuration key for the current SRP Outage Switch status.  
-   
-2. **OperationConstants.SRP_ODS_O_MODE**:  
-   Represents the "O Mode" status, indicating when the feature should not function.  
+#### **Constants**
+1. **ConfigurationKeyConstants.SRP_PAYMENTFX_THROTTLING_MIN_LIMIT**:  
+   Configuration key for the minimum customer ID range for throttling.
 
-3. **ConfigurationKeyConstants.STRATEGIC_AGGREGATION_ENABLED**:  
-   Key to check if the "Strategic Aggregation" feature is enabled at the gateway level.  
+2. **ConfigurationKeyConstants.SRP_PAYMENTFX_THROTTLING_MAX_LIMIT**:  
+   Configuration key for the maximum customer ID range for throttling.
 
-4. **OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE**:  
-   Session attribute key to retrieve customer group information.
+3. **FeatureToFunction.SRPPaymentFX**:  
+   Enum or identifier representing the "SRP Payment FX" feature.
 
-5. **FeatureToFunction.StrategicAggregation**:  
-   Enum or identifier for the "Strategic Aggregation" feature.
-
-6. **FeatureToFunction.SAWealthTermsAndConditions**:  
-   Enum or identifier for the "Strategic Aggregation Wealth Terms and Conditions" feature.
+4. **OperationConstants.SRP_PAYMENTFX**:  
+   Session parameter key to store the SRP Payment FX flag.
 
 ---
 
-#### **Functions**  
-1. **configValues.getStringProperty(String key, String defaultValue)**:  
-   Retrieves the value of a configuration key as a string, defaulting to a specific value if the key is not found.
+#### **Functions**
+1. **isFeatureAvailable(FeatureToFunction feature, GetAppPolicyServiceRequest serviceRequest)**:  
+   Checks if a specific feature is available for the current request.
 
-2. **configValues.isFeatureEnabled(String key, boolean defaultValue)**:  
-   Checks if a specific feature is enabled in configuration.
+2. **configValues.getIntegerProperty(String key, int defaultValue)**:  
+   Retrieves the value of a configuration key as an integer, defaulting to a specific value if the key is not found.
 
-3. **isFeatureAvailable(FeatureToFunction feature, GetAppPolicyServiceRequest serviceRequest)**:  
-   Checks if a particular feature is available for the current request.
+3. **featureSwitchService.isSRPPaymentFXEnabledForCustomerGroup()**:  
+   Checks if the SRP Payment FX feature is enabled for the customer's group.
 
-4. **strategicAggregationCustomerChecksService.isInStrategicAggregationRegistrationDelayPeriod(MobileUserContext mobileUserContext)**:  
-   Determines whether the customer falls within the registration delay period for the feature.
+4. **throttlingService.isCustomerAllowedToContinueWithoutThrottling(String customerId, int minRange, int maxRange)**:  
+   Verifies if the customer falls within the throttle range to proceed without restrictions.
 
-5. **strategicAggregationCustomerChecksService.isStrategicAggregationFeatureEnabled(GetAppPolicyServiceRequest request, CustomerContext context, boolean featureAvailable, List<CustomerGroupType> customerGroups)**:  
-   Checks if the customer is eligible for the feature.
-
-6. **strategicAggregationCustomerChecksService.hasStrategicAggregationWealthMarker(CustomerContext context)**:  
-   Determines whether the customer has a wealth marker for the feature.
-
-7. **turnOffFunction(GetAppPolicyServiceResponse response, FeatureToFunction feature)**:  
-   Turns off the specified feature for the customer and updates the response.
-
-8. **setStrategicAggregationPolicyFields(GetAppPolicyServiceRequest request, CustomerContext context, MobileUserContext mobileUserContext, boolean saWealthINCFeature)**:  
-   Updates policy fields related to Strategic Aggregation based on customer and mobile contexts.
-
-9. **processAggregationData(GetAppPolicyServiceRequest request, CustomerContext context, MobileUserContext mobileUserContext)**:  
-   Processes data for aggregation based on customer and mobile contexts.
+5. **turnOffFunction(GetAppPolicyServiceResponse serviceResponse, FeatureToFunction feature)**:  
+   Disables the specified feature and updates the response object.
 
 ---
 
-### **Session**  
-- **sessionParameters.get(OperationConstants.CUSTOMER_GROUP_SESSION_ATTRIBUTE)**:  
-   Retrieves customer group data for eligibility checks.
+#### **Session**
+- **this.sessionParameters.put(OperationConstants.SRP_PAYMENTFX, srpPaymentFXFlag)**:  
+   Stores the SRP Payment FX flag in the session parameters.
 
 ---
 
-### **Policy**  
+#### **Policy**
 1. **GetAppPolicyServiceRequest**:  
-   Represents the incoming request with details about the feature and customer context.
+   The request object containing information about the feature and customer context.
 
 2. **GetAppPolicyServiceResponse**:  
-   The response object to reflect the feature's enabled or disabled status.
+   The response object to reflect the enabled or disabled status of the feature.
 
 3. **CustomerContext**:  
-   Contains customer-specific data like registration date and wealth markers.
-
-4. **MobileUserContext**:  
-   Includes mobile app and device information for further processing.
+   Contains customer-specific data, such as their ID and registration details.
 
 ---
 
-### **Logic**  
-1. **'O' Mode Validation**:  
-   - Checks if "O Mode" is enabled.  
-   - If true, the feature must be turned off regardless of other checks.
+### **Logic**
 
-2. **Feature Enabled Check**:  
-   - Verifies if the feature is enabled at the gateway level.
+1. **Feature Availability Check**:  
+   - Determines if the "SRP Payment FX" feature is available for the request.
 
-3. **Registration Delay Validation**:  
-   - Ensures the customer’s registration date is outside the delay period for the feature.
+2. **Throttle Range Validation**:  
+   - Verifies if the customer's ID falls within the throttling range specified in the configuration.
 
-4. **Customer Eligibility Check**:  
-   - Confirms if the feature is available and enabled for the customer based on group types.
+3. **Customer Group Eligibility**:  
+   - Checks if the customer group is eligible for the feature.
 
-5. **Wealth T&C Validation**:  
-   - Checks if the customer qualifies for Wealth Terms and Conditions feature.  
-   - If not eligible, it disables the Wealth T&C-related functionality.
+4. **Enable Feature**:  
+   - If the feature is available, and the customer is within the throttle range, the feature is enabled by setting `srpPaymentFXFlag` to `true`.
 
-6. **Policy and Data Processing**:  
-   - Updates strategic aggregation policy fields and processes aggregation data for the customer.
+5. **Disable Feature**:  
+   - If the feature is not available or the customer is outside the throttle range, the feature is disabled by calling `turnOffFunction`.
 
-7. **Turn Off Feature**:  
-   - If the feature is unavailable or not eligible, it is disabled in the response.
+6. **Session Update**:  
+   - Updates the session parameter with the current status of the SRP Payment FX flag.
 
 ---
 
-### **Logging**  
-1. **LOGGER.trace**:  
-   Logs the start and end of method execution.
+### **Logging**
 
-2. **LOGGER.debug**:  
-   Logs detailed checks for 'O' mode, feature availability, registration delay, wealth marker, and eligibility.
+1. **LOGGER.debug**:  
+   Logs the entry, exit, and intermediate steps, such as throttle range checks, feature availability, and enabling or disabling the feature.
 
 ---
 
-This method ensures the "Strategic Aggregation" feature operates under strict rules, considering configuration, context, and additional factors like Wealth T&C.
+This method ensures the "SRP Payment FX" feature operates dynamically, considering eligibility, throttling, and configuration values.
