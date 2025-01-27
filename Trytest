@@ -1,48 +1,34 @@
-### **Half-line Description**:  
-The `putBMBHorizonFlag` method checks customer type, configuration, and feature availability to enable or disable the "BMB Horizon" feature.
+### **Half-line Description**  
+The `putPsd2ShaChargesFlag` method determines and sets the PSD2 SHA Charges feature's availability based on group restrictions and session attributes.
 
 ---
 
 ### **Constants**
-1. **`OperationConstants.CUSTOMER_TYPE`**  
-   - Holds the customer type (e.g., personal, business).
-2. **`OperationConstants.CUSTOMER_CLASS_BAP`**  
-   - Denotes BAP (Business and Personal) customer class.
-3. **`OperationConstants.BUSINESS_CUST`**  
-   - Represents business customers in the system.
-4. **`ConfigurationKeyConstants.DYNAMIC_PRODUCT_FUNCTIONALITY_SWITCH`**  
-   - Configuration to enable dynamic product functionality.
-5. **`FeatureToFunction.Horizon`**  
-   - Represents the Horizon feature for functionality checks.
+1. **`FeatureToFunction.PSD2SHACharges`**  
+   - Represents the PSD2 SHA Charges feature for validation.
+2. **`InternationalPaymentsConstants.PSD2_SHA_CHARGES_ENABLED`**  
+   - Key to store the PSD2 SHA Charges feature flag in session parameters.
 
 ---
 
 ### **Functions**
-1. **`turnoffFunction()`**  
-   - Disables a specific feature for a customer or group.
-2. **`flagsService.isFeatureAvailable()`**  
-   - Checks if a feature is available based on device context.
-3. **`flagsService.isFeatureAvailableVia()`**  
-   - Determines feature availability via dynamic product configuration.
-4. **`featureSwitchService.isBMBHorizonAvailable()`**  
-   - Verifies if the Horizon feature is accessible for a personal customer.
+1. **`isFeatureAvailable()`**  
+   - Checks if the PSD2 SHA Charges feature is available for the current request.
+2. **`featureSwitchService.isPsd2ShaChargesAvailable()`**  
+   - Verifies if PSD2 SHA Charges are accessible based on group restrictions.
+3. **`turnoffFunction()`**  
+   - Disables the PSD2 SHA Charges feature in case of ineligibility.
 
 ---
 
 ### **Policies**
-1. **Customer Class Policy**  
-   - Business customers under BAP cannot access the Horizon feature.
-2. **Dynamic Functionality Policy**  
-   - Horizon feature availability is determined dynamically if enabled.
-3. **Default Feature Availability**  
-   - Horizon is unavailable unless explicitly marked as accessible.
+1. **Group Restriction Policy**  
+   - The PSD2 SHA Charges feature is turned off for restricted customer groups.
+2. **Default Availability Policy**  
+   - The feature is disabled unless explicitly enabled.
 
 ---
 
 ### **Session**
-1. **`sessionParameters.get(OperationConstants.CUSTOMER_TYPE)`**  
-   - Retrieves the current customer type from session attributes.
-2. **`serviceRequest.getCustomerContext()`**  
-   - Accesses the registered customer class and personal customer data.
-3. **`serviceRequest.getProductClassCodes()`**  
-   - Fetches product class codes tied to the customer or session.
+1. **`sessionParameters.put(InternationalPaymentsConstants.PSD2_SHA_CHARGES_ENABLED)`**  
+   - Stores the PSD2 SHA Charges feature's enablement status in session parameters.
