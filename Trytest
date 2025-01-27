@@ -1,34 +1,40 @@
 ### **Half-line Description**  
-The `putPsd2ShaChargesFlag` method determines and sets the PSD2 SHA Charges feature's availability based on group restrictions and session attributes.
+The `putSRPServicing2Flag` method determines and sets the SRP Servicing 2 feature availability based on throttling and customer group restrictions.
 
 ---
 
-### **Constants**
-1. **`FeatureToFunction.PSD2SHACharges`**  
-   - Represents the PSD2 SHA Charges feature for validation.
-2. **`InternationalPaymentsConstants.PSD2_SHA_CHARGES_ENABLED`**  
-   - Key to store the PSD2 SHA Charges feature flag in session parameters.
+### **Constants**  
+1. **`FeatureToFunction.SRPS2`**  
+   - Represents the SRP Servicing 2 feature for validation.  
+2. **`ConfigurationKeyConstants.SRP_SERVICING_2_THROTTLING_MIN_LIMIT`**  
+   - Minimum limit for throttling SRP Servicing 2.  
+3. **`ConfigurationKeyConstants.SRP_SERVICING_2_THROTTLING_MAX_LIMIT`**  
+   - Maximum limit for throttling SRP Servicing 2.  
+4. **`OperationConstants.SRP_SERVICING_2`**  
+   - Key for storing SRP Servicing 2 enablement status in session parameters.  
 
 ---
 
-### **Functions**
+### **Functions**  
 1. **`isFeatureAvailable()`**  
-   - Checks if the PSD2 SHA Charges feature is available for the current request.
-2. **`featureSwitchService.isPsd2ShaChargesAvailable()`**  
-   - Verifies if PSD2 SHA Charges are accessible based on group restrictions.
-3. **`turnoffFunction()`**  
-   - Disables the PSD2 SHA Charges feature in case of ineligibility.
+   - Checks if SRP Servicing 2 is enabled for the current request.  
+2. **`featureSwitchService.isSRPServicing2EnabledForCustomerGroup()`**  
+   - Determines if SRP Servicing 2 is enabled for a specific customer group.  
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling()`**  
+   - Validates if a customer falls within the allowed throttling range.  
+4. **`turnoffFunction()`**  
+   - Disables the SRP Servicing 2 feature when ineligible.  
 
 ---
 
-### **Policies**
-1. **Group Restriction Policy**  
-   - The PSD2 SHA Charges feature is turned off for restricted customer groups.
-2. **Default Availability Policy**  
-   - The feature is disabled unless explicitly enabled.
+### **Policies**  
+1. **Throttling Policy**  
+   - Ensures the customer falls within a predefined range to enable SRP Servicing 2.  
+2. **Customer Group Policy**  
+   - Enables SRP Servicing 2 only for eligible customer groups.  
 
 ---
 
-### **Session**
-1. **`sessionParameters.put(InternationalPaymentsConstants.PSD2_SHA_CHARGES_ENABLED)`**  
-   - Stores the PSD2 SHA Charges feature's enablement status in session parameters.
+### **Session**  
+1. **`sessionParameters.put(OperationConstants.SRP_SERVICING_2)`**  
+   - Stores the SRP Servicing 2 feature enablement status in session parameters.  
