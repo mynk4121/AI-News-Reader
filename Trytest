@@ -1,40 +1,29 @@
 ### **Half-line Description**  
-The `putSRPServicing2Flag` method determines and sets the SRP Servicing 2 feature availability based on throttling and customer group restrictions.
+The `putBarclaycardUpdateDetailsFlag` method checks and enables the Barclaycard Update Details feature if it is available and meets all required conditions.
 
 ---
 
 ### **Constants**  
-1. **`FeatureToFunction.SRPS2`**  
-   - Represents the SRP Servicing 2 feature for validation.  
-2. **`ConfigurationKeyConstants.SRP_SERVICING_2_THROTTLING_MIN_LIMIT`**  
-   - Minimum limit for throttling SRP Servicing 2.  
-3. **`ConfigurationKeyConstants.SRP_SERVICING_2_THROTTLING_MAX_LIMIT`**  
-   - Maximum limit for throttling SRP Servicing 2.  
-4. **`OperationConstants.SRP_SERVICING_2`**  
-   - Key for storing SRP Servicing 2 enablement status in session parameters.  
+1. **`FeatureToFunction.BarclayCardUpdateDetails`**  
+   - Represents the Barclaycard Update Details feature for validation.
 
 ---
 
 ### **Functions**  
 1. **`isFeatureAvailable()`**  
-   - Checks if SRP Servicing 2 is enabled for the current request.  
-2. **`featureSwitchService.isSRPServicing2EnabledForCustomerGroup()`**  
-   - Determines if SRP Servicing 2 is enabled for a specific customer group.  
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling()`**  
-   - Validates if a customer falls within the allowed throttling range.  
-4. **`turnoffFunction()`**  
-   - Disables the SRP Servicing 2 feature when ineligible.  
+   - Checks if the Barclaycard Update Details feature is available in the current request.  
+2. **`featureSwitchService.isBarclayCardUpdateDetailsAvailable()`**  
+   - Validates the availability of the Barclaycard Update Details feature for the customer.  
+3. **`turnoffFunction()`**  
+   - Disables the Barclaycard Update Details feature if eligibility conditions are not met.  
 
 ---
 
 ### **Policies**  
-1. **Throttling Policy**  
-   - Ensures the customer falls within a predefined range to enable SRP Servicing 2.  
-2. **Customer Group Policy**  
-   - Enables SRP Servicing 2 only for eligible customer groups.  
+1. **Feature Availability Policy**  
+   - Ensures that the Barclaycard Update Details feature is available in both feature configuration and customer eligibility checks.  
 
 ---
 
 ### **Session**  
-1. **`sessionParameters.put(OperationConstants.SRP_SERVICING_2)`**  
-   - Stores the SRP Servicing 2 feature enablement status in session parameters.  
+No session parameters are explicitly set in this method.
