@@ -1,29 +1,23 @@
-### **Half-line Description**  
-The `putBarclaycardUpdateDetailsFlag` method checks and enables the Barclaycard Update Details feature if it is available and meets all required conditions.
+Feature Availability Policy:
 
----
+Checks if the feature is enabled in the function environment (isFeatureAvailable).
+If not available, no further policies are applied, and the feature is considered off.
+Customer Group Restriction Policy:
 
-### **Constants**  
-1. **`FeatureToFunction.BarclayCardUpdateDetails`**  
-   - Represents the Barclaycard Update Details feature for validation.
+If the feature is available, checks for group-specific restrictions using featureSwitchService.isBFAShowBannerAvailable.
+If restricted:
+Disables the feature using turnOffFunction.
+Throttle Restriction Policy:
 
----
-
-### **Functions**  
-1. **`isFeatureAvailable()`**  
-   - Checks if the Barclaycard Update Details feature is available in the current request.  
-2. **`featureSwitchService.isBarclayCardUpdateDetailsAvailable()`**  
-   - Validates the availability of the Barclaycard Update Details feature for the customer.  
-3. **`turnoffFunction()`**  
-   - Disables the Barclaycard Update Details feature if eligibility conditions are not met.  
-
----
-
-### **Policies**  
-1. **Feature Availability Policy**  
-   - Ensures that the Barclaycard Update Details feature is available in both feature configuration and customer eligibility checks.  
-
----
-
-### **Session**  
-No session parameters are explicitly set in this method.
+If the feature passes group restrictions, checks if the customer's ID falls within the throttle range using throttlingService.
+If within range:
+Enables the feature.
+Configures the following policies using setMyPaymentMyPlanCardsPolicyFields:
+mpmpCardBannerHost: Sets the host URL for the banner.
+mpmpCardBannerURL: Sets the endpoint URL for the banner JSON.
+mpmpCardBannerJson: Specifies the JSON file name for the banner.
+mpmpCardOurFeesExplainedHost: Sets the host URL for "Our Fees Explained."
+mpmpCardOurFeesExplainedURL: Sets the endpoint URL for "Our Fees Explained."
+mpmpCardOurFeesExplainedJson: Specifies the JSON file name for "Our Fees Explained."
+If outside the throttle range:
+Disables the feature using turnOffFunction.
