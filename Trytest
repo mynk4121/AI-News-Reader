@@ -1,41 +1,47 @@
-### **Half-line Description**  
-The `putChangeOfAddressBCardFlag` method checks if the Change of Address feature for Barclaycard is enabled and applies customer group restrictions and throttling rules.
+### **Half-Line Description:**  
+The `putChangeOfAddressConductFixFlag` method evaluates whether the **Change of Address Conduct Fix** feature should be enabled based on function environment settings, customer group eligibility, and throttling constraints.  
 
 ---
 
-### **Constants**  
-1. **`FeatureToFunction.ChangeOfAddressBcard`**  
-   - Represents the Change of Address feature for Barclaycard.  
-2. **`ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MIN`**  
-   - Defines the minimum threshold for throttling customers.  
-3. **`ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MAX`**  
-   - Defines the maximum threshold for throttling customers.  
-4. **`ConfigurationKeyConstants.BMB_LITE_REGISTRATION_ENABLED`**  
-   - Flag to check if BMB Lite registration is enabled.  
+### **Constants, Functions, Policies, and Sessions Used:**  
+
+- **Constants:**  
+  - `ConfigurationKeyConstants.CHANGE_OF_ADDRESS_CONDUCT_FIX_THROTTLE_MIN` → Defines the minimum throttling limit.  
+  - `ConfigurationKeyConstants.CHANGE_OF_ADDRESS_CONDUCT_FIX_THROTTLE_MAX` → Defines the maximum throttling limit.  
+
+- **Functions:**  
+  - `isFeatureAvailable(FeatureToFunction.ChangeOfAddressConductFix, serviceRequest)` → Checks if the feature is enabled at the function level.  
+  - `featureSwitchService.isChangeOfAddressConductFixEnabled()` → Verifies if the feature is allowed for the customer group.  
+  - `throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)` → Ensures only permitted customers can use the feature.  
+  - `throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling(cardHolderId, minRange, maxRange)` → Checks throttling rules for cardholders.  
+  - `turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressConductFix)` → Disables the feature if the customer is not eligible.  
+
+- **Policies:**  
+  - **Feature Availability Policy** → Determines if the feature is turned on in the function table.  
+  - **Customer Group Policy** → Restricts access based on customer type.  
+  - **Throttling Policy** → Ensures only a limited number of customers can use the feature.  
+
+- **Session:**  
+  - None explicitly stored, but the feature flag status is logged.  
 
 ---
 
-### **Functions**  
-1. **`isFeatureAvailable()`**  
-   - Checks if the Change of Address feature for Barclaycard is enabled in the system.  
-2. **`featureSwitchService.isChangeOfAddressBCardAvailable()`**  
-   - Validates the Change of Address feature against customer group restrictions.  
-3. **`throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling()`**  
-   - Determines if a Barclaycard customer can proceed without being throttled.  
-4. **`featureSwitchService.isBMBLiteAvailable()`**  
-   - Checks if the BMB Lite registration is available for the feature.  
-5. **`turnoffFunction()`**  
-   - Disables the Change of Address feature if eligibility conditions are not met.  
+### **Small Descriptions for Each Method:**  
 
----
+1. **`isFeatureAvailable(FeatureToFunction.ChangeOfAddressConductFix, serviceRequest)`**  
+   - Determines if the **Change of Address Conduct Fix** feature is active in the system.  
 
-### **Policies**  
-1. **Feature Availability Policy**  
-   - Ensures that the Change of Address feature for Barclaycard is enabled only if all customer and system conditions are met.  
-2. **Throttling Policy**  
-   - Limits the number of customers who can use the Change of Address feature within a defined range.  
+2. **`featureSwitchService.isChangeOfAddressConductFixEnabled()`**  
+   - Checks if the customer is eligible to use the feature based on their group.  
 
----
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)`**  
+   - Ensures that the customer falls within the predefined throttling limits.  
 
-### **Session**  
-No session parameters are explicitly set in this method.
+4. **`throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling(cardHolderId, minRange, maxRange)`**  
+   - Performs a similar throttling check but based on cardholder ID instead of customer ID.  
+
+5. **`turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressConductFix)`**  
+   - Disables the feature if the customer does not meet the eligibility criteria.  
+
+6. **`LOGGER.debug()` Statements**  
+   - Logs function environment status, customer eligibility, and throttling results for debugging purposes.  
