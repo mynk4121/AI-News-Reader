@@ -1,23 +1,27 @@
-Feature Availability Policy:
+### **Half-Line Description:**  
+The `putChangeOfAddressFlag` method checks feature availability and customer group restrictions to determine if the **Change of Address (COA)** feature should be enabled or disabled.  
 
-Checks if the feature is enabled in the function environment (isFeatureAvailable).
-If not available, no further policies are applied, and the feature is considered off.
-Customer Group Restriction Policy:
+---
 
-If the feature is available, checks for group-specific restrictions using featureSwitchService.isBFAShowBannerAvailable.
-If restricted:
-Disables the feature using turnOffFunction.
-Throttle Restriction Policy:
+### **Constants, Functions, Policies, and Sessions Used:**  
 
-If the feature passes group restrictions, checks if the customer's ID falls within the throttle range using throttlingService.
-If within range:
-Enables the feature.
-Configures the following policies using setMyPaymentMyPlanCardsPolicyFields:
-mpmpCardBannerHost: Sets the host URL for the banner.
-mpmpCardBannerURL: Sets the endpoint URL for the banner JSON.
-mpmpCardBannerJson: Specifies the JSON file name for the banner.
-mpmpCardOurFeesExplainedHost: Sets the host URL for "Our Fees Explained."
-mpmpCardOurFeesExplainedURL: Sets the endpoint URL for "Our Fees Explained."
-mpmpCardOurFeesExplainedJson: Specifies the JSON file name for "Our Fees Explained."
-If outside the throttle range:
-Disables the feature using turnOffFunction.
+- **Constant:** `FeatureToFunction.ChangeOfAddress` → Represents the Change of Address feature.  
+- **Function:** `turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddress)` → Disables the COA feature if not allowed.  
+- **Policy:** **Feature Availability Policy** → Ensures COA is enabled only if allowed by customer group restrictions.  
+- **Session:** None explicitly used in this method.  
+
+---
+
+### **Small Descriptions for Each Method:**  
+
+1. **`isFeatureAvailable(FeatureToFunction.ChangeOfAddress, serviceRequest)`**  
+   - Checks if the **Change of Address** feature is enabled in the function environment.  
+
+2. **`featureSwitchService.isChangeOfAddressAvailable()`**  
+   - Validates whether the customer is eligible for the **Change of Address** feature.  
+
+3. **`turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddress)`**  
+   - Disables the **Change of Address** feature if customer group restrictions apply.  
+
+4. **`LOGGER.debug()` Statements**  
+   - Logs the status of the **Change of Address** feature for debugging and tracking.  
