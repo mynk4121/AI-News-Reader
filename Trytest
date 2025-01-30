@@ -1,49 +1,41 @@
-### **Half-Line Description:**  
-The `putChangeOfAddressCardFlag` method determines whether the **Change of Address for BCard** feature should be enabled based on feature availability, customer group restrictions, throttling, and BMB Lite eligibility.  
+### **Half-line Description**  
+The `putChangeOfAddressBCardFlag` method checks if the Change of Address feature for Barclaycard is enabled and applies customer group restrictions and throttling rules.
 
 ---
 
-### **Constants, Functions, Policies, and Sessions Used:**  
-
-- **Constant:**  
-  - `ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MIN` → Defines the minimum throttling limit.  
-  - `ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MAX` → Defines the maximum throttling limit.  
-  - `ConfigurationKeyConstants.BMB_LITE_REGISTRATION_ENABLED` → Indicates if BMB Lite registration is enabled.  
-
-- **Function:**  
-  - `isFeatureAvailable(FeatureToFunction.ChangeOfAddressBcard, serviceRequest)` → Checks if the feature is enabled in the function environment.  
-  - `featureSwitchService.isChangeOfAddressCardAvailable()` → Checks customer eligibility for the feature.  
-  - `throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)` → Determines if the customer is within the allowed throttling range.  
-  - `featureSwitchService.isBMBLiteAvailable(...)` → Checks if BMB Lite is enabled for the customer.  
-  - `turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressBcard)` → Disables the feature if restrictions apply.  
-
-- **Policy:**  
-  - **Feature Availability Policy** → Determines if the **Change of Address for BCard** feature is turned on.  
-  - **Customer Group Restriction Policy** → Restricts access based on customer eligibility.  
-  - **Throttling Policy** → Ensures only allowed customers can proceed.  
-  - **BMB Lite Policy** → Controls access based on BMB Lite availability.  
-
-- **Session:**  
-  - None explicitly stored, but the feature flag is evaluated and logged.  
+### **Constants**  
+1. **`FeatureToFunction.ChangeOfAddressBcard`**  
+   - Represents the Change of Address feature for Barclaycard.  
+2. **`ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MIN`**  
+   - Defines the minimum threshold for throttling customers.  
+3. **`ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MAX`**  
+   - Defines the maximum threshold for throttling customers.  
+4. **`ConfigurationKeyConstants.BMB_LITE_REGISTRATION_ENABLED`**  
+   - Flag to check if BMB Lite registration is enabled.  
 
 ---
 
-### **Small Descriptions for Each Method:**  
+### **Functions**  
+1. **`isFeatureAvailable()`**  
+   - Checks if the Change of Address feature for Barclaycard is enabled in the system.  
+2. **`featureSwitchService.isChangeOfAddressBCardAvailable()`**  
+   - Validates the Change of Address feature against customer group restrictions.  
+3. **`throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling()`**  
+   - Determines if a Barclaycard customer can proceed without being throttled.  
+4. **`featureSwitchService.isBMBLiteAvailable()`**  
+   - Checks if the BMB Lite registration is available for the feature.  
+5. **`turnoffFunction()`**  
+   - Disables the Change of Address feature if eligibility conditions are not met.  
 
-1. **`isFeatureAvailable(FeatureToFunction.ChangeOfAddressBcard, serviceRequest)`**  
-   - Checks if the **Change of Address for BCard** feature is enabled in the function environment.  
+---
 
-2. **`featureSwitchService.isChangeOfAddressCardAvailable()`**  
-   - Determines if the customer is eligible to use the **Change of Address for BCard** feature.  
+### **Policies**  
+1. **Feature Availability Policy**  
+   - Ensures that the Change of Address feature for Barclaycard is enabled only if all customer and system conditions are met.  
+2. **Throttling Policy**  
+   - Limits the number of customers who can use the Change of Address feature within a defined range.  
 
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`**  
-   - Ensures that only a limited number of customers can use the feature at a given time.  
+---
 
-4. **`featureSwitchService.isBMBLiteAvailable(...)`**  
-   - Checks if **BMB Lite** is enabled, which might be a prerequisite for the feature.  
-
-5. **`turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressBcard)`**  
-   - Disables the feature if any of the restrictions (customer group, throttling, BMB Lite) apply.  
-
-6. **`LOGGER.debug()` Statements**  
-   - Logs debugging information about feature status, customer eligibility, and throttling checks.  
+### **Session**  
+No session parameters are explicitly set in this method.
