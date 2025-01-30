@@ -1,27 +1,49 @@
 ### **Half-Line Description:**  
-The `putChangeOfAddressFlag` method checks feature availability and customer group restrictions to determine if the **Change of Address (COA)** feature should be enabled or disabled.  
+The `putChangeOfAddressCardFlag` method determines whether the **Change of Address for BCard** feature should be enabled based on feature availability, customer group restrictions, throttling, and BMB Lite eligibility.  
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**  
 
-- **Constant:** `FeatureToFunction.ChangeOfAddress` → Represents the Change of Address feature.  
-- **Function:** `turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddress)` → Disables the COA feature if not allowed.  
-- **Policy:** **Feature Availability Policy** → Ensures COA is enabled only if allowed by customer group restrictions.  
-- **Session:** None explicitly used in this method.  
+- **Constant:**  
+  - `ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MIN` → Defines the minimum throttling limit.  
+  - `ConfigurationKeyConstants.BMB_BCARD_CHNGADDR_THROTTLE_MAX` → Defines the maximum throttling limit.  
+  - `ConfigurationKeyConstants.BMB_LITE_REGISTRATION_ENABLED` → Indicates if BMB Lite registration is enabled.  
+
+- **Function:**  
+  - `isFeatureAvailable(FeatureToFunction.ChangeOfAddressBcard, serviceRequest)` → Checks if the feature is enabled in the function environment.  
+  - `featureSwitchService.isChangeOfAddressCardAvailable()` → Checks customer eligibility for the feature.  
+  - `throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)` → Determines if the customer is within the allowed throttling range.  
+  - `featureSwitchService.isBMBLiteAvailable(...)` → Checks if BMB Lite is enabled for the customer.  
+  - `turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressBcard)` → Disables the feature if restrictions apply.  
+
+- **Policy:**  
+  - **Feature Availability Policy** → Determines if the **Change of Address for BCard** feature is turned on.  
+  - **Customer Group Restriction Policy** → Restricts access based on customer eligibility.  
+  - **Throttling Policy** → Ensures only allowed customers can proceed.  
+  - **BMB Lite Policy** → Controls access based on BMB Lite availability.  
+
+- **Session:**  
+  - None explicitly stored, but the feature flag is evaluated and logged.  
 
 ---
 
 ### **Small Descriptions for Each Method:**  
 
-1. **`isFeatureAvailable(FeatureToFunction.ChangeOfAddress, serviceRequest)`**  
-   - Checks if the **Change of Address** feature is enabled in the function environment.  
+1. **`isFeatureAvailable(FeatureToFunction.ChangeOfAddressBcard, serviceRequest)`**  
+   - Checks if the **Change of Address for BCard** feature is enabled in the function environment.  
 
-2. **`featureSwitchService.isChangeOfAddressAvailable()`**  
-   - Validates whether the customer is eligible for the **Change of Address** feature.  
+2. **`featureSwitchService.isChangeOfAddressCardAvailable()`**  
+   - Determines if the customer is eligible to use the **Change of Address for BCard** feature.  
 
-3. **`turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddress)`**  
-   - Disables the **Change of Address** feature if customer group restrictions apply.  
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`**  
+   - Ensures that only a limited number of customers can use the feature at a given time.  
 
-4. **`LOGGER.debug()` Statements**  
-   - Logs the status of the **Change of Address** feature for debugging and tracking.  
+4. **`featureSwitchService.isBMBLiteAvailable(...)`**  
+   - Checks if **BMB Lite** is enabled, which might be a prerequisite for the feature.  
+
+5. **`turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressBcard)`**  
+   - Disables the feature if any of the restrictions (customer group, throttling, BMB Lite) apply.  
+
+6. **`LOGGER.debug()` Statements**  
+   - Logs debugging information about feature status, customer eligibility, and throttling checks.  
