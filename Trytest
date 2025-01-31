@@ -1,53 +1,55 @@
 ### **Half-Line Description:**
 
-The `putWealthSRPTradingEntityFlag` method verifies the availability of the Wealth SRP Trading Entity feature and manages its state based on the feature switch and the session parameters.
+The `putOverdraftAMCFlag` method checks and manages the availability of the Overdraft AMC feature based on dynamic configuration and feature flags, updating the session accordingly.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.SRPTradingEntity` → Specifies the feature for SRP Trading Entity.
-  - `WEALTH_SRP` → Stores the availability of the Wealth SRP Trading Entity flag in the session.
-
+  - `ConfigurationKeyConstants.DYNAMIC_PRODUCT_FUNCTIONALITY_SWITCH` → Determines whether dynamic product functionality switching is enabled.
+  - `FeatureToFunction.OverdraftMMC` → Specifies the feature for Overdraft AMC.
+  - `OperationConstants.OVERDRAFT_CMA_SESSION` → Stores the status of the Overdraft AMC session.
+  
 - **Functions:**
-  - `isFeatureAvailable()` → Checks whether the SRP Trading Entity feature is available based on the service request.
-  - `featureSwitchservice.isWealthSRPTradingEntityAvailable()` → Checks if the SRP Trading Entity feature is enabled through the feature switch service.
-  - `turnoffFunction()` → Turns off the SRP Trading Entity feature in the service response if the conditions are met.
-  - `sessionParameters.put()` → Stores the feature availability status in the session.
+  - `configvalues.getBooleanProperty()` → Retrieves configuration values to check if dynamic product functionality is enabled.
+  - `featureFlagsService.isFeatureAvailable()` → Checks if the Overdraft AMC feature is available based on the current request and device context.
+  - `isFeatureAvailable()` → Verifies if the Overdraft AMC feature is enabled based on the feature switch and returns the status.
+  - `turnoffFunction()` → Turns off the Overdraft AMC feature in the service response if the feature is unavailable.
+  - `sessionParameters.put()` → Stores the Overdraft AMC status in the session for subsequent use.
 
 - **Policies:**
-  - **Feature Availability Policy** → Ensures that the SRP Trading Entity feature is only enabled if it is available based on feature switches and conditions.
-  - **Feature Flag Dependency Policy** → If the Wealth SRP Trading Entity feature is unavailable, the flag is turned off and recorded in the session.
+  - **Dynamic Feature Switching Policy** → If dynamic switching is enabled, it uses the `featureFlagsService` to check the feature availability based on the device context and product class codes.
+  - **Feature Availability Policy** → If the feature is not available, the Overdraft AMC flag is switched off, and the session is updated accordingly.
   
 - **Session:**
-  - `sessionParameters.put()` → Stores the availability status of the Wealth SRP Trading Entity flag in the session for further use.
+  - `sessionParameters.put()` → Stores the Overdraft AMC feature's status (either enabled or disabled) in the session for use in subsequent operations.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`isFeatureAvailable()`**
-   - Verifies whether the SRP Trading Entity feature is available based on the service request and feature settings.
+1. **`configvalues.getBooleanProperty()`**
+   - Retrieves configuration values to determine if dynamic product functionality switching is enabled or not.
 
-2. **`featureSwitchservice.isWealthSRPTradingEntityAvailable()`**
-   - Validates if the SRP Trading Entity feature is enabled through the feature switch service.
+2. **`featureFlagsService.isFeatureAvailable()`**
+   - Checks the availability of the Overdraft AMC feature using the feature flags service based on device context and product class codes.
 
-3. **`turnoffFunction()`**
-   - Disables the SRP Trading Entity feature in the service response when the feature is unavailable or conditions are not met.
+3. **`isFeatureAvailable()`**
+   - Verifies the status of the Overdraft AMC feature in the function table and checks if the feature is available or not.
 
-4. **`sessionParameters.put()`**
-   - Records the availability status of the SRP Trading Entity flag (true/false) in the session for subsequent use.
+4. **`turnoffFunction()`**
+   - Disables the Overdraft AMC feature in the service response if the feature is unavailable or disabled.
 
-5. **`LOGGER.debug()` / `LOGGER.trace()`**
-   - Logs detailed debug and trace messages to track the flow and status of the SRP Trading Entity feature.
+5. **`sessionParameters.put()`**
+   - Stores the Overdraft AMC feature's status (ON/OFF) in the session for use in future operations, ensuring consistent session handling.
 
 ---
 
 ### **Policy-Specific Breakdown:**
 
+- **Dynamic Feature Switching Policy**  
+  - The method first checks if dynamic product functionality switching is enabled. If true, it checks the availability of the Overdraft AMC feature with additional parameters such as device context and product class codes. If false, it performs the same check with simpler parameters.
+
 - **Feature Availability Policy**  
-  - The method first checks if the SRP Trading Entity feature is available, and if not, it turns off the feature and updates the session accordingly.
-  
-- **Feature Flag Dependency Policy**  
-  - If the SRP Trading Entity feature is unavailable, it directly impacts the Wealth SRP Trading Entity flag, turning it off and ensuring the flag status is recorded in the session for future use.
+  - If the feature is available, the method updates the session with the feature status. If unavailable, it turns off the feature and updates the session to indicate that the feature is off.
