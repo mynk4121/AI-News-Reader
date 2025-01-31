@@ -1,39 +1,59 @@
 ### **Half-Line Description:**
 
-The `putLoanPaymentDateSelectionFlag` method checks if the Loan Payment Date Selection feature is available for the customer and turns off the feature based on the availability.
+The `putOpenBankingApprovalFlag` method checks if Open Banking Approval is enabled for the customer, verifies throttling constraints, and turns off the feature if certain conditions aren't met.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.LoanPaymentDateSelection` → The feature constant for Loan Payment Date Selection.
-  - `OperationConstants.BMB_LOAN_PAYMENT_DATE_SELECTION` → Constant used for storing the status of Loan Payment Date Selection in session.
+  - `FeatureToFunction.OpenBankingApproval` → Feature constant representing Open Banking Approval.
+  - `ConfigurationKeyConstants.OPEN_BANKING_ENABLED` → Checks if Open Banking is enabled at the environment level.
+  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_PIN` → Defines the throttling pin.
+  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_MAX` → Defines the maximum throttling range.
 
 - **Functions:**
-  - `isFeatureAvailable(FeatureToFunction.LoanPaymentDateSelection, serviceRequest)` → Checks if the Loan Payment Date Selection feature is available for the given service request.
-  - `featureswitchservice.isBMBLoanDateSelectionAvailable()` → Verifies if Loan Payment Date Selection is available for BMB users.
-  - `turnoffFunction(serviceResponse, FeatureToFunction.LoanPaymentDateSelection)` → Turns off the Loan Payment Date Selection feature for BMB users if it's available.
+  - `isFeatureAvailable(FeatureToFunction.OpenBankingApproval, serviceRequest)` → Verifies if Open Banking Approval is available for the service request.
+  - `featureswitchservice.IsOpenBankingApprovalFeatureEnabled()` → Checks if Open Banking Approval feature is enabled in the feature flags.
+  - `throttlingService.isCustomerAllowedToContinueWithoutThrottling()` → Verifies if a customer is allowed to continue with Open Banking Approval without hitting throttling limits.
+  - `turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)` → Turns off the Open Banking Approval feature if conditions aren't met.
 
 - **Policies:**
-  - **Loan Payment Date Selection Availability** → If the feature is available and enabled for BMB users, the feature is turned off.
+  - **Open Banking Approval Feature Availability** → If Open Banking Approval is available and enabled, the method checks whether throttling conditions are met. If not, the feature is turned off.
   
 - **Session:**
   - **Session Parameter Storage:**
-    - `sessionParameters.put(OperationConstants.BMB_LOAN_PAYMENT_DATE_SELECTION, isBMBLoanDateSelectionAvailable)` → Stores the availability status of the Loan Payment Date Selection feature in the session.
+    - Not explicitly stored in this case, but session management could be part of the feature toggling and throttle flag handling.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`isFeatureAvailable(FeatureToFunction.LoanPaymentDateSelection, serviceRequest)`**
-   - Checks whether the Loan Payment Date Selection feature is available based on the service request, returning a boolean value.
+1. **`isFeatureAvailable(FeatureToFunction.OpenBankingApproval, serviceRequest)`**
+   - Verifies if the Open Banking Approval feature is available based on the provided service request.
 
-2. **`featureswitchservice.isBMBLoanDateSelectionAvailable()`**
-   - Verifies whether the Loan Payment Date Selection feature is enabled and available specifically for BMB users.
+2. **`featureswitchservice.IsOpenBankingApprovalFeatureEnabled()`**
+   - Checks if the Open Banking Approval feature is enabled in the feature flags.
 
-3. **`turnoffFunction(serviceResponse, FeatureToFunction.LoanPaymentDateSelection)`**
-   - Turns off the Loan Payment Date Selection feature if it's enabled for BMB users.
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling()`**
+   - Determines if the customer is within allowed throttling limits for Open Banking Approval.
 
-4. **`sessionParameters.put(OperationConstants.BMB_LOAN_PAYMENT_DATE_SELECTION, isBMBLoanDateSelectionAvailable)`**
-   - Saves the status of the Loan Payment Date Selection feature (enabled or disabled) in the session for later use.
+4. **`turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)`**
+   - Disables the Open Banking Approval feature if the customer is not allowed to proceed or if the feature is disabled.
+
+---
+
+### **Method Flow Explanation:**
+
+1. **Feature Availability Check:**
+   - First, it checks whether Open Banking Approval is available for the customer using `isFeatureAvailable()`.
+
+2. **Open Banking Feature Check:**
+   - If available, it checks whether the Open Banking feature is enabled at the configuration level.
+
+3. **Throttling Conditions Check:**
+   - Then, it verifies if the customer is allowed to continue using Open Banking without throttling, using `throttlingService.isCustomerAllowedToContinueWithoutThrottling()`.
+
+4. **Turn Off Feature if Necessary:**
+   - If any condition fails (feature disabled or throttling exceeded), it turns off the Open Banking Approval feature using `turnoffFunction()`.
+
