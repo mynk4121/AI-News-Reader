@@ -1,37 +1,34 @@
 ### **Half-Line Description:**
 
-The `turnoffOutOfScopeAppFunction` method iterates over a list of app functions, checks if they belong to specific features, and turns them off if they are active.
+The `putWealthKitSmartCallFlag` method checks if the "WealthSmartCall" feature is enabled for a customer and, if the WealthKit is not enabled, turns off the feature.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `OperationConstants.APP_FUNCTION_THRAB`, `OperationConstants.APP_FUNCTION_WEALTH_HISTORICAL_ALLOCATION`, etc. → Various constants representing app functions/features to check.
-  - `FeatureToFunction.<FeatureName>.getNewFeatureName()` → Feature constants for specific features (like `NomiKanaUpgrade`, `Widgets`, etc.).
-  - `Status.ON`, `Status.OFF` → Represents the status of the app functions (enabled/disabled).
-
+  - `FeatureToFunction.WealthSmartCall` → The feature constant for the "WealthSmartCall" functionality.
+  
 - **Functions:**
-  - `opResponse.getAppFunctions()` → Retrieves the list of app functions to check.
-  - `flag.getFunction()` → Retrieves the function associated with the app flag.
-  - `flag.setStatus(Status.OFF)` → Turns off the app function by setting its status to OFF.
-  - `opResponse.setAppFunctions()` → Updates the response with the modified app functions list.
-
+  - `isFeatureAvailable(FeatureToFunction.WealthSmartCall, serviceRequest)` → Checks if the WealthSmartCall feature is available for the given service request.
+  - `isWealthKitEnabled()` → Checks if the WealthKit is enabled for the customer.
+  - `turnoffFunction(opResponse, FeatureToFunction.WealthSmartCall)` → Turns off the WealthSmartCall feature if the condition is met.
+  
 - **Policies:**
-  - **Feature Deactivation Policy** → If an app function is identified as out of scope, it is deactivated by turning it off.
+  - **Feature Deactivation Policy** → If the WealthKit is not enabled for the customer, the WealthSmartCall feature is deactivated.
 
 - **Session:**
-  - **None in this method** as the focus is on modifying the app functions within the response object.
+  - **None explicitly in this method**, but the status of the WealthSmartCall feature is managed in the response object.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`opResponse.getAppFunctions()`**
-   - Retrieves the list of app functions from the response object to check for specific features.
+1. **`isFeatureAvailable(FeatureToFunction.WealthSmartCall, serviceRequest)`**
+   - Checks if the "WealthSmartCall" feature is available for the specific service request, determining whether the feature should be processed.
 
-2. **`flag.getFunction()`**
-   - Gets the function name associated with the app flag, used to match it against known feature names.
+2. **`isWealthKitEnabled()`**
+   - Verifies if the WealthKit functionality is enabled for the customer, allowing the WealthSmartCall feature to be used.
 
-3. **`flag.setStatus(Status.OFF)`**
-   - Sets the status of the app function to OFF, effectively turning it off if it
+3. **`turnoffFunction(opResponse, FeatureToFunction.WealthSmartCall)`**
+   - Deactivates the "WealthSmartCall" feature by turning it off in the response when the conditions are met.
