@@ -1,63 +1,75 @@
 ### **Half-Line Description:**  
-The `execute` method performs address lookup and validation based on the channel and app function, checking for feature availability, user authentication, and error handling while ensuring proper service response.
+The `execute` method updates a customer's address after validating feature availability, channel checks, and user session, while handling errors and setting appropriate response statuses.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `OperationConstants.ADDRESS_LOOKUP_UPDATE` → Defines the operation function for address lookup update.
-  - `OperationConstants.BCA_TRILLIUM_ADDRESS_FEATURE_KEY` → The feature key for address lookup functionality.
-  - `OperationConstants.BCA_TRILLIUM_ADDRESS_LOOKUP_POSTCODE` → Defines the parameter for postcode lookup.
-  - `ErrorCodes.MSG_OP_FATAL` → Error code for fatal operations.
-  - `ErrorCodes.ADDRESS_LOOKUP_TECHNICAL_FAILURE_ALE02` → Error code for technical failure during address lookup.
-  - `ErrorCodes.HTTP_SERVER_FAILURE_STATUS` → HTTP status code for server failure.
-  - `OperationConstants.ERR308` → Specific error code related to failed address lookup.
-  - `OperationConstants.TECHNICAL_FAILURE` → Defines the technical failure message.
-
+  - `OperationConstants.ADDRESS_LOOKUP_UPDATE` → Defines the operation function for address lookup and update.
+  - `ErrorCodes.MSG_OP_FAILED` → Error code for operation failure.
+  - `ErrorCodes.SECURITY_SESSION_VALIDATION_FAILED` → Error code for security validation failure.
+  - `ErrorCodes.MSG_OP_FATAL` → Error code for fatal operation failure.
+  
 - **Functions:**
-  - `FeatureFlagsServiceResponse.isFeatureAvailable()` → Checks if the feature is available for the requested operation.
-  - `getMobileUserContext()` → Retrieves the user context for mobile requests.
-  - `serviceResponse.getErrors()` → Retrieves any errors returned by the service.
-  - `businessService.getAddressFromPostcode(postCode)` → Retrieves the address based on postcode from the service.
-  - `setSuccessStatusCodes()` → Sets success status codes for the response.
-  - `setFailureStatusCodes()` → Sets failure status codes for the response.
-  - `setFatalRequestStatusCode()` → Sets status code for fatal request conditions.
+  - `FeatureFlagsServiceResponse.isFeatureAvailable()` → Checks if the address lookup and update feature is available for the current function.
+  - `getMobileUserContext()` → Retrieves the mobile user context for session validation.
+  - `serviceRequest.getChannelId()` → Retrieves the channel ID (BMB or others) for the request.
+  - `serviceRequest.getParameter(APP_FUNCTION)` → Retrieves the application function parameter to validate the app function.
+  - `businessService.updateAddresswithoutCapscan()` → Updates the address in the system without using the Capscan service.
+  - `setSuccessStatusCodes()` → Sets the success status codes for a successful response.
+  - `setFailureStatusCodes()` → Sets failure status codes for the operation if any error occurs.
 
 - **Policies:**
-  - **Feature Availability Policy** → Ensures the feature is enabled before continuing with address lookup.
-  - **Authentication Policy** → Verifies the user authentication, especially for Touch ID users.
-  - **Error Handling Policy** → Handles errors like empty postcode, technical failures, and feature unavailability.
-  - **Channel Identification Policy** → Differentiates between BCA and BMB channels for the request.
-
+  - **Feature Availability Policy** → Verifies whether the address lookup and update feature is enabled and available for the requested function.
+  - **Channel and Function Validation Policy** → Ensures that the request matches the expected channel (BMB) and function (Address Lookup and Update).
+  - **Session Validation Policy** → Checks if the mobile user context exists in the session, preventing further actions if the session is invalid.
+  - **Fraud Detection Policy** → Determines if the request is suspicious (e.g., invalid feature flag status) and stops further processing in case of fraud.
+  
 - **Session:**
-  - `getMobileUserContext(request)` → Retrieves the mobile user context from the session.
-  - `request.getSession()` → Session management for handling user-specific data such as Touch ID status.
-
+  - `getMobileUserContext()` → Retrieves the mobile user context from the session for session validation and authentication.
+  
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`getChannelId(OperationRequest opReq)`**
-   - Determines the channel ID (BMB or BCA) based on the service code from the operation request.
+1. **`getMobileUserContext()`**
+   - Retrieves the mobile user context from the session to ensure that the request is authenticated and valid.
 
-2. **`FeatureFlagsServiceResponse.isFeatureAvailable()`**
-   - Checks whether the address lookup update feature is available for the current function and user.
+2. **`serviceRequest.getChannelId()`**
+   - Retrieves the channel ID from the request to verify whether the request originates from the BMB channel.
 
-3. **`getMobileUserContext(request)`**
-   - Retrieves the mobile user context to validate user authentication and session status.
+3. **`serviceRequest.getParameter(APP_FUNCTION)`**
+   - Extracts the application function from the request to check if it matches the expected value for address lookup and update.
 
-4. **`businessService.getAddressFromPostcode(postCode)`**
-   - Makes a service call to fetch the address details based on the provided postcode.
+4. **`FeatureFlagsServiceResponse.isFeatureAvailable()`**
+   - Checks whether the address lookup and update feature is enabled for the requested function.
 
-5. **`setSuccessStatusCodes(opResponse)`**
-   - Sets the success status codes for the operation response upon successful address lookup.
+5. **`businessService.updateAddresswithoutCapscan()`**
+   - Updates the customer’s address in the database without using the Capscan service for address verification.
 
-6. **`setFailureStatusCodes(opResponse)`**
-   - Sets failure status codes if an error occurs, such as invalid postcode or unavailable service.
+6. **`setSuccessStatusCodes()`**
+   - Sets the success status codes in the response upon a successful address update.
 
-7. **`setFatalRequestStatusCode(opResponse)`**
-   - Handles the termination of the request with a fatal status if certain conditions (e.g., suspicious request) are met.
+7. **`setFailureStatusCodes()`**
+   - Sets failure status codes in the response if an error occurs during the update process or session validation.
 
 8. **`LOGGER.debug()` / `LOGGER.error()` / `LOGGER.trace()`**
-   - Logs various debugging and error messages to track the progress and status of the request handling.
+   - Logs debug, error, and trace messages to monitor and trace the flow of the method, helping in error tracking and debugging.
+
+---
+
+### **Policy-Specific Breakdown:**
+
+- **Feature Availability Policy**  
+  - Ensures the requested operation (address lookup and update) is enabled before proceeding.
+
+- **Channel and Function Validation Policy**  
+  - Confirms that the request originates from the BMB channel and that the app function corresponds to the expected update request.
+
+- **Session Validation Policy**  
+  - Ensures the mobile user context is available in the session. If missing, it stops further processing and returns an error.
+
+- **Fraud Detection Policy**  
+  - Handles scenarios where the app function or feature flag is set to `OFF`, marking the request as suspicious and halting further execution.
+
