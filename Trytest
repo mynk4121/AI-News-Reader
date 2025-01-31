@@ -1,5 +1,6 @@
-### **Half-Line Description:**  
-The `putWealthSRPTradingEntityFlag` method checks the availability of the Wealth SRP Trading Entity feature, turning it off based on conditions like WealthKit status and feature availability.
+### **Half-Line Description:**
+
+The `putWealthSRPTradingEntityFlag` method verifies the availability of the Wealth SRP Trading Entity feature and manages its state based on the feature switch and the session parameters.
 
 ---
 
@@ -7,49 +8,46 @@ The `putWealthSRPTradingEntityFlag` method checks the availability of the Wealth
 
 - **Constants:**
   - `FeatureToFunction.SRPTradingEntity` → Specifies the feature for SRP Trading Entity.
-  - `WEALTH_SRP` → Stores the availability status of the Wealth SRP Trading Entity flag in the session.
+  - `WEALTH_SRP` → Stores the availability of the Wealth SRP Trading Entity flag in the session.
 
 - **Functions:**
-  - `isFeatureAvailable()` → Checks whether the SRP Trading Entity feature is available based on the provided feature and service request.
-  - `isWealthKitEnabled()` → Verifies if the Wealth Kit feature is enabled for the customer group.
-  - `featureSwitchService.isWealthSRPTradingEntityAvailable()` → Checks if the Wealth SRP Trading Entity is available based on the feature switch service.
-  - `turnoffFunction()` → Disables the SRP Trading Entity feature in the service response if the conditions are met.
-  
+  - `isFeatureAvailable()` → Checks whether the SRP Trading Entity feature is available based on the service request.
+  - `featureSwitchservice.isWealthSRPTradingEntityAvailable()` → Checks if the SRP Trading Entity feature is enabled through the feature switch service.
+  - `turnoffFunction()` → Turns off the SRP Trading Entity feature in the service response if the conditions are met.
+  - `sessionParameters.put()` → Stores the feature availability status in the session.
+
 - **Policies:**
-  - **Feature Availability Policy** → Ensures that the SRP Trading Entity feature is only active if it is enabled and available according to the feature switches and Wealth Kit status.
-  - **Wealth Kit Validation Policy** → Verifies if the Wealth Kit feature is enabled before considering the SRP Trading Entity feature available.
+  - **Feature Availability Policy** → Ensures that the SRP Trading Entity feature is only enabled if it is available based on feature switches and conditions.
+  - **Feature Flag Dependency Policy** → If the Wealth SRP Trading Entity feature is unavailable, the flag is turned off and recorded in the session.
   
 - **Session:**
-  - `sessionParameters.put()` → Stores the flag indicating the availability of the Wealth SRP Trading Entity in the session.
+  - `sessionParameters.put()` → Stores the availability status of the Wealth SRP Trading Entity flag in the session for further use.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
 1. **`isFeatureAvailable()`**
-   - Checks if the SRP Trading Entity feature is available for the current service request based on feature switches.
+   - Verifies whether the SRP Trading Entity feature is available based on the service request and feature settings.
 
-2. **`isWealthKitEnabled()`**
-   - Checks if the Wealth Kit is enabled for the customer group, influencing whether the SRP Trading Entity feature can be used.
+2. **`featureSwitchservice.isWealthSRPTradingEntityAvailable()`**
+   - Validates if the SRP Trading Entity feature is enabled through the feature switch service.
 
-3. **`featureSwitchService.isWealthSRPTradingEntityAvailable()`**
-   - Validates if the SRP Trading Entity feature is available through the feature switch service for the current environment.
+3. **`turnoffFunction()`**
+   - Disables the SRP Trading Entity feature in the service response when the feature is unavailable or conditions are not met.
 
-4. **`turnoffFunction()`**
-   - Disables the SRP Trading Entity feature in the service response if certain conditions are met (e.g., if WealthKit is not enabled or the feature is not available).
+4. **`sessionParameters.put()`**
+   - Records the availability status of the SRP Trading Entity flag (true/false) in the session for subsequent use.
 
-5. **`sessionParameters.put()`**
-   - Stores the availability status of the Wealth SRP Trading Entity feature in the session, making it accessible to other components in the application.
-
-6. **`LOGGER.debug()` / `LOGGER.trace()`**
-   - Logs debug and trace messages to track the flow of the method and the state of the feature availability.
+5. **`LOGGER.debug()` / `LOGGER.trace()`**
+   - Logs detailed debug and trace messages to track the flow and status of the SRP Trading Entity feature.
 
 ---
 
 ### **Policy-Specific Breakdown:**
 
 - **Feature Availability Policy**  
-  - Ensures the SRP Trading Entity feature is active only if it is available and enabled based on the feature switch settings.
-
-- **Wealth Kit Validation Policy**  
-  - Verifies the availability of the Wealth Kit before allowing the SRP Trading Entity feature to be enabled or activated. If WealthKit is not enabled, the SRP Trading Entity feature is turned off.
+  - The method first checks if the SRP Trading Entity feature is available, and if not, it turns off the feature and updates the session accordingly.
+  
+- **Feature Flag Dependency Policy**  
+  - If the SRP Trading Entity feature is unavailable, it directly impacts the Wealth SRP Trading Entity flag, turning it off and ensuring the flag status is recorded in the session for future use.
