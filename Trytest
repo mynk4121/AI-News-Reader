@@ -1,55 +1,45 @@
 ### **Half-Line Description:**
 
-The `putOverdraftAMCFlag` method checks and manages the availability of the Overdraft AMC feature based on dynamic configuration and feature flags, updating the session accordingly.
+The `putRunningBalanceFlag` method checks the availability of the Daily Balance feature based on function tables and customer group restrictions, turning off the feature if necessary.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `ConfigurationKeyConstants.DYNAMIC_PRODUCT_FUNCTIONALITY_SWITCH` → Determines whether dynamic product functionality switching is enabled.
-  - `FeatureToFunction.OverdraftMMC` → Specifies the feature for Overdraft AMC.
-  - `OperationConstants.OVERDRAFT_CMA_SESSION` → Stores the status of the Overdraft AMC session.
+  - `FeatureToFunction.DailyBalance` → Refers to the feature related to the daily balance functionality.
   
 - **Functions:**
-  - `configvalues.getBooleanProperty()` → Retrieves configuration values to check if dynamic product functionality is enabled.
-  - `featureFlagsService.isFeatureAvailable()` → Checks if the Overdraft AMC feature is available based on the current request and device context.
-  - `isFeatureAvailable()` → Verifies if the Overdraft AMC feature is enabled based on the feature switch and returns the status.
-  - `turnoffFunction()` → Turns off the Overdraft AMC feature in the service response if the feature is unavailable.
-  - `sessionParameters.put()` → Stores the Overdraft AMC status in the session for subsequent use.
+  - `isFeatureAvailable()` → Checks if the Daily Balance feature is available according to the function table and the service request.
+  - `featureSwitchService.isDailyBalanceAvailable()` → Determines if the Daily Balance feature is enabled based on customer group restrictions.
+  - `turnoffFunction()` → Turns off the Daily Balance feature in the service response if it is restricted based on the customer group.
 
 - **Policies:**
-  - **Dynamic Feature Switching Policy** → If dynamic switching is enabled, it uses the `featureFlagsService` to check the feature availability based on the device context and product class codes.
-  - **Feature Availability Policy** → If the feature is not available, the Overdraft AMC flag is switched off, and the session is updated accordingly.
-  
+  - **Feature Availability Policy** → If the Daily Balance feature is switched on, the method checks for customer group restrictions. If the feature is restricted, it is turned off.
+  - **Customer Group Restriction Policy** → If the Daily Balance feature is available but restricted for the customer group, it is turned off.
+
 - **Session:**
-  - `sessionParameters.put()` → Stores the Overdraft AMC feature's status (either enabled or disabled) in the session for use in subsequent operations.
+  - **No session variables** are directly manipulated in this method, but the feature status might affect subsequent requests or session states indirectly.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`configvalues.getBooleanProperty()`**
-   - Retrieves configuration values to determine if dynamic product functionality switching is enabled or not.
+1. **`isFeatureAvailable()`**
+   - Checks if the Daily Balance feature is enabled in the function tables based on the current request.
 
-2. **`featureFlagsService.isFeatureAvailable()`**
-   - Checks the availability of the Overdraft AMC feature using the feature flags service based on device context and product class codes.
+2. **`featureSwitchService.isDailyBalanceAvailable()`**
+   - Verifies if the Daily Balance feature is available for the customer group by checking against available feature switches.
 
-3. **`isFeatureAvailable()`**
-   - Verifies the status of the Overdraft AMC feature in the function table and checks if the feature is available or not.
-
-4. **`turnoffFunction()`**
-   - Disables the Overdraft AMC feature in the service response if the feature is unavailable or disabled.
-
-5. **`sessionParameters.put()`**
-   - Stores the Overdraft AMC feature's status (ON/OFF) in the session for use in future operations, ensuring consistent session handling.
+3. **`turnoffFunction()`**
+   - Disables the Daily Balance feature in the service response if it is not available or allowed based on customer group restrictions.
 
 ---
 
 ### **Policy-Specific Breakdown:**
 
-- **Dynamic Feature Switching Policy**  
-  - The method first checks if dynamic product functionality switching is enabled. If true, it checks the availability of the Overdraft AMC feature with additional parameters such as device context and product class codes. If false, it performs the same check with simpler parameters.
-
 - **Feature Availability Policy**  
-  - If the feature is available, the method updates the session with the feature status. If unavailable, it turns off the feature and updates the session to indicate that the feature is off.
+  - The method first checks if the Daily Balance feature is enabled in the function tables. If enabled, it proceeds to check whether the feature is available for the specific customer group. If restricted, the feature is turned off.
+
+- **Customer Group Restriction Policy**  
+  - If the Daily Balance feature is not allowed for the customer group (based on `isDailyBalanceAvailable()`), the feature is turned off, ensuring the correct feature state for the customer.
