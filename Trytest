@@ -1,59 +1,70 @@
 ### **Half-Line Description:**
 
-The `putOpenBankingApprovalFlag` method checks if Open Banking Approval is enabled for the customer, verifies throttling constraints, and turns off the feature if certain conditions aren't met.
+The `putOpenBankingApprovalFlag` method checks whether the Open Banking Approval feature is enabled, verifies throttling conditions, and disables the feature if any condition fails for a given cardholder.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.OpenBankingApproval` → Feature constant representing Open Banking Approval.
-  - `ConfigurationKeyConstants.OPEN_BANKING_ENABLED` → Checks if Open Banking is enabled at the environment level.
-  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_PIN` → Defines the throttling pin.
-  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_MAX` → Defines the maximum throttling range.
+  - `FeatureToFunction.OpenBankingApproval.getNewFeatureName()` → Represents the name of the Open Banking Approval feature.
+  - `ConfigurationKeyConstants.OPEN_BANKING_ENABLED` → Configuration key for enabling or disabling Open Banking.
+  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_MIN` → Minimum throttle value for Open Banking Approval.
+  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_MAX` → Maximum throttle value for Open Banking Approval.
 
 - **Functions:**
-  - `isFeatureAvailable(FeatureToFunction.OpenBankingApproval, serviceRequest)` → Verifies if Open Banking Approval is available for the service request.
-  - `featureswitchservice.IsOpenBankingApprovalFeatureEnabled()` → Checks if Open Banking Approval feature is enabled in the feature flags.
-  - `throttlingService.isCustomerAllowedToContinueWithoutThrottling()` → Verifies if a customer is allowed to continue with Open Banking Approval without hitting throttling limits.
-  - `turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)` → Turns off the Open Banking Approval feature if conditions aren't met.
+  - `serviceResponse.getAppFunctions()` → Retrieves a list of App Functions for the service response.
+  - `isFeatureEnabled(ConfigurationKeyConstants.OPEN_BANKING_ENABLED, false)` → Checks if Open Banking is enabled in the environment configuration.
+  - `featureSwitchService.isOpenBankingApprovalFeatureEnabled()` → Checks if the Open Banking Approval feature is enabled in the feature flags.
+  - `throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling()` → Checks if the given cardholder ID is within throttling limits for Open Banking Approval.
+  - `turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)` → Turns off the Open Banking Approval feature.
 
 - **Policies:**
-  - **Open Banking Approval Feature Availability** → If Open Banking Approval is available and enabled, the method checks whether throttling conditions are met. If not, the feature is turned off.
-  
+  - **Open Banking Approval Feature Availability** → Ensures that Open Banking is enabled in the environment and that the cardholder does not exceed throttling limits. If either condition is violated, the feature is turned off.
+
 - **Session:**
-  - **Session Parameter Storage:**
-    - Not explicitly stored in this case, but session management could be part of the feature toggling and throttle flag handling.
+  - **App Function Status**: Checks if Open Banking Approval is in the "ON" status and verifies the status of the associated feature flag and throttling condition.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`isFeatureAvailable(FeatureToFunction.OpenBankingApproval, serviceRequest)`**
-   - Verifies if the Open Banking Approval feature is available based on the provided service request.
+1. **`serviceResponse.getAppFunctions()`**
+   - Retrieves all App Functions related to the service response to verify the status of the Open Banking Approval feature.
 
-2. **`featureswitchservice.IsOpenBankingApprovalFeatureEnabled()`**
-   - Checks if the Open Banking Approval feature is enabled in the feature flags.
+2. **`isFeatureEnabled(ConfigurationKeyConstants.OPEN_BANKING_ENABLED, false)`**
+   - Checks if Open Banking is enabled for the system using the provided configuration key.
 
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling()`**
-   - Determines if the customer is within allowed throttling limits for Open Banking Approval.
+3. **`featureSwitchService.isOpenBankingApprovalFeatureEnabled()`**
+   - Verifies whether the Open Banking Approval feature is enabled in the system configuration.
 
-4. **`turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)`**
-   - Disables the Open Banking Approval feature if the customer is not allowed to proceed or if the feature is disabled.
+4. **`throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling()`**
+   - Determines if the cardholder is allowed to proceed with Open Banking Approval without triggering throttling limits.
+
+5. **`turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)`**
+   - Disables the Open Banking Approval feature if conditions are not met (either feature disabled or throttling exceeded).
 
 ---
 
 ### **Method Flow Explanation:**
 
-1. **Feature Availability Check:**
-   - First, it checks whether Open Banking Approval is available for the customer using `isFeatureAvailable()`.
+1. **Retrieve App Functions:**
+   - The method starts by retrieving the list of `AppFunction` objects in the `serviceResponse`.
 
-2. **Open Banking Feature Check:**
-   - If available, it checks whether the Open Banking feature is enabled at the configuration level.
+2. **Check Open Banking Approval Status:**
+   - It iterates through the list of app functions and looks for the Open Banking Approval feature.
+   - If the feature is found and its status is `ON`, it proceeds to check if Open Banking is enabled and evaluates throttling limits.
 
-3. **Throttling Conditions Check:**
-   - Then, it verifies if the customer is allowed to continue using Open Banking without throttling, using `throttlingService.isCustomerAllowedToContinueWithoutThrottling()`.
+3. **Check Environment and Throttling:**
+   - If Open Banking is enabled, it checks whether the Open Banking Approval feature is enabled in the configuration.
+   - It also checks if the cardholder's activity falls within the allowed throttling range.
 
-4. **Turn Off Feature if Necessary:**
-   - If any condition fails (feature disabled or throttling exceeded), it turns off the Open Banking Approval feature using `turnoffFunction()`.
+4. **Turn Off Feature if Conditions Fail:**
+   - If the feature is not enabled, or if throttling conditions are exceeded, the method turns off the Open Banking Approval feature by calling `turnoffFunction()`.
 
+5. **Exit Method:**
+   - The loop exits after processing the Open Banking Approval feature.
+
+---
+
+This method ensures that the Open Banking Approval feature operates within set thresholds, ensuring that the cardholder does not exceed throttling limits and that the feature is only active when appropriate.
