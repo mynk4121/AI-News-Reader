@@ -1,45 +1,37 @@
 ### **Half-Line Description:**
 
-The `putRunningBalanceFlag` method checks the availability of the Daily Balance feature based on function tables and customer group restrictions, turning off the feature if necessary.
+The `putLoanDebtConsolidationFlag` method checks if the Loan Debt Consolidation feature is available and updates the session accordingly.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.DailyBalance` → Refers to the feature related to the daily balance functionality.
-  
+  - `FeatureToFunction.LoanDebtConsolidation` → Refers to the feature related to Loan Debt Consolidation.
+  - `Operationconstants.BARCLAYLOAN_DEBT_CONSOLIDATION_ENABLED` → A session constant that holds the status of Loan Debt Consolidation.
+
 - **Functions:**
-  - `isFeatureAvailable()` → Checks if the Daily Balance feature is available according to the function table and the service request.
-  - `featureSwitchService.isDailyBalanceAvailable()` → Determines if the Daily Balance feature is enabled based on customer group restrictions.
-  - `turnoffFunction()` → Turns off the Daily Balance feature in the service response if it is restricted based on the customer group.
+  - `isFeatureAvailable()` → Checks if the Loan Debt Consolidation feature is available based on the service request.
 
 - **Policies:**
-  - **Feature Availability Policy** → If the Daily Balance feature is switched on, the method checks for customer group restrictions. If the feature is restricted, it is turned off.
-  - **Customer Group Restriction Policy** → If the Daily Balance feature is available but restricted for the customer group, it is turned off.
-
+  - **Feature Availability Policy** → The method checks if the Loan Debt Consolidation feature is enabled. If available, it updates the session with the feature's status.
+  
 - **Session:**
-  - **No session variables** are directly manipulated in this method, but the feature status might affect subsequent requests or session states indirectly.
+  - **sessionParameters.put()** → Stores the availability status of the Loan Debt Consolidation feature in the session as `BARCLAYLOAN_DEBT_CONSOLIDATION_ENABLED`.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
 1. **`isFeatureAvailable()`**
-   - Checks if the Daily Balance feature is enabled in the function tables based on the current request.
+   - Determines if the Loan Debt Consolidation feature is available for the current service request.
 
-2. **`featureSwitchService.isDailyBalanceAvailable()`**
-   - Verifies if the Daily Balance feature is available for the customer group by checking against available feature switches.
-
-3. **`turnoffFunction()`**
-   - Disables the Daily Balance feature in the service response if it is not available or allowed based on customer group restrictions.
+2. **`sessionParameters.put()`**
+   - Updates the session with the current availability status of the Loan Debt Consolidation feature (either enabled or not).
 
 ---
 
 ### **Policy-Specific Breakdown:**
 
 - **Feature Availability Policy**  
-  - The method first checks if the Daily Balance feature is enabled in the function tables. If enabled, it proceeds to check whether the feature is available for the specific customer group. If restricted, the feature is turned off.
-
-- **Customer Group Restriction Policy**  
-  - If the Daily Balance feature is not allowed for the customer group (based on `isDailyBalanceAvailable()`), the feature is turned off, ensuring the correct feature state for the customer.
+  - The method checks if the Loan Debt Consolidation feature is available. If it is, it sets the status to `true` and updates the session; otherwise, it logs that the feature is already off.
