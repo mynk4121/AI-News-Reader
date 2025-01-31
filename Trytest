@@ -1,35 +1,39 @@
 ### **Half-Line Description:**
 
-The `isWealthKitSmartCallEnable` method checks whether the "WealthSmartCall" feature is enabled for the customer, based on the function code, device context, and user context.
+The `putLoanPaymentDateSelectionFlag` method checks if the Loan Payment Date Selection feature is available for the customer and turns off the feature based on the availability.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.WealthSmartCall` → The feature constant for "WealthSmartCall".
-  - `ConfigurationKeyConstants.WEALTHKIT_SMARTCALL_FUNCTION_CODES` → Configuration key for allowed function codes for the WealthSmartCall feature.
+  - `FeatureToFunction.LoanPaymentDateSelection` → The feature constant for Loan Payment Date Selection.
+  - `OperationConstants.BMB_LOAN_PAYMENT_DATE_SELECTION` → Constant used for storing the status of Loan Payment Date Selection in session.
 
 - **Functions:**
-  - `featureswitchservice.isWealthSmartCallAvailable()` → Checks if WealthSmartCall is available for the customer.
-  - `featureflag.isFeatureAvailable()` → Determines if the WealthSmartCall feature is available in the feature flag service.
-  - `Arrays.asList(allowedFunctionCodes).contains(functionCode)` → Checks if the provided function code is among the allowed function codes.
+  - `isFeatureAvailable(FeatureToFunction.LoanPaymentDateSelection, serviceRequest)` → Checks if the Loan Payment Date Selection feature is available for the given service request.
+  - `featureswitchservice.isBMBLoanDateSelectionAvailable()` → Verifies if Loan Payment Date Selection is available for BMB users.
+  - `turnoffFunction(serviceResponse, FeatureToFunction.LoanPaymentDateSelection)` → Turns off the Loan Payment Date Selection feature for BMB users if it's available.
 
 - **Policies:**
-  - **WealthSmartCall Feature Activation** → If the WealthKit is enabled, the function code is allowed, and the WealthSmartCall feature is available, then the WealthSmartCall feature is enabled for the customer.
-
+  - **Loan Payment Date Selection Availability** → If the feature is available and enabled for BMB users, the feature is turned off.
+  
 - **Session:**
-  - **None explicitly in this method**, but the session is implied in the `deviceContext` and `mobileUserContext` (MUC), which influence feature availability.
+  - **Session Parameter Storage:**
+    - `sessionParameters.put(OperationConstants.BMB_LOAN_PAYMENT_DATE_SELECTION, isBMBLoanDateSelectionAvailable)` → Stores the availability status of the Loan Payment Date Selection feature in the session.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`featureswitchservice.isWealthSmartCallAvailable()`**
-   - Checks if the WealthSmartCall feature is available for the customer, returning a boolean indicating availability.
+1. **`isFeatureAvailable(FeatureToFunction.LoanPaymentDateSelection, serviceRequest)`**
+   - Checks whether the Loan Payment Date Selection feature is available based on the service request, returning a boolean value.
 
-2. **`featureflag.isFeatureAvailable()`**
-   - Verifies if the WealthSmartCall feature is enabled in the feature flag service, including checks for the feature’s status and configuration.
+2. **`featureswitchservice.isBMBLoanDateSelectionAvailable()`**
+   - Verifies whether the Loan Payment Date Selection feature is enabled and available specifically for BMB users.
 
-3. **`Arrays.asList(allowedFunctionCodes).contains(functionCode)`**
-   - Checks if the provided function code is part of the list of allowed function codes for the WealthSmartCall feature, enabling the feature only for valid function codes.
+3. **`turnoffFunction(serviceResponse, FeatureToFunction.LoanPaymentDateSelection)`**
+   - Turns off the Loan Payment Date Selection feature if it's enabled for BMB users.
+
+4. **`sessionParameters.put(OperationConstants.BMB_LOAN_PAYMENT_DATE_SELECTION, isBMBLoanDateSelectionAvailable)`**
+   - Saves the status of the Loan Payment Date Selection feature (enabled or disabled) in the session for later use.
