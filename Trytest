@@ -1,47 +1,63 @@
 ### **Half-Line Description:**  
-The `putChangeOfAddressConductFixFlag` method evaluates whether the **Change of Address Conduct Fix** feature should be enabled based on function environment settings, customer group eligibility, and throttling constraints.  
+The `execute` method performs address lookup and validation based on the channel and app function, checking for feature availability, user authentication, and error handling while ensuring proper service response.
 
 ---
 
-### **Constants, Functions, Policies, and Sessions Used:**  
+### **Constants, Functions, Policies, and Sessions Used:**
 
-- **Constants:**  
-  - `ConfigurationKeyConstants.CHANGE_OF_ADDRESS_CONDUCT_FIX_THROTTLE_MIN` → Defines the minimum throttling limit.  
-  - `ConfigurationKeyConstants.CHANGE_OF_ADDRESS_CONDUCT_FIX_THROTTLE_MAX` → Defines the maximum throttling limit.  
+- **Constants:**
+  - `OperationConstants.ADDRESS_LOOKUP_UPDATE` → Defines the operation function for address lookup update.
+  - `OperationConstants.BCA_TRILLIUM_ADDRESS_FEATURE_KEY` → The feature key for address lookup functionality.
+  - `OperationConstants.BCA_TRILLIUM_ADDRESS_LOOKUP_POSTCODE` → Defines the parameter for postcode lookup.
+  - `ErrorCodes.MSG_OP_FATAL` → Error code for fatal operations.
+  - `ErrorCodes.ADDRESS_LOOKUP_TECHNICAL_FAILURE_ALE02` → Error code for technical failure during address lookup.
+  - `ErrorCodes.HTTP_SERVER_FAILURE_STATUS` → HTTP status code for server failure.
+  - `OperationConstants.ERR308` → Specific error code related to failed address lookup.
+  - `OperationConstants.TECHNICAL_FAILURE` → Defines the technical failure message.
 
-- **Functions:**  
-  - `isFeatureAvailable(FeatureToFunction.ChangeOfAddressConductFix, serviceRequest)` → Checks if the feature is enabled at the function level.  
-  - `featureSwitchService.isChangeOfAddressConductFixEnabled()` → Verifies if the feature is allowed for the customer group.  
-  - `throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)` → Ensures only permitted customers can use the feature.  
-  - `throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling(cardHolderId, minRange, maxRange)` → Checks throttling rules for cardholders.  
-  - `turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressConductFix)` → Disables the feature if the customer is not eligible.  
+- **Functions:**
+  - `FeatureFlagsServiceResponse.isFeatureAvailable()` → Checks if the feature is available for the requested operation.
+  - `getMobileUserContext()` → Retrieves the user context for mobile requests.
+  - `serviceResponse.getErrors()` → Retrieves any errors returned by the service.
+  - `businessService.getAddressFromPostcode(postCode)` → Retrieves the address based on postcode from the service.
+  - `setSuccessStatusCodes()` → Sets success status codes for the response.
+  - `setFailureStatusCodes()` → Sets failure status codes for the response.
+  - `setFatalRequestStatusCode()` → Sets status code for fatal request conditions.
 
-- **Policies:**  
-  - **Feature Availability Policy** → Determines if the feature is turned on in the function table.  
-  - **Customer Group Policy** → Restricts access based on customer type.  
-  - **Throttling Policy** → Ensures only a limited number of customers can use the feature.  
+- **Policies:**
+  - **Feature Availability Policy** → Ensures the feature is enabled before continuing with address lookup.
+  - **Authentication Policy** → Verifies the user authentication, especially for Touch ID users.
+  - **Error Handling Policy** → Handles errors like empty postcode, technical failures, and feature unavailability.
+  - **Channel Identification Policy** → Differentiates between BCA and BMB channels for the request.
 
-- **Session:**  
-  - None explicitly stored, but the feature flag status is logged.  
+- **Session:**
+  - `getMobileUserContext(request)` → Retrieves the mobile user context from the session.
+  - `request.getSession()` → Session management for handling user-specific data such as Touch ID status.
 
 ---
 
-### **Small Descriptions for Each Method:**  
+### **Small Descriptions for Each Method:**
 
-1. **`isFeatureAvailable(FeatureToFunction.ChangeOfAddressConductFix, serviceRequest)`**  
-   - Determines if the **Change of Address Conduct Fix** feature is active in the system.  
+1. **`getChannelId(OperationRequest opReq)`**
+   - Determines the channel ID (BMB or BCA) based on the service code from the operation request.
 
-2. **`featureSwitchService.isChangeOfAddressConductFixEnabled()`**  
-   - Checks if the customer is eligible to use the feature based on their group.  
+2. **`FeatureFlagsServiceResponse.isFeatureAvailable()`**
+   - Checks whether the address lookup update feature is available for the current function and user.
 
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)`**  
-   - Ensures that the customer falls within the predefined throttling limits.  
+3. **`getMobileUserContext(request)`**
+   - Retrieves the mobile user context to validate user authentication and session status.
 
-4. **`throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling(cardHolderId, minRange, maxRange)`**  
-   - Performs a similar throttling check but based on cardholder ID instead of customer ID.  
+4. **`businessService.getAddressFromPostcode(postCode)`**
+   - Makes a service call to fetch the address details based on the provided postcode.
 
-5. **`turnOffFunction(serviceResponse, FeatureToFunction.ChangeOfAddressConductFix)`**  
-   - Disables the feature if the customer does not meet the eligibility criteria.  
+5. **`setSuccessStatusCodes(opResponse)`**
+   - Sets the success status codes for the operation response upon successful address lookup.
 
-6. **`LOGGER.debug()` Statements**  
-   - Logs function environment status, customer eligibility, and throttling results for debugging purposes.  
+6. **`setFailureStatusCodes(opResponse)`**
+   - Sets failure status codes if an error occurs, such as invalid postcode or unavailable service.
+
+7. **`setFatalRequestStatusCode(opResponse)`**
+   - Handles the termination of the request with a fatal status if certain conditions (e.g., suspicious request) are met.
+
+8. **`LOGGER.debug()` / `LOGGER.error()` / `LOGGER.trace()`**
+   - Logs various debugging and error messages to track the progress and status of the request handling.
