@@ -1,34 +1,35 @@
 ### **Half-Line Description:**
 
-The `putWealthKitSmartCallFlag` method checks if the "WealthSmartCall" feature is enabled for a customer and, if the WealthKit is not enabled, turns off the feature.
+The `isWealthKitSmartCallEnable` method checks whether the "WealthSmartCall" feature is enabled for the customer, based on the function code, device context, and user context.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.WealthSmartCall` → The feature constant for the "WealthSmartCall" functionality.
-  
+  - `FeatureToFunction.WealthSmartCall` → The feature constant for "WealthSmartCall".
+  - `ConfigurationKeyConstants.WEALTHKIT_SMARTCALL_FUNCTION_CODES` → Configuration key for allowed function codes for the WealthSmartCall feature.
+
 - **Functions:**
-  - `isFeatureAvailable(FeatureToFunction.WealthSmartCall, serviceRequest)` → Checks if the WealthSmartCall feature is available for the given service request.
-  - `isWealthKitEnabled()` → Checks if the WealthKit is enabled for the customer.
-  - `turnoffFunction(opResponse, FeatureToFunction.WealthSmartCall)` → Turns off the WealthSmartCall feature if the condition is met.
-  
+  - `featureswitchservice.isWealthSmartCallAvailable()` → Checks if WealthSmartCall is available for the customer.
+  - `featureflag.isFeatureAvailable()` → Determines if the WealthSmartCall feature is available in the feature flag service.
+  - `Arrays.asList(allowedFunctionCodes).contains(functionCode)` → Checks if the provided function code is among the allowed function codes.
+
 - **Policies:**
-  - **Feature Deactivation Policy** → If the WealthKit is not enabled for the customer, the WealthSmartCall feature is deactivated.
+  - **WealthSmartCall Feature Activation** → If the WealthKit is enabled, the function code is allowed, and the WealthSmartCall feature is available, then the WealthSmartCall feature is enabled for the customer.
 
 - **Session:**
-  - **None explicitly in this method**, but the status of the WealthSmartCall feature is managed in the response object.
+  - **None explicitly in this method**, but the session is implied in the `deviceContext` and `mobileUserContext` (MUC), which influence feature availability.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`isFeatureAvailable(FeatureToFunction.WealthSmartCall, serviceRequest)`**
-   - Checks if the "WealthSmartCall" feature is available for the specific service request, determining whether the feature should be processed.
+1. **`featureswitchservice.isWealthSmartCallAvailable()`**
+   - Checks if the WealthSmartCall feature is available for the customer, returning a boolean indicating availability.
 
-2. **`isWealthKitEnabled()`**
-   - Verifies if the WealthKit functionality is enabled for the customer, allowing the WealthSmartCall feature to be used.
+2. **`featureflag.isFeatureAvailable()`**
+   - Verifies if the WealthSmartCall feature is enabled in the feature flag service, including checks for the feature’s status and configuration.
 
-3. **`turnoffFunction(opResponse, FeatureToFunction.WealthSmartCall)`**
-   - Deactivates the "WealthSmartCall" feature by turning it off in the response when the conditions are met.
+3. **`Arrays.asList(allowedFunctionCodes).contains(functionCode)`**
+   - Checks if the provided function code is part of the list of allowed function codes for the WealthSmartCall feature, enabling the feature only for valid function codes.
