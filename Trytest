@@ -1,37 +1,37 @@
 ### **Half-Line Description:**
 
-The `putLoanDebtConsolidationFlag` method checks if the Loan Debt Consolidation feature is available and updates the session accordingly.
+The `turnoffOutOfScopeAppFunction` method iterates over a list of app functions, checks if they belong to specific features, and turns them off if they are active.
 
 ---
 
 ### **Constants, Functions, Policies, and Sessions Used:**
 
 - **Constants:**
-  - `FeatureToFunction.LoanDebtConsolidation` → Refers to the feature related to Loan Debt Consolidation.
-  - `Operationconstants.BARCLAYLOAN_DEBT_CONSOLIDATION_ENABLED` → A session constant that holds the status of Loan Debt Consolidation.
+  - `OperationConstants.APP_FUNCTION_THRAB`, `OperationConstants.APP_FUNCTION_WEALTH_HISTORICAL_ALLOCATION`, etc. → Various constants representing app functions/features to check.
+  - `FeatureToFunction.<FeatureName>.getNewFeatureName()` → Feature constants for specific features (like `NomiKanaUpgrade`, `Widgets`, etc.).
+  - `Status.ON`, `Status.OFF` → Represents the status of the app functions (enabled/disabled).
 
 - **Functions:**
-  - `isFeatureAvailable()` → Checks if the Loan Debt Consolidation feature is available based on the service request.
+  - `opResponse.getAppFunctions()` → Retrieves the list of app functions to check.
+  - `flag.getFunction()` → Retrieves the function associated with the app flag.
+  - `flag.setStatus(Status.OFF)` → Turns off the app function by setting its status to OFF.
+  - `opResponse.setAppFunctions()` → Updates the response with the modified app functions list.
 
 - **Policies:**
-  - **Feature Availability Policy** → The method checks if the Loan Debt Consolidation feature is enabled. If available, it updates the session with the feature's status.
-  
+  - **Feature Deactivation Policy** → If an app function is identified as out of scope, it is deactivated by turning it off.
+
 - **Session:**
-  - **sessionParameters.put()** → Stores the availability status of the Loan Debt Consolidation feature in the session as `BARCLAYLOAN_DEBT_CONSOLIDATION_ENABLED`.
+  - **None in this method** as the focus is on modifying the app functions within the response object.
 
 ---
 
 ### **Small Descriptions for Each Method:**
 
-1. **`isFeatureAvailable()`**
-   - Determines if the Loan Debt Consolidation feature is available for the current service request.
+1. **`opResponse.getAppFunctions()`**
+   - Retrieves the list of app functions from the response object to check for specific features.
 
-2. **`sessionParameters.put()`**
-   - Updates the session with the current availability status of the Loan Debt Consolidation feature (either enabled or not).
+2. **`flag.getFunction()`**
+   - Gets the function name associated with the app flag, used to match it against known feature names.
 
----
-
-### **Policy-Specific Breakdown:**
-
-- **Feature Availability Policy**  
-  - The method checks if the Loan Debt Consolidation feature is available. If it is, it sets the status to `true` and updates the session; otherwise, it logs that the feature is already off.
+3. **`flag.setStatus(Status.OFF)`**
+   - Sets the status of the app function to OFF, effectively turning it off if it
