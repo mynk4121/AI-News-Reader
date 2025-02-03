@@ -1,70 +1,96 @@
-### **Half-Line Description:**
-
-The `putOpenBankingApprovalFlag` method checks whether the Open Banking Approval feature is enabled, verifies throttling conditions, and disables the feature if any condition fails for a given cardholder.
-
----
-
-### **Constants, Functions, Policies, and Sessions Used:**
-
-- **Constants:**
-  - `FeatureToFunction.OpenBankingApproval.getNewFeatureName()` → Represents the name of the Open Banking Approval feature.
-  - `ConfigurationKeyConstants.OPEN_BANKING_ENABLED` → Configuration key for enabling or disabling Open Banking.
-  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_MIN` → Minimum throttle value for Open Banking Approval.
-  - `ConfigurationKeyConstants.OPEN_BANKING_APPROVAL_THROTTLE_MAX` → Maximum throttle value for Open Banking Approval.
-
-- **Functions:**
-  - `serviceResponse.getAppFunctions()` → Retrieves a list of App Functions for the service response.
-  - `isFeatureEnabled(ConfigurationKeyConstants.OPEN_BANKING_ENABLED, false)` → Checks if Open Banking is enabled in the environment configuration.
-  - `featureSwitchService.isOpenBankingApprovalFeatureEnabled()` → Checks if the Open Banking Approval feature is enabled in the feature flags.
-  - `throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling()` → Checks if the given cardholder ID is within throttling limits for Open Banking Approval.
-  - `turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)` → Turns off the Open Banking Approval feature.
-
-- **Policies:**
-  - **Open Banking Approval Feature Availability** → Ensures that Open Banking is enabled in the environment and that the cardholder does not exceed throttling limits. If either condition is violated, the feature is turned off.
-
-- **Session:**
-  - **App Function Status**: Checks if Open Banking Approval is in the "ON" status and verifies the status of the associated feature flag and throttling condition.
+### **Method Overview:**  
+The `putsRPAQFlag` method determines whether the **SRP Account Opening** feature should be enabled based on feature availability and customer throttling constraints. If the conditions are not met, it disables the feature.
 
 ---
 
-### **Small Descriptions for Each Method:**
+### **Constants, Functions, and Policies Used:**
 
-1. **`serviceResponse.getAppFunctions()`**
-   - Retrieves all App Functions related to the service response to verify the status of the Open Banking Approval feature.
+#### **Constants:**
+- `FeatureToFunction.SRPAccountOpening` → Represents the SRP Account Opening feature.
+- `ConfigurationKeyConstants.SRP_ACCOUNT_OPENING_THROTTLING_MIN_LIMIT` → Minimum threshold for throttling.
+- `ConfigurationKeyConstants.SRP_ACCOUNT_OPENING_THROTTLING_MAX_LIMIT` → Maximum threshold for throttling.
+- `OperationConstants.SRP_ACCOUNT_OPENING` → Session parameter key for SRP Account Opening.
 
-2. **`isFeatureEnabled(ConfigurationKeyConstants.OPEN_BANKING_ENABLED, false)`**
-   - Checks if Open Banking is enabled for the system using the provided configuration key.
+#### **Functions:**
+1. **`isFeatureAvailable(FeatureToFunction.SRPAccountOpening, serviceRequest)`**
+   - Checks if the SRP Account Opening feature is available for the request.
+  
+2. **`featureswitchService.isSRPAOEnabledForCustomerGroup()`**
+   - Checks if the feature is enabled for a specific customer group.
 
-3. **`featureSwitchService.isOpenBankingApprovalFeatureEnabled()`**
-   - Verifies whether the Open Banking Approval feature is enabled in the system configuration.
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(serviceRequest.getCustomerContext().getRegisteredCustomer().customerId, custIdMinRange, custIdMaxRange)`**
+   - Determines if the customer is within the allowed throttling range.
 
-4. **`throttlingService.isBCACardholderIdAllowedToContinueWithoutThrottling()`**
-   - Determines if the cardholder is allowed to proceed with Open Banking Approval without triggering throttling limits.
+4. **`turnoffFunction(serviceResponse, FeatureToFunction.SRPAccountOpening)`**
+   - Disables the SRP Account Opening feature if the customer is outside the throttling range or the feature is not enabled.
 
-5. **`turnoffFunction(serviceResponse, FeatureToFunction.OpenBankingApproval)`**
-   - Disables the Open Banking Approval feature if conditions are not met (either feature disabled or throttling exceeded).
+5. **`sessionParameters.put(OperationConstants.SRP_ACCOUNT_OPENING, srpAOFeatureFlag)`**
+   - Stores the final feature availability status in session parameters.
 
 ---
 
 ### **Method Flow Explanation:**
 
-1. **Retrieve App Functions:**
-   - The method starts by retrieving the list of `AppFunction` objects in the `serviceResponse`.
+1. **Initialize Feature Flags:**
+   - `isFeatureAvailable` is set to `false` initially.
+   - `srpAOFeatureFlag` is also set to `false` (assuming the feature is unavailable unless proven otherwise).
 
-2. **Check Open Banking Approval Status:**
-   - It iterates through the list of app functions and looks for the Open Banking Approval feature.
-   - If the feature is found and its status is `ON`, it proceeds to check if Open Banking is enabled and evaluates throttling limits.
+2. **Check Feature Availability:**
+   - Calls `isFeatureAvailable(FeatureToFunction.SRPAccountOpening, serviceRequest)` to check if the feature is enabled.
 
-3. **Check Environment and Throttling:**
-   - If Open Banking is enabled, it checks whether the Open Banking Approval feature is enabled in the configuration.
-   - It also checks if the cardholder's activity falls within the allowed throttling range.
+3. **Retrieve Throttling Ranges:**
+   - Fetches `custIdMinRange` and `custIdMaxRange` values from configuration.
 
-4. **Turn Off Feature if Conditions Fail:**
-   - If the feature is not enabled, or if throttling conditions are exceeded, the method turns off the Open Banking Approval feature by calling `turnoffFunction()`.
+4. **Check Feature & Throttling Conditions:**
+   - Calls `featureswitchService.isSRPAOEnabledForCustomerGroup()` to check customer group restrictions.
+   - Calls `throttlingService.isCustomerAllowedToContinueWithoutThrottling()` to verify if the customer falls within the allowed throttling range.
+   - Logs the feature availability and throttling status.
 
-5. **Exit Method:**
-   - The loop exits after processing the Open Banking Approval feature.
+5. **Set Feature Status:**
+   - If both feature availability and throttling conditions are met, `srpAOFeatureFlag` is set to `true`.
+   - Otherwise, `turnoffFunction(serviceResponse, FeatureToFunction.SRPAccountOpening)` is called to disable the feature.
+
+6. **Update Session Parameters:**
+   - The final status (`srpAOFeatureFlag`) is stored in the session for reference.
 
 ---
 
-This method ensures that the Open Banking Approval feature operates within set thresholds, ensuring that the cardholder does not exceed throttling limits and that the feature is only active when appropriate.
+### **Simplified Code Version (Refactored for Readability):**
+```java
+private void putSRPAQFlag(GetAppPolicyServiceResponse serviceResponse, GetAppPolicyServiceRequest serviceRequest) {
+
+    boolean srpAOFeatureFlag = false;
+
+    if (isFeatureAvailable(FeatureToFunction.SRPAccountOpening, serviceRequest)) {
+
+        int custIdMinRange = configValues.getIntegerProperty(
+                ConfigurationKeyConstants.SRP_ACCOUNT_OPENING_THROTTLING_MIN_LIMIT, 00);
+        int custIdMaxRange = configValues.getIntegerProperty(
+                ConfigurationKeyConstants.SRP_ACCOUNT_OPENING_THROTTLING_MAX_LIMIT, 99);
+
+        boolean isFeatureAvailable = featureswitchService.isSRPAOEnabledForCustomerGroup();
+        boolean isCustomerInThrottleRange = throttlingService.isCustomerAllowedToContinueWithoutThrottling(
+                serviceRequest.getCustomerContext().getRegisteredCustomer().customerId, custIdMinRange, custIdMaxRange);
+
+        LOGGER.debug("Throttling enabled: " + isCustomerInThrottleRange +
+                     ", Feature available for customer group: " + isFeatureAvailable);
+
+        if (isFeatureAvailable && isCustomerInThrottleRange) {
+            srpAOFeatureFlag = true;
+        } else {
+            turnoffFunction(serviceResponse, FeatureToFunction.SRPAccountOpening);
+        }
+    }
+
+    this.sessionParameters.put(OperationConstants.SRP_ACCOUNT_OPENING, srpAOFeatureFlag);
+}
+```
+
+---
+
+### **Key Takeaways:**
+- The method ensures **SRP Account Opening** is only enabled for eligible customers.
+- It checks both **feature flag** and **throttling constraints** before enabling/disabling the feature.
+- The final status is stored in session parameters for use in later processing.
+
+Let me know if you need further modifications!
