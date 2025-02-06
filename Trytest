@@ -1,21 +1,14 @@
-Here’s the structured breakdown for the given method:  
-
-### **Method Description:**  
-**`putSRPAOFlag`** → Determines if **SRP Account Opening** is enabled for a cardholder based on feature availability and throttling checks.  
-
-### **Constants Used:**  
-- `ConfigurationKeyConstants.SRP_ACCOUNT_OPENING_THROTTLING_MIN_LIMIT`  
-- `ConfigurationKeyConstants.SRP_ACCOUNT_OPENING_THROTTLING_MAX_LIMIT`  
-- `OperationConstants.SRP_ACCOUNT_OPENING`  
-
-### **Functions & Their Purpose:**  
-- **`getAppFunctions()`** → Fetches the list of app functions.  
-- **`getNewFeatureName()`** → Retrieves the feature name for SRP Account Opening.  
-- **`getStatus()`** → Checks if the feature is enabled.  
-- **`getIntegerProperty()`** → Fetches configuration properties for throttling limits.  
-- **`isSRPAOEnabledForCustomerGroup()`** → Verifies if the feature is enabled for a customer group.  
-- **`isBCACardholderIdAllowedToContinueWithoutThrottling()`** → Checks if the cardholder is within the allowed range for throttling.  
-- **`turnoffFunction()`** → Disables the feature if conditions aren’t met.  
-- **`put()`** → Stores the final flag in session parameters.  
-
-Would you like me to do the same for other methods?
+Customer Registration Check: If the customer is not actively registered (REG_ACTIVATED), the feature is turned OFF.
+Feature Availability & Throttling Check: Verifies if the feature is available and the customer is within throttling limits. If not, the feature is turned OFF.
+Customer Segmentation Check:
+If the customer is linked to WealthKit, the feature is turned OFF.
+Checks if the customer has a CSEG marker, which may restrict eligibility.
+Account Eligibility Check:
+Retrieves the customer’s Statement Preference Accounts.
+Zero accounts? Feature is turned OFF.
+Accounts below allowed limit? Feature remains ON.
+Too many accounts? Feature is turned OFF, and CSEG marker is updated.
+Final Decision:
+If all checks pass, the feature is enabled (stifeatureFlag = true).
+Otherwise, it is turned OFF and stored in session parameters.
+This ensures only eligible customers can access the feature while preventing unauthorized activation.
