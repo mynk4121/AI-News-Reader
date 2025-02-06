@@ -1,6 +1,6 @@
-### **Description of `execute` Method (RetainStatementPreferencesOperation)**  
+### **Description of `execute` Method (UpdateStatementPreferencesOperation)**  
 
-This method retains a customer’s **Statement Preferences** if the feature flag (SMP) is enabled. It retrieves account details from the session, sends them to the **choreographer service**, and processes the response. If successful, it updates the response status; otherwise, it logs errors and returns failure codes.  
+This method updates **Statement Preferences** for a user. It checks if the feature flag (SMP) is enabled, retrieves request parameters, and validates the request against session data using **Gateway Hardening**. If valid, it calls the **choreographer service** to update preferences. The response status is set based on success or failure, and errors are logged if encountered.  
 
 ---
 
@@ -8,23 +8,25 @@ This method retains a customer’s **Statement Preferences** if the feature flag
 
 #### **Constants**  
 1. `OperationConstants.SMP` – Feature flag for Statement Preferences.  
-2. `OperationConstants.STATEMENT_PREFERENCES_ACCOUNT_LIST` – Stores account list in the session.  
-3. `OperationConstants.STATEMENT_PREFERENCES_SUCCESS_STATUS` – Expected success status from the choreographer.  
+2. `OperationConstants.STATEMENT_PREFERENCE_ACCOUNT_REQUEST` – Request parameter for account preferences.  
+3. `OperationConstants.STATEMENT_PREFERENCES_SUCCESS_STATUS` – Expected success status from choreographer.  
 4. `OperationConstants.MSG_OP_SUCCESS` – Indicates a successful operation.  
-5. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP01` – General error code for failure.  
-6. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP91` – Specific failure error code.  
+5. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP01` – General failure error code.  
+6. `ErrorCodes.SECURITY_SESSION_VALIDATION_FAILED` – Error for failed session validation.  
+7. `ConfigurationKeyConstants.STATEMENT_PREFERENCES_GATEWAY_HARDENING_ENABLED` – Controls Gateway Hardening validation.  
 
 #### **Functions**  
-1. `getSession().getAttribute(...)` – Retrieves stored session attributes.  
-2. `getSession().setAttribute(...)` – Stores processed response data in the session.  
-3. `choreographer.retainStatementPreferences(choreographerRequest)` – Calls backend service to retain preferences.  
-4. `setAccountList(accountList)` – Assigns the retrieved account list.  
-5. `setCustomerContext(customerContext)` – Attaches customer data to the request.  
+1. `getSession().getAttribute(...)` – Retrieves session attributes.  
+2. `getSession().setAttribute(...)` – Stores processed response data.  
+3. `objectMapper.readValue(...)` – Parses JSON request into `AccountRequest` objects.  
+4. `buildChoreographer(...)` – Prepares the choreographer request.  
+5. `choreographer.updateStatementPreferences(choreographerRequest)` – Calls backend to update preferences.  
+6. `setKeepPreferences(keepPreferences)` – Stores user preference retention choice.  
 
 #### **Policies**  
-- No explicit policy handling is observed in this method.  
+- **Gateway Hardening Validation**: Ensures **Product Identifiers** in the request match session data to prevent unauthorized changes.  
 
 #### **Session Variables Used**  
-1. **Feature flag (`SMP`)** – Determines whether statement preferences should be processed.  
-2. **Account list (`STATEMENT_PREFERENCES_ACCOUNT_LIST`)** – Stores customer’s account details.  
-3. **Response status (`STATEMENT_PREFERENCES_SUCCESS_STATUS`)** – Verifies choreographer response for success.
+1. **Feature flag (`SMP`)** – Determines whether statement preferences can be updated.  
+2. **Account list (`STATEMENT_PREFERENCES_ACCOUNT_LIST`)** – Stores customer account preferences.  
+3. **Security validation (`Gateway Hardening`)** – Compares request data with session-stored accounts.
