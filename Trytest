@@ -1,6 +1,6 @@
-### **Description of `execute` Method**  
+### **Description of `execute` Method (RetainStatementPreferencesOperation)**  
 
-This method retrieves statement preference accounts for a customer. If the **Statement Preferences feature flag (SMP)** is enabled, it fetches account details from the session and calls a choreographer service to get statement preferences. The response is processed, including frequency mapping and group details. If no accounts are found, an error response is returned. The method also handles exceptions, logging errors and returning appropriate error codes.  
+This method retains a customer’s **Statement Preferences** if the feature flag (SMP) is enabled. It retrieves account details from the session, sends them to the **choreographer service**, and processes the response. If successful, it updates the response status; otherwise, it logs errors and returns failure codes.  
 
 ---
 
@@ -9,23 +9,22 @@ This method retrieves statement preference accounts for a customer. If the **Sta
 #### **Constants**  
 1. `OperationConstants.SMP` – Feature flag for Statement Preferences.  
 2. `OperationConstants.STATEMENT_PREFERENCES_ACCOUNT_LIST` – Stores account list in the session.  
-3. `OperationConstants.GET_STATEMENT_ACCOUNT_PREFERENCES_RESPONSE` – Stores choreographer response in the session.  
-4. `OperationConstants.STATEMENT_PREFERENCES_RESPONSE` – Stores statement preference details in the session.  
-5. `OperationConstants.MSG_OP_SUCCESS` – Indicates successful operation.  
-6. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP01` – Error code for failed statement preferences retrieval.  
+3. `OperationConstants.STATEMENT_PREFERENCES_SUCCESS_STATUS` – Expected success status from the choreographer.  
+4. `OperationConstants.MSG_OP_SUCCESS` – Indicates a successful operation.  
+5. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP01` – General error code for failure.  
+6. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP91` – Specific failure error code.  
 
 #### **Functions**  
-1. `choreographer.getStatementPreferencesAccounts(choreographerRequest)` – Fetches statement preferences from the backend.  
-2. `buildFrequencyMap(choreographerResponse.getFrequencyReference())` – Maps frequency details.  
-3. `setGroupDetailsInResponse(choreographerResponse.getAccountList())` – Assigns group details to response.  
-4. `getSession().getAttribute(...)` – Retrieves stored session attributes.  
-5. `getSession().setAttribute(...)` – Stores processed response data in the session.  
+1. `getSession().getAttribute(...)` – Retrieves stored session attributes.  
+2. `getSession().setAttribute(...)` – Stores processed response data in the session.  
+3. `choreographer.retainStatementPreferences(choreographerRequest)` – Calls backend service to retain preferences.  
+4. `setAccountList(accountList)` – Assigns the retrieved account list.  
+5. `setCustomerContext(customerContext)` – Attaches customer data to the request.  
 
 #### **Policies**  
 - No explicit policy handling is observed in this method.  
 
 #### **Session Variables Used**  
 1. **Feature flag (`SMP`)** – Determines whether statement preferences should be processed.  
-2. **Account list (`STATEMENT_PREFERENCES_ACCOUNT_LIST`)** – Stores account details retrieved from the session.  
-3. **Choreographer response (`GET_STATEMENT_ACCOUNT_PREFERENCES_RESPONSE`)** – Stores response from backend service.  
-4. **Statement preferences response (`STATEMENT_PREFERENCES_RESPONSE`)** – Stores final processed statement preferences details.  
+2. **Account list (`STATEMENT_PREFERENCES_ACCOUNT_LIST`)** – Stores customer’s account details.  
+3. **Response status (`STATEMENT_PREFERENCES_SUCCESS_STATUS`)** – Verifies choreographer response for success.
