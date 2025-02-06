@@ -1,1 +1,3 @@
-The method checks if the customer is actively registered; otherwise, it disables the feature. It verifies feature availability and throttling limits, turning it off if conditions aren’t met. If the customer is linked to WealthKit, the feature is disabled. It then checks for a CSEG marker and retrieves eligible accounts. If the account count is zero or exceeds the allowed limit, the feature is turned off. If the count is within limits, it remains enabled. The final status is stored in session parameters to ensure only eligible customers can access the feature.
+1. **WealthKit Check** – Disables the feature if the customer has WealthKit.  
+2. **CSEG Marker Handling** – Updates customer segmentation if too many accounts exist.  
+3. **Account List Fetching** – Retrieves specific eligible accounts for Statement Preferences.
