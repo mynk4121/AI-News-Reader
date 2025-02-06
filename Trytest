@@ -1,3 +1,31 @@
-1. **WealthKit Check** – Disables the feature if the customer has WealthKit.  
-2. **CSEG Marker Handling** – Updates customer segmentation if too many accounts exist.  
-3. **Account List Fetching** – Retrieves specific eligible accounts for Statement Preferences.
+### **Description of `execute` Method**  
+
+This method retrieves statement preference accounts for a customer. If the **Statement Preferences feature flag (SMP)** is enabled, it fetches account details from the session and calls a choreographer service to get statement preferences. The response is processed, including frequency mapping and group details. If no accounts are found, an error response is returned. The method also handles exceptions, logging errors and returning appropriate error codes.  
+
+---
+
+### **Constants, Functions, Policies, and Sessions Used**  
+
+#### **Constants**  
+1. `OperationConstants.SMP` – Feature flag for Statement Preferences.  
+2. `OperationConstants.STATEMENT_PREFERENCES_ACCOUNT_LIST` – Stores account list in the session.  
+3. `OperationConstants.GET_STATEMENT_ACCOUNT_PREFERENCES_RESPONSE` – Stores choreographer response in the session.  
+4. `OperationConstants.STATEMENT_PREFERENCES_RESPONSE` – Stores statement preference details in the session.  
+5. `OperationConstants.MSG_OP_SUCCESS` – Indicates successful operation.  
+6. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP01` – Error code for failed statement preferences retrieval.  
+
+#### **Functions**  
+1. `choreographer.getStatementPreferencesAccounts(choreographerRequest)` – Fetches statement preferences from the backend.  
+2. `buildFrequencyMap(choreographerResponse.getFrequencyReference())` – Maps frequency details.  
+3. `setGroupDetailsInResponse(choreographerResponse.getAccountList())` – Assigns group details to response.  
+4. `getSession().getAttribute(...)` – Retrieves stored session attributes.  
+5. `getSession().setAttribute(...)` – Stores processed response data in the session.  
+
+#### **Policies**  
+- No explicit policy handling is observed in this method.  
+
+#### **Session Variables Used**  
+1. **Feature flag (`SMP`)** – Determines whether statement preferences should be processed.  
+2. **Account list (`STATEMENT_PREFERENCES_ACCOUNT_LIST`)** – Stores account details retrieved from the session.  
+3. **Choreographer response (`GET_STATEMENT_ACCOUNT_PREFERENCES_RESPONSE`)** – Stores response from backend service.  
+4. **Statement preferences response (`STATEMENT_PREFERENCES_RESPONSE`)** – Stores final processed statement preferences details.  
