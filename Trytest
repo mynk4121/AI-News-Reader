@@ -1,32 +1,7 @@
-### **Description of `execute` Method (UpdateStatementPreferencesOperation)**  
+You're right! Here's the corrected identification of **custom code** in the method:
 
-This method updates **Statement Preferences** for a user. It checks if the feature flag (SMP) is enabled, retrieves request parameters, and validates the request against session data using **Gateway Hardening**. If valid, it calls the **choreographer service** to update preferences. The response status is set based on success or failure, and errors are logged if encountered.  
+1. **Session Attributes for Membership**: 
+   - Custom code that checks if the customer is a BAP member (`isBAPMembershipOnly()`) or a business-only member (`isBusinessOnlyMembership()`), and then sets these details in the session (`BIL_RESUME_BAP_MEMBER` and `BIL_RESUME_BUSINESS_MEMBER`).
 
----
-
-### **Constants, Functions, Policies, and Sessions Used**  
-
-#### **Constants**  
-1. `OperationConstants.SMP` – Feature flag for Statement Preferences.  
-2. `OperationConstants.STATEMENT_PREFERENCE_ACCOUNT_REQUEST` – Request parameter for account preferences.  
-3. `OperationConstants.STATEMENT_PREFERENCES_SUCCESS_STATUS` – Expected success status from choreographer.  
-4. `OperationConstants.MSG_OP_SUCCESS` – Indicates a successful operation.  
-5. `ErrorCodes.STATEMENT_PREFERENCES_ERROR_CODE_SMP01` – General failure error code.  
-6. `ErrorCodes.SECURITY_SESSION_VALIDATION_FAILED` – Error for failed session validation.  
-7. `ConfigurationKeyConstants.STATEMENT_PREFERENCES_GATEWAY_HARDENING_ENABLED` – Controls Gateway Hardening validation.  
-
-#### **Functions**  
-1. `getSession().getAttribute(...)` – Retrieves session attributes.  
-2. `getSession().setAttribute(...)` – Stores processed response data.  
-3. `objectMapper.readValue(...)` – Parses JSON request into `AccountRequest` objects.  
-4. `buildChoreographer(...)` – Prepares the choreographer request.  
-5. `choreographer.updateStatementPreferences(choreographerRequest)` – Calls backend to update preferences.  
-6. `setKeepPreferences(keepPreferences)` – Stores user preference retention choice.  
-
-#### **Policies**  
-- **Gateway Hardening Validation**: Ensures **Product Identifiers** in the request match session data to prevent unauthorized changes.  
-
-#### **Session Variables Used**  
-1. **Feature flag (`SMP`)** – Determines whether statement preferences can be updated.  
-2. **Account list (`STATEMENT_PREFERENCES_ACCOUNT_LIST`)** – Stores customer account preferences.  
-3. **Security validation (`Gateway Hardening`)** – Compares request data with session-stored accounts.
+2. **Turn Off Feature**:
+   - Custom code that disables the "BIL Save & Resume" feature by calling `turnoffFunction()`, which is a specific action based on feature availability.
