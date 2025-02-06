@@ -1,14 +1,1 @@
-Customer Registration Check: If the customer is not actively registered (REG_ACTIVATED), the feature is turned OFF.
-Feature Availability & Throttling Check: Verifies if the feature is available and the customer is within throttling limits. If not, the feature is turned OFF.
-Customer Segmentation Check:
-If the customer is linked to WealthKit, the feature is turned OFF.
-Checks if the customer has a CSEG marker, which may restrict eligibility.
-Account Eligibility Check:
-Retrieves the customer’s Statement Preference Accounts.
-Zero accounts? Feature is turned OFF.
-Accounts below allowed limit? Feature remains ON.
-Too many accounts? Feature is turned OFF, and CSEG marker is updated.
-Final Decision:
-If all checks pass, the feature is enabled (stifeatureFlag = true).
-Otherwise, it is turned OFF and stored in session parameters.
-This ensures only eligible customers can access the feature while preventing unauthorized activation.
+The method checks if the customer is actively registered; otherwise, it disables the feature. It verifies feature availability and throttling limits, turning it off if conditions aren’t met. If the customer is linked to WealthKit, the feature is disabled. It then checks for a CSEG marker and retrieves eligible accounts. If the account count is zero or exceeds the allowed limit, the feature is turned off. If the count is within limits, it remains enabled. The final status is stored in session parameters to ensure only eligible customers can access the feature.
