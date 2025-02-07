@@ -1,21 +1,29 @@
-### **Description of `putIosATMLimitRefactoredFeatureFlag` Method**  
-This method checks if the **IOS ATM Limit Refactored Feature** is enabled for a service request and logs the status. If the feature is not available, it disables the functionality and logs that it has been turned off.
+### **Description of `putEcosystemSubscriptionsFlag` Method**  
+This method checks if the **Ecosystem Subscriptions Feature** is enabled for a given service request. It also checks if the customer's ID falls within the allowed throttle range. If the feature is enabled and the throttle check passes, the feature is allowed to continue. If not, it turns off the feature.
 
 ### **Constants Used:**  
-- `FeatureToFunction.DCSC_ATM_LIMIT_IOS_REFACTOR` – Represents the feature flag for the refactored IOS ATM limit.
+- `FeatureToFunction.ECOSYSTEM_SUBSCRIPTIONS` – Represents the feature flag for Ecosystem Subscriptions.
+- `ConfigurationkeyConstants.ECOSYSTEM_SUBSCRIPTIONS_THROTTLE_MIN` – Minimum throttle range for customer ID.
+- `ConfigurationkeyConstants.ECOSYSTEM_SUBSCRIPTIONS_THROTTLE_MAX` – Maximum throttle range for customer ID.
+- `OperationConstants.DEFAULT_THROTTLE_MIN` – Default minimum throttle value.
+- `OperationConstants.DEFAULT_THROTTLE_MAX` – Default maximum throttle value.
 
 ### **Functions Used:**  
-- `isFeatureAvailable(FeatureToFunction.DCSC_ATM_LIMIT_IOS_REFACTOR, serviceRequest)`  
-  - Checks whether the IOS ATM limit refactored feature is available or enabled for the given service request.
+- `isFeatureAvailable(FeatureToFunction.ECOSYSTEM_SUBSCRIPTIONS, serviceRequest)`  
+  - Checks if the Ecosystem Subscriptions feature is available for the service request.
   
-- `turnoffFunction(serviceResponse, FeatureToFunction.DCSC_ATM_LIMIT_IOS_REFACTOR)`  
-  - Disables the IOS ATM limit refactored feature in the response if the feature is not enabled.
+- `throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)`  
+  - Verifies if the customer’s ID falls within the allowed throttle range.
+  
+- `turnoffFunction(serviceResponse, FeatureToFunction.ECOSYSTEM_SUBSCRIPTIONS)`  
+  - Disables the Ecosystem Subscriptions feature in the service response if the conditions are not met.
 
 ### **Policy Used:**  
 - No specific policies are applied in this method.
 
 ### **Session Used:**  
-- No session attributes are used in this method.
+- `this.sessionParameters.put(OperationConstants.ECOSYSTEM_SUBSCRIPTIONS, isEcosystemSubscriptionsEnabled)`  
+  - Sets the status of the Ecosystem Subscriptions feature in the session parameters.
 
 ### **Custom Code:**  
-- **No custom code is present.** The method follows a standard structure for checking feature availability, logging the status, and turning off the feature when necessary.
+- **No custom code is present.** The method follows a standard pattern for checking feature availability, performing throttling checks, logging status, and turning off features when necessary.
