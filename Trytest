@@ -2,18 +2,18 @@
 The method checks if the **Loan Affordability Hub MCA** feature is enabled for the customer. If enabled, it verifies if the customer ID falls within a defined throttling range. If outside the range, the feature is turned off using `turnoffFunction()`.  
 
 ### **Constants Used:**  
-- `LoanAffordabilityHubConstants.BMB_LOAN_AFFORDABILITY_HUB_THROTTLE_MIN`  
-- `LoanAffordabilityHubConstants.BMB_LOAN_AFFORDABILITY_HUB_THROTTLE_MAX`  
-- `LoanAffordabilityHubConstants.LN_OPEN`  
+- `LoanAffordabilityHubConstants.BMB_LOAN_AFFORDABILITY_HUB_THROTTLE_MIN` – Minimum customer ID range for throttling.  
+- `LoanAffordabilityHubConstants.BMB_LOAN_AFFORDABILITY_HUB_THROTTLE_MAX` – Maximum customer ID range for throttling.  
+- `LoanAffordabilityHubConstants.LN_OPEN` – Feature flag for Loan Affordability Hub MCA.  
 
 ### **Functions Used:**  
-- `isFeatureAvailable(FeatureToFunction.LoanAffordabilityHub, serviceRequest)`  
-- `featureSwitchService.isLoanAffordabilityHubMCAFeatureEnabled()`  
-- `throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`  
-- `turnoffFunction(serviceResponse, FeatureToFunction.LoanAffordabilityHub)`  
+1. `isFeatureAvailable(FeatureToFunction.LoanAffordabilityHub, serviceRequest)` – Checks if the feature is enabled for the customer.  
+2. `featureSwitchService.isLoanAffordabilityHubMCAFeatureEnabled()` – Determines if the feature switch is turned on.  
+3. `throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)` – Verifies if the customer ID falls within the allowed throttling range.  
+4. `turnoffFunction(serviceResponse, FeatureToFunction.LoanAffordabilityHub)` – Disables the feature if the customer is outside the throttling range.  
 
 ### **Session Used:**  
-- `this.sessionParameters.put(LoanAffordabilityHubConstants.LN_OPEN, isLoanAffordabilityHubMCAEnabled)`  
+- `this.sessionParameters.put(LoanAffordabilityHubConstants.LN_OPEN, isLoanAffordabilityHubMCAEnabled)` – Stores the feature flag in the session.  
 
 ### **Custom Code:**  
 If the customer ID falls outside the throttling range, the feature is disabled using `turnoffFunction()`.
