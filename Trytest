@@ -1,13 +1,11 @@
 ### **Description:**  
-This method checks if the **SSP Payment Confirmation** feature is enabled. If the feature switch is off, it disables the feature using `turnoffFunction()`.  
+This method checks if the **MORTMAP** feature is enabled and logs whether it is switched on or off.  
 
 ### **Constants Used:**  
-- **`FeatureToFunction.SSP_PAYMENT_CONFIRMATION`** – Represents the SSP Payment Confirmation feature.  
+- **`FeatureToFunction.MORTMAP`** – Represents the MORTMAP feature.  
 
 ### **Functions Used:**  
-1. **`isFeatureAvailable(FeatureToFunction.SSP_PAYMENT_CONFIRMATION, serviceRequest)`** – Checks if the feature is enabled for the customer.  
-2. **`featureSwitchService.isSSPPaymentConfirmationEnabled()`** – Determines if the feature switch is turned on.  
-3. **`turnoffFunction(serviceResponse, FeatureToFunction.SSP_PAYMENT_CONFIRMATION)`** – Disables the feature if the switch is off.  
+1. **`isFeatureAvailable(FeatureToFunction.MORTMAP, serviceRequest)`** – Checks if the feature is enabled for the customer.  
 
 ### **Custom Code:**  
-If the feature switch is off, `turnoffFunction()` is called to disable the **SSP Payment Confirmation** feature.
+No custom code is present in this method; it only logs the feature status.
