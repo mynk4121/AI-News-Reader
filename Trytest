@@ -1,12 +1,18 @@
 ### **Description:**  
-This method checks if the **Fair Fees Personalization** feature is enabled. If it is switched off, the method disables it using `turnoffFunction()`.  
+This method checks if the **Business Insurance Simply Business (BISB)** feature is enabled. If it is disabled or the customer is a personal customer, the feature is turned off using `turnoffFunction()`.  
 
 ### **Constants Used:**  
-- **`FeatureToFunction.DSCS_FAIR_FEES_PERSONALISATION`** – Represents the Fair Fees Personalization feature.  
+- **`FeatureToFunction.BISB`** – Represents the Business Insurance Simply Business feature.  
+- **`ConfigurationKeyConstants.BUSINS_SIMPLYBUSINESS_THROTTLE_MIN`** – Minimum threshold for BISB throttling.  
+- **`ConfigurationKeyConstants.BUSINS_SIMPLYBUSINESS_THROTTLE_MAX`** – Maximum threshold for BISB throttling.  
+- **`OperationConstants.LOAD_BUSINESS_DATA_ENABLED`** – Flag for loading business data.  
 
 ### **Functions Used:**  
-1. **`isFeatureAvailable(FeatureToFunction.DSCS_FAIR_FEES_PERSONALISATION, serviceRequest)`** – Checks if the feature is enabled.  
-2. **`turnoffFunction(serviceResponse, FeatureToFunction.DSCS_FAIR_FEES_PERSONALISATION)`** – Disables the feature if it is switched off.  
+1. **`isFeatureAvailable(FeatureToFunction.BISB, serviceRequest)`** – Checks if the BISB feature is enabled.  
+2. **`featureSwitchService.isBusInsSimplyBusinessEnabled()`** – Verifies if the customer group is eligible for BISB.  
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`** – Checks if the customer falls within the BISB throttling range.  
+4. **`turnoffFunction(serviceResponse, FeatureToFunction.BISB)`** – Disables the feature if not enabled or if the customer is a personal customer.  
 
 ### **Custom Code:**  
-- **Disabling the feature if switched off** – If the feature is not available, `turnoffFunction()` is called to ensure it is disabled.
+- **Throttling Check for BISB** – Ensures only customers within a certain range can use the feature.  
+- **Disabling Feature for Personal Customers** – If the customer is not a business user, the feature is turned off.
