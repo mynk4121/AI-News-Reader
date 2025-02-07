@@ -1,18 +1,20 @@
-### **Description:**  
-This method checks if the **Delete Registration** feature is enabled and whether the customer qualifies based on a throttling range. If the feature is unavailable or the customer does not meet the criteria, the function disables the **Delete Registration** feature.  
+### **Description of `putNgcbChangePaymentDueDateFlag` Method**  
+This method manages the **Change Payment Due Date (CPDD) feature flag** by checking its availability in the system and enabling or disabling it accordingly.  
 
 ### **Constants Used:**  
-- **`FeatureToFunction.DELETEREG`** – Represents the Delete Registration feature.  
-- **`ConfigurationKeyConstants.DELETEREG_THROTTLE_MIN`** – Minimum threshold for throttling.  
-- **`ConfigurationKeyConstants.DELETEREG_THROTTLE_MAX`** – Maximum threshold for throttling.  
-- **`OperationConstants.DEFAULT_THROTTLE_MIN`** – Default minimum throttle value.  
-- **`OperationConstants.DEFAULT_THROTTLE_MAX`** – Default maximum throttle value.  
+- `FeatureToFunction.NGCB_CPDD` – Represents the Change Payment Due Date feature flag.  
 
 ### **Functions Used:**  
-1. **`isFeatureAvailable(FeatureToFunction.DELETEREG, serviceRequest)`** – Checks if the Delete Registration feature is available.  
-2. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`** – Determines if the customer falls within the allowed throttling range.  
-3. **`turnoffFunction(serviceResponse, FeatureToFunction.DELETEREG)`** – Disables the feature if the customer does not qualify.  
+- `isFeatureAvailable(FeatureToFunction.NGCB_CPDD, serviceRequest)`  
+  - Checks if the Change Payment Due Date feature is enabled.  
+- `turnoffFunction(serviceResponse, FeatureToFunction.NGCB_CPDD)`  
+  - Disables the feature if it is not available.  
+
+### **Policy Used:**  
+- No specific policies are applied in this method.  
+
+### **Session Used:**  
+- No session attributes are used in this method.  
 
 ### **Custom Code:**  
-- **Throttling Check for Delete Registration** – Ensures only customers within the defined range can access the feature.  
-- **Feature Deactivation for Ineligible Customers** – Turns off the Delete Registration feature if the customer is not allowed to use it.
+- **No custom code is present.** This method follows a standard pattern of checking feature availability and enabling or disabling it accordingly.
