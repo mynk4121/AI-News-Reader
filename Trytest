@@ -1,13 +1,13 @@
 ### **Description:**  
-The method checks if the **SSP Share Receipt** feature is enabled. If the feature switch is off, it disables the feature using `turnoffFunction()`.  
+This method checks if the **SSP Payment Confirmation** feature is enabled. If the feature switch is off, it disables the feature using `turnoffFunction()`.  
 
 ### **Constants Used:**  
-- **`FeatureToFunction.SSP_SHARE_RECIEPT`** – Represents the SSP Share Receipt feature.  
+- **`FeatureToFunction.SSP_PAYMENT_CONFIRMATION`** – Represents the SSP Payment Confirmation feature.  
 
 ### **Functions Used:**  
-1. **`isFeatureAvailable(FeatureToFunction.SSP_SHARE_RECIEPT, serviceRequest)`** – Checks if the feature is enabled for the customer.  
-2. **`featureSwitchService.isSSPShareRecieptEnabled()`** – Determines if the feature switch is turned on.  
-3. **`turnoffFunction(serviceResponse, FeatureToFunction.SSP_SHARE_RECIEPT)`** – Disables the feature if the switch is off.  
+1. **`isFeatureAvailable(FeatureToFunction.SSP_PAYMENT_CONFIRMATION, serviceRequest)`** – Checks if the feature is enabled for the customer.  
+2. **`featureSwitchService.isSSPPaymentConfirmationEnabled()`** – Determines if the feature switch is turned on.  
+3. **`turnoffFunction(serviceResponse, FeatureToFunction.SSP_PAYMENT_CONFIRMATION)`** – Disables the feature if the switch is off.  
 
 ### **Custom Code:**  
-If the feature switch is off, `turnoffFunction()` is called to disable the **SSP Share Receipt** feature.
+If the feature switch is off, `turnoffFunction()` is called to disable the **SSP Payment Confirmation** feature.
