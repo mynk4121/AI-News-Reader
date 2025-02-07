@@ -1,23 +1,53 @@
-### **Description of `putExternalMarketing` Method**
+### **Description of `putContactlessLimitFlag` Method**
 
-This method checks whether the **External Marketing** feature is available based on the service request. If it is available, it further checks if the feature is enabled for the current customer group. If the feature is enabled, the flag is set to `true`, otherwise, the feature is turned off.
+This method manages the state of the **Contactless Limit** feature flag. It checks whether the feature is available and whether the customer meets the required conditions for enabling the feature. If the conditions are met, the feature is enabled; otherwise, it is turned off.
 
 ### **Constants Used:**
-- `FeatureToFunction.ExternalMarketing` – Represents the feature flag for External Marketing.
-- `isExternalMarketingEnabled` – A boolean variable that holds the status of whether the External Marketing feature is enabled.
+- `FeatureToFunction.CONTACTLESS_LIMIT` – Represents the Contactless Limit feature flag.
+- `OperationConstants.CONTACTLESS` – Represents the key used to store the feature availability status.
+- `ConfigurationkeyConstants.BUSINESS_CUSTOMER` – Constant used to check if the customer is a business customer.
 
 ### **Functions Used:**
-- `isFeatureAvailable(FeatureToFunction.ExternalMarketing, serviceRequest)`  
-  - This checks if the External Marketing feature is available based on the service request.
+- `isFeatureAvailable(FeatureToFunction.CONTACTLESS_LIMIT, serviceRequest)`  
+  - Checks if the Contactless Limit feature is available based on the service request.
   
-- `featureswitchService.isExternalMarketingEnabled()`  
-  - This checks whether the feature is enabled for the current customer group.
+- `featureSwitchService.isContactlessLimitEnabled()`  
+  - Checks if the Contactless Limit feature is enabled in the feature switch service.
   
-- `turnoffFunction(serviceResponse, FeatureToFunction.ExternalMarketing)`  
-  - This turns off the External Marketing feature if it is not allowed for the customer.
+- `turnoffFunction(serviceResponse, FeatureToFunction.CONTACTLESS_LIMIT)`  
+  - Turns off the Contactless Limit feature if the customer does not meet the eligibility conditions.
+
+- `serviceRequest.getCustomerContext().getRegisteredCustomerClass()`  
+  - Retrieves the customer type to check if the customer is a business customer.
+  
+- `serviceRequest.getCustomerContext().isBusinessOnlyMembership()`  
+  - Checks if the customer is a Business Only member.
 
 ### **Policy Used:**
-- No specific policy is applied in this method.
+- **Business Customer Policy**: If the customer is a business customer and is not eligible for the **BB/DCSC** debit card, the feature will be turned off, even if it is enabled for non-business customers.
+  
+- **Feature Availability Based on Customer Type**: If the customer is a business customer, the eligibility for the Contactless Limit feature will also depend on whether the debit card is eligible.
 
 ### **Custom Code:**
-- **No custom code is present.** The method follows a standard approach for feature flag checking, customer group verification, and logging the feature status.
+- **Business Customer Eligibility**: The eligibility check considers whether the customer is a business customer and whether they have the necessary debit card eligibility (controlled by `isBbDcscEligibleDebitCardon`). This ensures that business customers are only able to use the feature under certain conditions.
+
+---
+
+### **Method Explanation with Steps:**
+
+1. **Check Feature Availability**:
+   - The method first checks if the **Contactless Limit** feature is available for the service request. If the feature is not available, it logs that the feature is switched off.
+
+2. **Check Customer Eligibility**:
+   - If the feature is available, the method retrieves the customer's type (`customerType`) and checks if the customer is a business customer (`isBOMCustomer`).
+   - If the customer is a business customer, it checks if the customer is eligible for the Contactless Limit feature based on their debit card status and business membership.
+
+3. **Feature Activation/Deactivation**:
+   - If the customer is not eligible for the feature, it turns the feature off by calling `turnoffFunction`.
+   - If the customer is eligible, the feature is considered available and the flag `isFeatureAvailable` is set to `true`.
+
+4. **Store the Feature Status**:
+   - The final availability status of the feature (`isFeatureAvailable`) is stored in the session parameters.
+
+### **Logging**:
+- The method logs each significant step, including feature availability status, customer eligibility checks, and the final outcome (whether the feature is turned on or off).
