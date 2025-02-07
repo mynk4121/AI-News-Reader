@@ -1,1 +1,19 @@
-If the **Strategic Aggregation V3** feature is enabled, it checks if it is available for the user. If unavailable, it further verifies the device OS and app version before deciding to disable the feature using `turnoffFunction()`.
+### **Description:**  
+The method checks if the **Loan Affordability Hub MCA** feature is enabled for the customer. If enabled, it verifies if the customer ID falls within a defined throttling range. If outside the range, the feature is turned off using `turnoffFunction()`.  
+
+### **Constants Used:**  
+- `LoanAffordabilityHubConstants.BMB_LOAN_AFFORDABILITY_HUB_THROTTLE_MIN`  
+- `LoanAffordabilityHubConstants.BMB_LOAN_AFFORDABILITY_HUB_THROTTLE_MAX`  
+- `LoanAffordabilityHubConstants.LN_OPEN`  
+
+### **Functions Used:**  
+- `isFeatureAvailable(FeatureToFunction.LoanAffordabilityHub, serviceRequest)`  
+- `featureSwitchService.isLoanAffordabilityHubMCAFeatureEnabled()`  
+- `throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`  
+- `turnoffFunction(serviceResponse, FeatureToFunction.LoanAffordabilityHub)`  
+
+### **Session Used:**  
+- `this.sessionParameters.put(LoanAffordabilityHubConstants.LN_OPEN, isLoanAffordabilityHubMCAEnabled)`  
+
+### **Custom Code:**  
+If the customer ID falls outside the throttling range, the feature is disabled using `turnoffFunction()`.
