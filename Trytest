@@ -1,29 +1,20 @@
-### **Description of `putEcosystemSubscriptionsFlag` Method**  
-This method checks if the **Ecosystem Subscriptions Feature** is enabled for a given service request. It also checks if the customer's ID falls within the allowed throttle range. If the feature is enabled and the throttle check passes, the feature is allowed to continue. If not, it turns off the feature.
+### **Description of `putSepaEnhancementsDay1FeatureFlag` Method**
 
-### **Constants Used:**  
-- `FeatureToFunction.ECOSYSTEM_SUBSCRIPTIONS` – Represents the feature flag for Ecosystem Subscriptions.
-- `ConfigurationkeyConstants.ECOSYSTEM_SUBSCRIPTIONS_THROTTLE_MIN` – Minimum throttle range for customer ID.
-- `ConfigurationkeyConstants.ECOSYSTEM_SUBSCRIPTIONS_THROTTLE_MAX` – Maximum throttle range for customer ID.
-- `OperationConstants.DEFAULT_THROTTLE_MIN` – Default minimum throttle value.
-- `OperationConstants.DEFAULT_THROTTLE_MAX` – Default maximum throttle value.
+This method checks whether the **SEPA Enhancements Day 1** feature is available based on the service request and function environment. If the feature is enabled, it sets a flag to `true` and logs the appropriate message. It also updates the session parameters with the feature status.
 
-### **Functions Used:**  
-- `isFeatureAvailable(FeatureToFunction.ECOSYSTEM_SUBSCRIPTIONS, serviceRequest)`  
-  - Checks if the Ecosystem Subscriptions feature is available for the service request.
+### **Constants Used:**
+- `FeatureToFunction.SEPA_ENHANCEMENTS_DAY1` – Represents the feature flag for SEPA Enhancements Day 1.
+- `OperationConstants.SEPA_ENHANCEMENTS_DAY1` – The key used to store the feature status in the session parameters.
+
+### **Functions Used:**
+- `isFeatureAvailable(FeatureToFunction.SEPA_ENHANCEMENTS_DAY1, serviceRequest)`  
+  - This checks if the SEPA Enhancements Day 1 feature is enabled based on the service request.
   
-- `throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, minRange, maxRange)`  
-  - Verifies if the customer’s ID falls within the allowed throttle range.
-  
-- `turnoffFunction(serviceResponse, FeatureToFunction.ECOSYSTEM_SUBSCRIPTIONS)`  
-  - Disables the Ecosystem Subscriptions feature in the service response if the conditions are not met.
+- `this.sessionParameters.put(OperationConstants.SEPA_ENHANCEMENTS_DAY1, isSepaEnhancementsDay1FeatureAvailable)`  
+  - Stores the feature availability status (`true` or `false`) in the session parameters.
 
-### **Policy Used:**  
-- No specific policies are applied in this method.
+### **Policy Used:**
+- No specific policy is applied in this method.
 
-### **Session Used:**  
-- `this.sessionParameters.put(OperationConstants.ECOSYSTEM_SUBSCRIPTIONS, isEcosystemSubscriptionsEnabled)`  
-  - Sets the status of the Ecosystem Subscriptions feature in the session parameters.
-
-### **Custom Code:**  
-- **No custom code is present.** The method follows a standard pattern for checking feature availability, performing throttling checks, logging status, and turning off features when necessary.
+### **Custom Code:**
+- **No custom code is present.** The method follows a standard approach for feature flag checking and logging the status of the feature.
