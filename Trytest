@@ -1,20 +1,23 @@
-### **Description of `putSepaEnhancementsDay1FeatureFlag` Method**
+### **Description of `putExternalMarketing` Method**
 
-This method checks whether the **SEPA Enhancements Day 1** feature is available based on the service request and function environment. If the feature is enabled, it sets a flag to `true` and logs the appropriate message. It also updates the session parameters with the feature status.
+This method checks whether the **External Marketing** feature is available based on the service request. If it is available, it further checks if the feature is enabled for the current customer group. If the feature is enabled, the flag is set to `true`, otherwise, the feature is turned off.
 
 ### **Constants Used:**
-- `FeatureToFunction.SEPA_ENHANCEMENTS_DAY1` – Represents the feature flag for SEPA Enhancements Day 1.
-- `OperationConstants.SEPA_ENHANCEMENTS_DAY1` – The key used to store the feature status in the session parameters.
+- `FeatureToFunction.ExternalMarketing` – Represents the feature flag for External Marketing.
+- `isExternalMarketingEnabled` – A boolean variable that holds the status of whether the External Marketing feature is enabled.
 
 ### **Functions Used:**
-- `isFeatureAvailable(FeatureToFunction.SEPA_ENHANCEMENTS_DAY1, serviceRequest)`  
-  - This checks if the SEPA Enhancements Day 1 feature is enabled based on the service request.
+- `isFeatureAvailable(FeatureToFunction.ExternalMarketing, serviceRequest)`  
+  - This checks if the External Marketing feature is available based on the service request.
   
-- `this.sessionParameters.put(OperationConstants.SEPA_ENHANCEMENTS_DAY1, isSepaEnhancementsDay1FeatureAvailable)`  
-  - Stores the feature availability status (`true` or `false`) in the session parameters.
+- `featureswitchService.isExternalMarketingEnabled()`  
+  - This checks whether the feature is enabled for the current customer group.
+  
+- `turnoffFunction(serviceResponse, FeatureToFunction.ExternalMarketing)`  
+  - This turns off the External Marketing feature if it is not allowed for the customer.
 
 ### **Policy Used:**
 - No specific policy is applied in this method.
 
 ### **Custom Code:**
-- **No custom code is present.** The method follows a standard approach for feature flag checking and logging the status of the feature.
+- **No custom code is present.** The method follows a standard approach for feature flag checking, customer group verification, and logging the feature status.
