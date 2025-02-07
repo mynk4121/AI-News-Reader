@@ -1,18 +1,1 @@
-The method checks if the Recent Payee feature is enabled by verifying the session attribute OperationConstants.RECENTPAYEE. If disabled, it returns an error. It checks for recent payees in the session, and if not found, it fetches them using the accounts stored in OperationConstants.ACCOUNTS_FOR_OD. If no accounts are available, it returns an error. In case of exceptions, it returns a failure status.
-
-### Constants, Functions, and Session Used in the Method:
-
-#### **Constants:**
-1. **OperationConstants.RECENTPAYEE** - Used to check if the "Recent Payee" feature is enabled in the session.
-2. **BLPErrorCodes.RECENTPAYEEDISABLED** - Represents the error code when the Recent Payee feature is disabled.
-3. **ErrorCodes.MSG_OP_FAILED** - Used to set the operation status when the operation fails.
-4. **ErrorCodes.OP_SUCCESS** - Represents a successful operation status.
-5. **BLPErrorCodes.NODATAINSESSION** - Represents the error code when no data is found in the session.
-
-#### **Functions:**
-1. **RecentPayeeChoreographer.getRecentPayee()** - Used to fetch the recent payees from the list of accounts.
-
-#### **Session:**
-1. **OperationConstants.RECENTPAYEE** - Session attribute used to check if the Recent Payee feature is enabled.
-2. **RecentPayees.class.getName()** - Session attribute used to store and retrieve recent payees.
-3. **OperationConstants.ACCOUNTS_FOR_OD** - Session attribute containing a list of accounts used to fetch recent payees.
+If the **Strategic Aggregation V3** feature is enabled, it checks if it is available for the user. If unavailable, it further verifies the device OS and app version before deciding to disable the feature using `turnoffFunction()`.
