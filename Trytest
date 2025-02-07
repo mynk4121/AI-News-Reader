@@ -1,18 +1,18 @@
 ### **Description:**  
-This method checks if the **NUC Consumer Lending** feature is enabled and whether the customer falls within the defined throttling range. If the feature is disabled or the customer is outside the allowed range, the function turns off the **NUC Lending Switch**.  
+This method checks if the **Delete Registration** feature is enabled and whether the customer qualifies based on a throttling range. If the feature is unavailable or the customer does not meet the criteria, the function disables the **Delete Registration** feature.  
 
 ### **Constants Used:**  
-- **`FeatureToFunction.NUCLoan`** – Represents the NUC Consumer Lending feature.  
-- **`ConfigurationKeyConstants.BMB_NUC_LOAN_THROTTLE_MIN`** – Minimum threshold for NUC Loan throttling.  
-- **`ConfigurationKeyConstants.BMB_NUC_LOAN_THROTTLE_MAX`** – Maximum threshold for NUC Loan throttling.  
-- **`OperationConstants.NUC_LENDING_SWITCH`** – Flag indicating if NUC Lending is enabled.  
+- **`FeatureToFunction.DELETEREG`** – Represents the Delete Registration feature.  
+- **`ConfigurationKeyConstants.DELETEREG_THROTTLE_MIN`** – Minimum threshold for throttling.  
+- **`ConfigurationKeyConstants.DELETEREG_THROTTLE_MAX`** – Maximum threshold for throttling.  
+- **`OperationConstants.DEFAULT_THROTTLE_MIN`** – Default minimum throttle value.  
+- **`OperationConstants.DEFAULT_THROTTLE_MAX`** – Default maximum throttle value.  
 
 ### **Functions Used:**  
-1. **`isFeatureAvailable(FeatureToFunction.NUCLoan, serviceRequest)`** – Checks if the NUC Loan feature is available.  
-2. **`featureSwitchService.isNUCLoanFeatureEnabled()`** – Validates if the feature is enabled for the customer group.  
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`** – Determines if the customer falls within the throttling range.  
-4. **`turnoffFunction(serviceResponse, FeatureToFunction.NUCLoan)`** – Disables the feature if not available or if the customer does not qualify.  
+1. **`isFeatureAvailable(FeatureToFunction.DELETEREG, serviceRequest)`** – Checks if the Delete Registration feature is available.  
+2. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(customerId, min, max)`** – Determines if the customer falls within the allowed throttling range.  
+3. **`turnoffFunction(serviceResponse, FeatureToFunction.DELETEREG)`** – Disables the feature if the customer does not qualify.  
 
 ### **Custom Code:**  
-- **Throttling Check for NUC Loan** – Ensures the customer falls within the defined range before enabling the feature.  
-- **Feature Deactivation for Ineligible Customers** – Turns off the NUC Loan feature if the customer is not allowed to use it.
+- **Throttling Check for Delete Registration** – Ensures only customers within the defined range can access the feature.  
+- **Feature Deactivation for Ineligible Customers** – Turns off the Delete Registration feature if the customer is not allowed to use it.
