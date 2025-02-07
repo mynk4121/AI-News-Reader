@@ -1,18 +1,21 @@
-### **Description of `putMortgageMakeAPayment3DSecureV1` Method**  
-This method checks whether the **Mortgage Make a Payment 3D Secure V1** feature is enabled and logs its status accordingly.  
+### **Description of `putIosATMLimitRefactoredFeatureFlag` Method**  
+This method checks if the **IOS ATM Limit Refactored Feature** is enabled for a service request and logs the status. If the feature is not available, it disables the functionality and logs that it has been turned off.
 
 ### **Constants Used:**  
-- `FeatureToFunction.MORTGAGE_MAP_3DSV1` – Represents the Mortgage Make a Payment 3D Secure V1 feature flag.  
+- `FeatureToFunction.DCSC_ATM_LIMIT_IOS_REFACTOR` – Represents the feature flag for the refactored IOS ATM limit.
 
 ### **Functions Used:**  
-- `isFeatureAvailable(FeatureToFunction.MORTGAGE_MAP_3DSV1, serviceRequest)`  
-  - Checks if the Mortgage Make a Payment 3D Secure V1 feature is enabled.  
+- `isFeatureAvailable(FeatureToFunction.DCSC_ATM_LIMIT_IOS_REFACTOR, serviceRequest)`  
+  - Checks whether the IOS ATM limit refactored feature is available or enabled for the given service request.
+  
+- `turnoffFunction(serviceResponse, FeatureToFunction.DCSC_ATM_LIMIT_IOS_REFACTOR)`  
+  - Disables the IOS ATM limit refactored feature in the response if the feature is not enabled.
 
 ### **Policy Used:**  
-- No specific policies are applied in this method.  
+- No specific policies are applied in this method.
 
 ### **Session Used:**  
-- No session attributes are used in this method.  
+- No session attributes are used in this method.
 
 ### **Custom Code:**  
-- **No custom code is present.** This method follows a standard structure for checking feature availability and logging its status.
+- **No custom code is present.** The method follows a standard structure for checking feature availability, logging the status, and turning off the feature when necessary.
