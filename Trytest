@@ -1,11 +1,12 @@
 ### **Description:**  
-This method checks if the **MORTMAP** feature is enabled and logs whether it is switched on or off.  
+This method checks if the **Fair Fees Personalization** feature is enabled. If it is switched off, the method disables it using `turnoffFunction()`.  
 
 ### **Constants Used:**  
-- **`FeatureToFunction.MORTMAP`** – Represents the MORTMAP feature.  
+- **`FeatureToFunction.DSCS_FAIR_FEES_PERSONALISATION`** – Represents the Fair Fees Personalization feature.  
 
 ### **Functions Used:**  
-1. **`isFeatureAvailable(FeatureToFunction.MORTMAP, serviceRequest)`** – Checks if the feature is enabled for the customer.  
+1. **`isFeatureAvailable(FeatureToFunction.DSCS_FAIR_FEES_PERSONALISATION, serviceRequest)`** – Checks if the feature is enabled.  
+2. **`turnoffFunction(serviceResponse, FeatureToFunction.DSCS_FAIR_FEES_PERSONALISATION)`** – Disables the feature if it is switched off.  
 
 ### **Custom Code:**  
-No custom code is present in this method; it only logs the feature status.
+- **Disabling the feature if switched off** – If the feature is not available, `turnoffFunction()` is called to ensure it is disabled.
