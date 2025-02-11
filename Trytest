@@ -1,57 +1,52 @@
-### **Method Description: `populateProductDataAccountTypeSwitches`**  
+### **Method Description: `putHPPFSRFeatureSwitch`**  
 
 #### **Feature Environment is ON:**  
-- The method checks if the `HPProductData` feature is available using:  
+- The method verifies whether the **HPPartnerFinanceProduct** feature is available using:  
   ```java
-  isFeatureAvailable(FeatureToFunction.HPProductData, serviceRequest)
+  isFeatureAvailable(FeatureToFunction.HPPartnerFinanceProduct, serviceRequest)
   ```  
-- If the feature is available, it proceeds with additional checks.  
+- If the feature is enabled, additional checks are performed.  
 
 #### **RATIO (Feature is Enabled if All Conditions are Met):**  
 - **Feature switch is ON** → Checked using:  
   ```java
-  featureswitchService.isHPPDCAvailable()
+  featureSwitchService.iSHPPFSRAvailable()
   ```  
-- **Throttling Conditions are Met** → Ensures the customer falls within the allowed range:  
+- **Throttling Conditions are Met** → Ensures the customer meets the allowed range:  
   ```java
   throttlingService.isCustomerAllowedToContinueWithoutThrottling(
       serviceRequest.getCustomerContext().getRegisteredCustomer().customerId,
-      configValues.getIntegerProperty(ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MIN, 100),
-      configValues.getIntegerProperty(ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MAX, 100)
+      configValues.getIntegerProperty(ConfigurationKeyConstants.BMB_HPPFSR_THROTTLE_MIN, 100),
+      configValues.getIntegerProperty(ConfigurationKeyConstants.BMB_HPPFSR_THROTTLE_MAX, 100)
   )
   ```  
-- **Customer ID falls within the allowed range**, defined by `BMB_HPPDC_THROTTLE_MIN` and `BMB_HPPDC_THROTTLE_MAX`.  
-- **If enabled, the method also activates another related feature switch:**  
-  ```java
-  putHPPFSRFeatureSwitch(serviceRequest, serviceResponse);
-  ```
+- **Customer ID falls within the allowed range**, defined by `BMB_HPPFSR_THROTTLE_MIN` and `BMB_HPPFSR_THROTTLE_MAX`.  
 
 #### **Feature is Turned OFF if Any Condition Fails:**  
-- If `isHPPDCEnabled` is `false`, the feature is switched OFF:  
+- If `isHPPFSREnabled` is `false`, the feature is explicitly turned OFF:  
   ```java
-  turnoffFunction(serviceResponse, FeatureToFunction.HPProductData);
+  turnoffFunction(serviceResponse, FeatureToFunction.HPPartnerFinanceProduct);
   ```  
-- A log entry is added to indicate that `HPPDC` is switched off.  
+- A log entry is recorded to indicate that `HPPFSR` is disabled.  
 
 ---
 
 ## **Constants, Functions, and Policies Used**  
 
 ### **Constants (From the Method):**  
-1. **`ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MIN`** → Defines the minimum customer ID range for throttling.  
-2. **`ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MAX`** → Defines the maximum customer ID range for throttling.  
-3. **`FeatureToFunction.HPProductData`** → Represents the `HPProductData` feature flag.  
+1. **`ConfigurationKeyConstants.BMB_HPPFSR_THROTTLE_MIN`** → Defines the minimum threshold for throttling.  
+2. **`ConfigurationKeyConstants.BMB_HPPFSR_THROTTLE_MAX`** → Defines the maximum threshold for throttling.  
+3. **`FeatureToFunction.HPPartnerFinanceProduct`** → Represents the `HPPFSR` feature switch.  
 
 ### **Functions and Their Explanation (From the Method):**  
-1. **`isFeatureAvailable(FeatureToFunction.HPProductData, serviceRequest)`** → Checks if the feature is enabled based on the function table.  
-2. **`featureswitchService.isHPPDCAvailable()`** → Determines if `HPPDC` is enabled at a higher configuration level.  
-3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`** → Ensures the customer meets throttling rules based on ID range.  
-4. **`putHPPFSRFeatureSwitch(serviceRequest, serviceResponse)`** → Enables an additional related feature switch `HPPFSR`.  
-5. **`turnoffFunction(serviceResponse, FeatureToFunction.HPProductData)`** → Deactivates the feature when conditions are not met.  
+1. **`isFeatureAvailable(FeatureToFunction.HPPartnerFinanceProduct, serviceRequest)`** → Checks if the `HPPFSR` feature is enabled at the function level.  
+2. **`featureSwitchService.iSHPPFSRAvailable()`** → Determines if `HPPFSR` is enabled as per feature switch configurations.  
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`** → Ensures the customer meets throttling conditions based on ID range.  
+4. **`turnoffFunction(serviceResponse, FeatureToFunction.HPPartnerFinanceProduct)`** → Deactivates the feature if any conditions are not met.  
 
 ### **Policy Checks (From the Method):**  
-- **Throttling Policy:** Ensures the customer meets the `HPPDC` throttling criteria.  
-- **Feature Activation Policy:** Ensures `HPProductData` is turned on only if all conditions are met.  
+- **Throttling Policy:** Ensures the customer meets `HPPFSR` throttling criteria.  
+- **Feature Activation Policy:** Ensures `HPPFSR` is enabled only if all conditions pass.  
 
 ### **Session Parameters:**  
 **None** → This method does not store any values in session parameters.  
@@ -62,8 +57,7 @@
 Yes, **this method contains custom code.**  
 
 ### **Custom Code Behavior:**  
-- **Customer-based throttling logic** → Unlike a standard feature flag check, this method first applies **customer ID range-based throttling** before activating the feature.  
-- **Dependent feature activation (`HPPFSR`)** → It enables another feature (`HPPFSR`) if `HPPDC` is allowed, which is **not a standard practice** in simple feature flag methods.  
-- **Explicit feature deactivation** → If conditions fail, it explicitly turns off `HPProductData`, ensuring it does not remain enabled incorrectly.  
+- **Customer-based throttling logic** → This method incorporates **customer ID-based throttling** before enabling `HPPFSR`, which is **not standard** for a simple feature flag check.  
+- **Explicit feature deactivation** → If any condition fails, it explicitly turns off `HPPFSR`, ensuring it does not remain enabled incorrectly.  
 
-This **custom logic ensures controlled activation** based on **customer ID ranges** and related feature dependencies.
+This **custom logic ensures controlled activation** based on **customer eligibility, feature switch status, and throttling constraints**.
