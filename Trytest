@@ -1,53 +1,69 @@
-### **Description of `putContactlessLimitFlag` Method**
+### **Method Description: `populateProductDataAccountTypeSwitches`**  
 
-This method manages the state of the **Contactless Limit** feature flag. It checks whether the feature is available and whether the customer meets the required conditions for enabling the feature. If the conditions are met, the feature is enabled; otherwise, it is turned off.
+#### **Feature Environment is ON:**  
+- The method checks if the `HPProductData` feature is available using:  
+  ```java
+  isFeatureAvailable(FeatureToFunction.HPProductData, serviceRequest)
+  ```  
+- If the feature is available, it proceeds with additional checks.  
 
-### **Constants Used:**
-- `FeatureToFunction.CONTACTLESS_LIMIT` – Represents the Contactless Limit feature flag.
-- `OperationConstants.CONTACTLESS` – Represents the key used to store the feature availability status.
-- `ConfigurationkeyConstants.BUSINESS_CUSTOMER` – Constant used to check if the customer is a business customer.
+#### **RATIO (Feature is Enabled if All Conditions are Met):**  
+- **Feature switch is ON** → Checked using:  
+  ```java
+  featureswitchService.isHPPDCAvailable()
+  ```  
+- **Throttling Conditions are Met** → Ensures the customer falls within the allowed range:  
+  ```java
+  throttlingService.isCustomerAllowedToContinueWithoutThrottling(
+      serviceRequest.getCustomerContext().getRegisteredCustomer().customerId,
+      configValues.getIntegerProperty(ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MIN, 100),
+      configValues.getIntegerProperty(ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MAX, 100)
+  )
+  ```  
+- **Customer ID falls within the allowed range**, defined by `BMB_HPPDC_THROTTLE_MIN` and `BMB_HPPDC_THROTTLE_MAX`.  
+- **If enabled, the method also activates another related feature switch:**  
+  ```java
+  putHPPFSRFeatureSwitch(serviceRequest, serviceResponse);
+  ```
 
-### **Functions Used:**
-- `isFeatureAvailable(FeatureToFunction.CONTACTLESS_LIMIT, serviceRequest)`  
-  - Checks if the Contactless Limit feature is available based on the service request.
-  
-- `featureSwitchService.isContactlessLimitEnabled()`  
-  - Checks if the Contactless Limit feature is enabled in the feature switch service.
-  
-- `turnoffFunction(serviceResponse, FeatureToFunction.CONTACTLESS_LIMIT)`  
-  - Turns off the Contactless Limit feature if the customer does not meet the eligibility conditions.
-
-- `serviceRequest.getCustomerContext().getRegisteredCustomerClass()`  
-  - Retrieves the customer type to check if the customer is a business customer.
-  
-- `serviceRequest.getCustomerContext().isBusinessOnlyMembership()`  
-  - Checks if the customer is a Business Only member.
-
-### **Policy Used:**
-- **Business Customer Policy**: If the customer is a business customer and is not eligible for the **BB/DCSC** debit card, the feature will be turned off, even if it is enabled for non-business customers.
-  
-- **Feature Availability Based on Customer Type**: If the customer is a business customer, the eligibility for the Contactless Limit feature will also depend on whether the debit card is eligible.
-
-### **Custom Code:**
-- **Business Customer Eligibility**: The eligibility check considers whether the customer is a business customer and whether they have the necessary debit card eligibility (controlled by `isBbDcscEligibleDebitCardon`). This ensures that business customers are only able to use the feature under certain conditions.
+#### **Feature is Turned OFF if Any Condition Fails:**  
+- If `isHPPDCEnabled` is `false`, the feature is switched OFF:  
+  ```java
+  turnoffFunction(serviceResponse, FeatureToFunction.HPProductData);
+  ```  
+- A log entry is added to indicate that `HPPDC` is switched off.  
 
 ---
 
-### **Method Explanation with Steps:**
+## **Constants, Functions, and Policies Used**  
 
-1. **Check Feature Availability**:
-   - The method first checks if the **Contactless Limit** feature is available for the service request. If the feature is not available, it logs that the feature is switched off.
+### **Constants (From the Method):**  
+1. **`ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MIN`** → Defines the minimum customer ID range for throttling.  
+2. **`ConfigurationKeyConstants.BMB_HPPDC_THROTTLE_MAX`** → Defines the maximum customer ID range for throttling.  
+3. **`FeatureToFunction.HPProductData`** → Represents the `HPProductData` feature flag.  
 
-2. **Check Customer Eligibility**:
-   - If the feature is available, the method retrieves the customer's type (`customerType`) and checks if the customer is a business customer (`isBOMCustomer`).
-   - If the customer is a business customer, it checks if the customer is eligible for the Contactless Limit feature based on their debit card status and business membership.
+### **Functions and Their Explanation (From the Method):**  
+1. **`isFeatureAvailable(FeatureToFunction.HPProductData, serviceRequest)`** → Checks if the feature is enabled based on the function table.  
+2. **`featureswitchService.isHPPDCAvailable()`** → Determines if `HPPDC` is enabled at a higher configuration level.  
+3. **`throttlingService.isCustomerAllowedToContinueWithoutThrottling(...)`** → Ensures the customer meets throttling rules based on ID range.  
+4. **`putHPPFSRFeatureSwitch(serviceRequest, serviceResponse)`** → Enables an additional related feature switch `HPPFSR`.  
+5. **`turnoffFunction(serviceResponse, FeatureToFunction.HPProductData)`** → Deactivates the feature when conditions are not met.  
 
-3. **Feature Activation/Deactivation**:
-   - If the customer is not eligible for the feature, it turns the feature off by calling `turnoffFunction`.
-   - If the customer is eligible, the feature is considered available and the flag `isFeatureAvailable` is set to `true`.
+### **Policy Checks (From the Method):**  
+- **Throttling Policy:** Ensures the customer meets the `HPPDC` throttling criteria.  
+- **Feature Activation Policy:** Ensures `HPProductData` is turned on only if all conditions are met.  
 
-4. **Store the Feature Status**:
-   - The final availability status of the feature (`isFeatureAvailable`) is stored in the session parameters.
+### **Session Parameters:**  
+**None** → This method does not store any values in session parameters.  
 
-### **Logging**:
-- The method logs each significant step, including feature availability status, customer eligibility checks, and the final outcome (whether the feature is turned on or off).
+---
+
+## **Custom Code Check:**  
+Yes, **this method contains custom code.**  
+
+### **Custom Code Behavior:**  
+- **Customer-based throttling logic** → Unlike a standard feature flag check, this method first applies **customer ID range-based throttling** before activating the feature.  
+- **Dependent feature activation (`HPPFSR`)** → It enables another feature (`HPPFSR`) if `HPPDC` is allowed, which is **not a standard practice** in simple feature flag methods.  
+- **Explicit feature deactivation** → If conditions fail, it explicitly turns off `HPProductData`, ensuring it does not remain enabled incorrectly.  
+
+This **custom logic ensures controlled activation** based on **customer ID ranges** and related feature dependencies.
