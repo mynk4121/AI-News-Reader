@@ -1,0 +1,17 @@
+**OS Virtualization in Cloud Computing**
+
+- **What it is**: OS Virtualization allows multiple operating systems to run on a single physical server by creating virtual instances (VMs).
+  
+- **How it works**: A hypervisor manages the virtual machines (VMs), each running its own OS and applications, while sharing the same physical hardware resources.
+
+- **Benefits**:
+  - **Efficient Resource Use**: Maximize hardware usage.
+  - **Cost-Effective**: Fewer physical servers needed.
+  - **Isolation**: Each VM is isolated, preventing one from affecting others.
+  - **Flexibility**: Run different OS types on the same hardware.
+
+- **Example**: AWS EC2 instances running different OS types (Windows, Linux) on the same physical server. 
+
+--- 
+
+This summarizes OS Virtualization in a simple and concise way for a slide.
