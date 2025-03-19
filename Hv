@@ -1,0 +1,26 @@
+**Introduction to Hypervisor**
+
+- **What is a Hypervisor?**
+  - A **hypervisor** is a **software layer** that enables virtualization by allowing multiple virtual machines (VMs) to run on a single physical computer.
+
+- **How it Works**:
+  - The hypervisor **allocates resources** (like CPU, memory, and storage) to each virtual machine.
+  - It ensures that each VM is **isolated** and operates independently.
+
+- **Types of Hypervisors**:
+  - **Type 1 (Bare-Metal)**: Runs directly on physical hardware.
+    - **Example**: VMware ESXi, Microsoft Hyper-V.
+  - **Type 2 (Hosted)**: Runs on top of an existing operating system.
+    - **Example**: VMware Workstation, Oracle VirtualBox.
+
+- **Benefits**:
+  - **Efficient Resource Utilization**: Multiple VMs on a single physical machine.
+  - **Isolation**: VMs are isolated, preventing one from affecting the others.
+  - **Flexibility**: Run different operating systems on the same hardware.
+
+- **Usage**:
+  - Used in **data centers**, **cloud computing**, and for **testing** or **development** environments.
+
+---
+
+This is a simple and clear introduction to a **hypervisor** for a PowerPoint slide.
