@@ -1,0 +1,18 @@
+Cloud core architecture consists of several components working together to provide cloud services. Here's a simple breakdown of the terms:
+
+1. **Region**  
+   - **Explanation**: A **region** is a geographical area where cloud services are available. It could be a country or a larger area like "US East" or "Europe West."
+   - **Example**: If you use AWS, there might be a region called **US East (N. Virginia)**. Each region is independent, meaning that services in one region don’t automatically affect services in another region.
+
+2. **Availability Zone (AZ)**  
+   - **Explanation**: An **availability zone** is like a data center within a region, but it’s designed to be isolated and fault-tolerant. There are usually multiple availability zones in a region to ensure that if one fails, others can take over.
+   - **Example**: Within the **US East (N. Virginia)** region, there might be 3 availability zones, meaning your services can run in different zones for better reliability.
+
+3. **Data Center**  
+   - **Explanation**: A **data center** is a physical facility where servers, storage devices, and other hardware are stored. It’s a place where all the cloud computing hardware operates.
+   - **Example**: Think of a **data center** as a giant warehouse filled with powerful computers that host your data and services.
+
+### Putting it together:
+- **Region** is a large area (like a country), and inside each region, there are multiple **availability zones** (think of these as separate buildings that are connected but isolated for safety). Inside these availability zones are **data centers** (which are the actual buildings with the hardware). 
+
+This setup helps ensure that cloud services are reliable, fast, and available no matter where you are.
