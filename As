@@ -1,0 +1,35 @@
+Azure offers a variety of **storage services** to help store and manage data in the cloud. Here’s a simple breakdown of the main Azure storage services:
+
+### 1. **Azure Blob Storage**
+   - **Explanation**: Blob Storage is used to store unstructured data like text and binary data. It’s great for storing large files such as images, videos, and backups.
+   - **Example**: Think of it like a giant file locker where you can store all your documents, photos, and videos.
+
+### 2. **Azure Disk Storage**
+   - **Explanation**: Disk Storage provides high-performance storage for virtual machines (VMs) in Azure. It’s like a hard drive that is attached to a virtual machine.
+   - **Example**: When you run a virtual machine (like a server), you use Disk Storage to store its operating system, applications, and data.
+
+### 3. **Azure File Storage**
+   - **Explanation**: Azure File Storage is used to store files in a shared folder that can be accessed by multiple machines, similar to how you would access files on a network drive.
+   - **Example**: You can use it to share files between different virtual machines, or even from on-premises systems to the cloud, like a shared network drive.
+
+### 4. **Azure Queue Storage**
+   - **Explanation**: Queue Storage allows you to store and manage messages in a queue. It's useful for passing information between different parts of your application.
+   - **Example**: If you have a system where one service processes orders and another sends confirmation emails, Queue Storage helps transfer the "order" message between the two.
+
+### 5. **Azure Table Storage**
+   - **Explanation**: Table Storage is a NoSQL database that stores structured data. It’s useful for applications that need to store large amounts of data without a fixed schema.
+   - **Example**: Imagine storing user profile information for a mobile app, where each user’s data may have different properties (like name, email, and preferences) but doesn’t require a rigid structure.
+
+### 6. **Azure Data Lake Storage**
+   - **Explanation**: Data Lake Storage is designed to store large volumes of raw, unstructured data (like logs, raw files, and analytics data) and is optimized for big data analytics.
+   - **Example**: If you’re collecting large amounts of data from sensors or logs and need to analyze it, Data Lake Storage is a good option for holding this raw data.
+
+### Summary:
+- **Blob Storage**: For storing large files like images and videos.
+- **Disk Storage**: For storing data used by virtual machines (VMs).
+- **File Storage**: For shared file storage accessible by multiple systems.
+- **Queue Storage**: For message queues to pass data between services.
+- **Table Storage**: For storing structured data in a NoSQL format.
+- **Data Lake Storage**: For storing large amounts of raw, unstructured data for analytics.
+
+These Azure storage services make it easy to store and manage data, whether you're working with large files, virtual machines, or structured data.
