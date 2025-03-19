@@ -1,0 +1,19 @@
+**Type 1 vs Type 2 Virtualization**
+
+- **Type 1 Virtualization (Bare-Metal)**:
+  - **What it is**: The hypervisor runs **directly on the physical hardware** without an underlying OS.
+  - **Example**: VMware ESXi, Microsoft Hyper-V.
+  - **Benefits**: More efficient, faster performance, better resource management.
+  - **Usage**: Used in data centers and cloud environments.
+
+- **Type 2 Virtualization (Hosted)**:
+  - **What it is**: The hypervisor runs **on top of an existing operating system**.
+  - **Example**: VMware Workstation, Oracle VirtualBox.
+  - **Benefits**: Easier to set up and use for testing or development.
+  - **Usage**: Best for personal use or non-production environments.
+
+---
+
+**Summary**:
+- **Type 1** = Direct on hardware, better performance.
+- **Type 2** = Runs on OS, easier for personal use.
