@@ -1,0 +1,52 @@
+import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [num1, setNum1] = useState('');
+  const [num2, setNum2] = useState('');
+  const [operator, setOperator] = useState('+');
+  const [result, setResult] = useState(null);
+
+  const calculate = () => {
+    let endpoint = '';
+    switch (operator) {
+      case '+':
+        endpoint = 'add';
+        break;
+      case '-':
+        endpoint = 'subtract';
+        break;
+      case '*':
+        endpoint = 'multiply';
+        break;
+      case '/':
+        endpoint = 'divide';
+        break;
+      default:
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/${endpoint}?a=${num1}&b=${num2}`)
+      .then(response => response.text())
+      .then(data => setResult(data))
+      .catch(error => console.error('Error:', error));
+  };
+
+  return (
+    <div className="App">
+      <h1>Simple Calculator</h1>
+      <input type="number" value={num1} onChange={e => setNum1(e.target.value)} placeholder="First Number" />
+      <select value={operator} onChange={e => setOperator(e.target.value)}>
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+      </select>
+      <input type="number" value={num2} onChange={e => setNum2(e.target.value)} placeholder="Second Number" />
+      <button onClick={calculate}>Calculate</button>
+      {result !== null && <h2>Result: {result}</h2>}
+    </div>
+  );
+}
+
+export default App;
