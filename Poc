@@ -1,52 +1,43 @@
-import React, { useState } from 'react';
-import './App.css';
-
-function App() {
-  const [num1, setNum1] = useState('');
-  const [num2, setNum2] = useState('');
-  const [operator, setOperator] = useState('+');
-  const [result, setResult] = useState(null);
-
-  const calculate = () => {
-    let endpoint = '';
-    switch (operator) {
-      case '+':
-        endpoint = 'add';
-        break;
-      case '-':
-        endpoint = 'subtract';
-        break;
-      case '*':
-        endpoint = 'multiply';
-        break;
-      case '/':
-        endpoint = 'divide';
-        break;
-      default:
-        return;
-    }
-
-    fetch(`http://localhost:8080/api/${endpoint}?a=${num1}&b=${num2}`)
-      .then(response => response.text())
-      .then(data => setResult(data))
-      .catch(error => console.error('Error:', error));
-  };
-
-  return (
-    <div className="App">
-      <h1>Simple Calculator</h1>
-      <input type="number" value={num1} onChange={e => setNum1(e.target.value)} placeholder="First Number" />
-      <select value={operator} onChange={e => setOperator(e.target.value)}>
-        <option value="+">+</option>
-        <option value="-">-</option>
-        <option value="*">*</option>
-        <option value="/">/</option>
-      </select>
-      <input type="number" value={num2} onChange={e => setNum2(e.target.value)} placeholder="Second Number" />
-      <button onClick={calculate}>Calculate</button>
-      {result !== null && <h2>Result: {result}</h2>}
-    </div>
-  );
+.App {
+  text-align: center;
+  margin-top: 50px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-export default App;
+h1 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+input, select {
+  padding: 12px 20px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 150px;
+}
+
+button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+h2 {
+  margin-top: 30px;
+  color: #444;
+}
