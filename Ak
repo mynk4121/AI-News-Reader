@@ -1,70 +1,17 @@
 stages:
   - build
-  - promote
-  - deploy
 
-variables:
-  GIT_STRATEGY: clone
-
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: always
-    - when: never
-
-# ===============================
-# 🖥️ FRONTEND (UI)
-# ===============================
-
-include:
-  - local: "pspm-ui/build.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "frontend"'
-  - local: "pspm-ui/promote.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "frontend"'
-  - local: "pspm-ui/deploy.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "frontend"'
-
-# ===============================
-# 🛠️ BACKEND - DEV
-# ===============================
-
-  - local: "pspm-api/dev/build.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "dev"'
-  - local: "pspm-api/dev/promote.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "dev"'
-  - local: "pspm-api/dev/deploy.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "dev"'
-
-# ===============================
-# 🛠️ BACKEND - NFT
-# ===============================
-
-  - local: "pspm-api/nft/build.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "nft"'
-  - local: "pspm-api/nft/promote.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "nft"'
-  - local: "pspm-api/nft/deploy.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "nft"'
-
-# ===============================
-# 🛠️ BACKEND - SIT
-# ===============================
-
-  - local: "pspm-api/sit/build.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "sit"'
-  - local: "pspm-api/sit/promote.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "sit"'
-  - local: "pspm-api/sit/deploy.yml"
-    rules:
-      - if: '$PROJECT_TYPE == "backend" && $BACKEND_ENV == "sit"'
+get_build_number:
+  stage: build
+  script:
+    - NEXUS_URL="https://your-nexus-link"
+    - versions=$(curl -s "$NEXUS_URL" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+    - latest=$(echo "$versions" | sort -V | tail -n 1)
+    - IFS='.' read -r a b c <<< "$latest"
+    - build_number="$a.$b.$((c+1))"
+    - echo "Next build number: $build_number"
+    # Save build_number for later jobs
+    - echo "BUILD_NUMBER=$build_number" >> build.env
+  artifacts:
+    reports:
+      dotenv: build.env
