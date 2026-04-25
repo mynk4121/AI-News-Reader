@@ -1,477 +1,91 @@
-# ============================================================
-# Screen 2 — EDP Platforms Portal (Refined Tab Design)
-# ============================================================
 
-Screen2:
-  Type: Screen
-  Properties:
-    Fill: =RGBA(245, 247, 250, 1)
+  I'm building an ITSM automation tool called "GTSM Genie" for the Hadoop platform team to reduce manual effort on
+  ServiceNow operations. I need guidance on architecture, tools, and implementation approach.
 
-  OnVisible: |
-    =Set(selectedCategory, "EDP Apps");
-    Set(selectedService, Blank());
-    Set(showPopup, false);
+  ## Business Problem
+  Engineers repeatedly log in to ServiceNow for routine tasks: checking incidents, monitoring SLA breaches,
+  creating/updating/resolving incidents and change requests, and answering user queries about queues, escalation
+  matrices, and sample CRs. This creates high manual overhead.
 
-    ClearCollect(
-      colCategories,
-      { Name: "EDP Apps",  Icon: "⚙️" },
-      { Name: "SAS",       Icon: "📊" },
-      { Name: "BI",        Icon: "📈" },
-      { Name: "Hadoop",    Icon: "🗄️" }
-    );
+  ## Proposed Solution
+  A Microsoft Teams bot that lets users perform ITSM operations via chat:
+  - Query incident details and SLA status
+  - Create/update/close incidents
+  - Approve/reject change requests
+  - Search knowledge base (Confluence/KB articles)
+  - Identify recurring incidents by cluster
 
-    ClearCollect(
-      colServices,
-      { Category:"EDP Apps", ServiceName:"EDP Data Entitlement Service",    Description:"Manages data access rights and entitlements across the EDP ecosystem.",    FormURL:"https://forms.example.com/edp-entitlement"   },
-      { Category:"EDP Apps", ServiceName:"EDP Data Orchestration Platform", Description:"End-to-end workflow orchestration for data pipelines and ETL processes.",   FormURL:"https://forms.example.com/edp-orchestration"  },
-      { Category:"SAS",      ServiceName:"SAS Analytics Platform",          Description:"Advanced analytics, BI, and data management in one platform.",              FormURL:"https://forms.example.com/sas-analytics"      },
-      { Category:"SAS",      ServiceName:"SAS Data Integration Studio",     Description:"Visual ETL tool for designing and managing data integration workflows.",    FormURL:"https://forms.example.com/sas-di"             },
-      { Category:"BI",       ServiceName:"BIP Alteryx",                     Description:"Self-service data analytics and automated machine-learning platform.",      FormURL:"https://forms.example.com/bip-alteryx"        },
-      { Category:"BI",       ServiceName:"BIP Business Objects",            Description:"Enterprise reporting and semantic-layer BI suite for structured data.",     FormURL:"https://forms.example.com/bip-bo"             },
-      { Category:"Hadoop",   ServiceName:"HDFS",                            Description:"Scalable distributed storage for large-scale data workloads.",              FormURL:"https://forms.example.com/hdfs"               },
-      { Category:"Hadoop",   ServiceName:"YARN Resource Manager",           Description:"Cluster resource management and job scheduling for Hadoop applications.",  FormURL:"https://forms.example.com/yarn"               }
-    )
+  ## Architecture
+  Teams (Azure AD SSO) → Power Automate (orchestration) →
+    - SPDW Database (read-only: incidents, SLA, metrics)
+    - ServiceNow REST API (write: create/update/approve)
+    - Confluence REST API (KB search)
 
-  Children:
+  ## What I Need Help With
 
-    # ==========================================================
-    # HEADER
-    # ==========================================================
-    Header:
-      Type: GroupContainer
-      Properties:
-        X: 0
-        Y: 0
-        Width: =Parent.Width
-        Height: 64
-        Fill: =RGBA(0, 53, 107, 1)
-        DropShadow: =DropShadow.Regular
+  1. **Power Platform Setup**
+     - What Power Automate license do I need for HTTP + SQL connectors?
+     - Do I need an on-premises data gateway for SPDW access?
+     - How do I register a Teams bot in Barclays' Azure AD tenant?
 
-      Children:
+  2. **ServiceNow Integration**
+     - What are the ServiceNow REST API endpoints for incident and change_request tables?
+     - How do I get API credentials (service account) for ServiceNow?
+     - What approval API should I use for change request approvals?
 
-        BackBtn:
-          Type: Button
-          Properties:
-            X: 16
-            Y: 16
-            Width: 90
-            Height: 32
-            Text: '"← Back"'
-            FontSize: 13
-            Color: =RGBA(255, 255, 255, 1)
-            Fill: =RGBA(255, 255, 255, 0.12)
-            HoverFill: =RGBA(255, 255, 255, 0.22)
-            BorderRadius: 6
-            BorderColor: =RGBA(255, 255, 255, 0.3)
-            OnSelect: =Navigate(Screen1, ScreenTransition.SlideRight)
+  3. **Security & Compliance**
+     - What authentication method is approved for ServiceNow API calls (OAuth vs Basic)?
+     - Where should I store credentials (Azure Key Vault path)?
+     - What audit logging is required for bot actions?
+     - Are there rate limits on ServiceNow API calls I should respect?
 
-        HeaderTitle:
-          Type: Label
-          Properties:
-            X: =Parent.Width / 2 - 130
-            Y: 14
-            Width: 260
-            Height: 36
-            Text: '"EDP Platforms"'
-            FontSize: 18
-            FontWeight: =FontWeight.Bold
-            Color: =RGBA(255, 255, 255, 1)
-            Align: =Align.Center
+  4. **Data Access**
+     - How do I get read-only SQL access to SPDW database?
+     - What is the connection string format for SPDW from Power Automate?
+     - Is there a cached view for incidents I should use instead of direct tables?
 
-    # ==========================================================
-    # TAB BAR CONTAINER  —  white card with bottom shadow
-    # ==========================================================
-    TabBarContainer:
-      Type: GroupContainer
-      Properties:
-        X: 0
-        Y: 64
-        Width: =Parent.Width
-        Height: 56
-        Fill: =RGBA(255, 255, 255, 1)
-        DropShadow: =DropShadow.Light
+  5. **Confluence/KB Integration**
+     - What is the Confluence REST API URL for Barclays' knowledge base?
+     - How do I get an API token for Confluence?
 
-      Children:
+  6. **Deployment**
+     - What is the process to publish a Teams bot in Barclays environment?
+     - Are there pre-approved adaptive card templates I should use?
 
-        # ── Tab Gallery (dynamic, one item per category) ──────
-        TabGallery:
-          Type: Gallery
-          Properties:
-            Layout: =Layout.Horizontal
-            X: 16
-            Y: 0
-            Width: =Parent.Width - 32
-            Height: 56
-            TemplatePadding: 0
-            TemplateSize: 140           # fixed tab width; adjust if needed
-            Items: =colCategories
-            ShowScrollbar: false
-            BorderColor: =RGBA(0,0,0,0)
-            Fill: =RGBA(0,0,0,0)
+  ## Constraints
+  - Must work within Barclays Azure tenant
+  - Must comply with IT security policies
+  - Pilot scope: Hadoop team incidents and change requests only
+  - Prefer Power Platform over custom code where possible
 
-          Children:
+  Please provide specific documentation links, API endpoints, credential request processes, and any existing patterns or
+   templates I should follow.
 
-            # Transparent hit-area button (full tab width)
-            TabHitArea:
-              Type: Button
-              Properties:
-                X: 0
-                Y: 0
-                Width: =Parent.TemplateWidth
-                Height: 52
-                Text: '""'             # invisible — label drawn below
-                Fill: =RGBA(0,0,0,0)
-                HoverFill: =RGBA(0, 53, 107, 0.05)
-                BorderColor: =RGBA(0,0,0,0)
-                BorderRadius: 0
-                OnSelect: =Set(selectedCategory, ThisItem.Name)
+  ---
+  Tips for Better Results
 
-            # Icon  (emoji icon above label)
-            TabIcon:
-              Type: Label
-              Properties:
-                X: =Parent.TemplateWidth / 2 - 12
-                Y: 5
-                Width: 24
-                Height: 20
-                Text: =ThisItem.Icon
-                FontSize: 14
-                Align: =Align.Center
+  ┌─────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────┐
+  │                               Do                                │                     Don't                     │
+  ├─────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────┤
+  │ Paste error messages if something fails                         │ Ask vague questions like "how do I build a    │
+  │                                                                 │ bot?"                                         │
+  ├─────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────┤
+  │ Reference specific Barclays systems (SPDW, ServiceNow instance  │ Assume public ServiceNow URLs work            │
+  │ name)                                                           │                                               │
+  ├─────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────┤
+  │ Ask for internal documentation links                            │ Share sensitive credentials                   │
+  └─────────────────────────────────────────────────────────────────┴───────────────────────────────────────────────┘
 
-            # Category name label
-            TabLabel:
-              Type: Label
-              Properties:
-                X: 0
-                Y: 24
-                Width: =Parent.TemplateWidth
-                Height: 20
-                Text: =ThisItem.Name
-                FontSize: 12
-                FontWeight: =If(ThisItem.Name = selectedCategory, FontWeight.Bold, FontWeight.Normal)
-                Color: =If(ThisItem.Name = selectedCategory, RGBA(0,53,107,1), RGBA(100,100,100,1))
-                Align: =Align.Center
+  ---
+  Follow-up Prompts (After Initial Response)
 
-            # Active underline indicator
-            TabUnderline:
-              Type: Rectangle
-              Properties:
-                X: 12
-                Y: 50
-                Width: =Parent.TemplateWidth - 24
-                Height: 3
-                BorderRadius: 2
-                Fill: =If(ThisItem.Name = selectedCategory, RGBA(0,120,212,1), RGBA(0,0,0,0))
+  Once you get initial guidance, use these:
 
-    # ==========================================================
-    # SECTION HEADING + SERVICE COUNT BADGE
-    # ==========================================================
-    SectionRow:
-      Type: GroupContainer
-      Properties:
-        X: 24
-        Y: 136
-        Width: =Parent.Width - 48
-        Height: 36
-        Fill: =RGBA(0,0,0,0)
+  /generate Create a Power Automate flow diagram for "Get Incident Details"
+  that calls ServiceNow REST API and returns an adaptive card to Teams.
 
-      Children:
+  /generate Write the HTTP request configuration for ServiceNow incident
+  API including headers, authentication, and URL format.
 
-        SectionLabel:
-          Type: Label
-          Properties:
-            X: 0
-            Y: 4
-            Width: 260
-            Height: 28
-            Text: =selectedCategory & " Services"
-            FontSize: 15
-            FontWeight: =FontWeight.Bold
-            Color: =RGBA(0, 53, 107, 1)
-
-        ServiceCountBadge:
-          Type: Label
-          Properties:
-            X: 270
-            Y: 6
-            Width: 60
-            Height: 24
-            Text: =Text(CountRows(Filter(colServices, Category = selectedCategory))) & " total"
-            FontSize: 11
-            Color: =RGBA(255, 255, 255, 1)
-            Fill: =RGBA(0, 120, 212, 1)
-            BorderRadius: 12
-            Align: =Align.Center
-            PaddingLeft: 8
-            PaddingRight: 8
-
-    # ==========================================================
-    # SEARCH BAR
-    # ==========================================================
-    SearchBox:
-      Type: TextInput
-      Properties:
-        X: 24
-        Y: 180
-        Width: =Parent.Width - 48
-        Height: 40
-        HintText: '"🔍  Search services..."'
-        FontSize: 13
-        BorderRadius: 20               # pill-shaped input
-        BorderColor: =RGBA(200, 202, 206, 1)
-        FocusedBorderColor: =RGBA(0, 120, 212, 1)
-        Fill: =RGBA(255, 255, 255, 1)
-        PaddingLeft: 16
-
-    # ==========================================================
-    # SERVICES GALLERY
-    # ==========================================================
-    ServicesGallery:
-      Type: Gallery
-      Properties:
-        Layout: =Layout.Vertical
-        X: 24
-        Y: 232
-        Width: =Parent.Width - 48
-        Height: =Parent.Height - 256
-        TemplatePadding: 10
-        TemplateSize: 112
-        ShowScrollbar: true
-        BorderColor: =RGBA(0,0,0,0)
-        Fill: =RGBA(0,0,0,0)
-        Items: |
-          =Filter(
-            colServices,
-            Category = selectedCategory &&
-            (IsBlank(SearchBox.Text) || SearchBox.Text in ServiceName)
-          )
-
-      Children:
-
-        # ── Service Card ──────────────────────────────────────
-        ServiceCard:
-          Type: GroupContainer
-          Properties:
-            X: 0
-            Y: 0
-            Width: =Parent.TemplateWidth
-            Height: 100
-            Fill: =RGBA(255, 255, 255, 1)
-            BorderRadius: 10
-            DropShadow: =DropShadow.Light
-            PaddingLeft: 16
-            PaddingRight: 16
-            PaddingTop: 14
-            PaddingBottom: 14
-
-          Children:
-
-            # Accent left bar (brand colour stripe)
-            AccentBar:
-              Type: Rectangle
-              Properties:
-                X: 0
-                Y: 0
-                Width: 4
-                Height: 100
-                Fill: =RGBA(0, 120, 212, 1)
-                BorderRadius: 10
-
-            ServiceNameLabel:
-              Type: Label
-              Properties:
-                X: 18
-                Y: 10
-                Width: =Parent.Width - 150
-                Height: 26
-                Text: =ThisItem.ServiceName
-                FontSize: 13
-                FontWeight: =FontWeight.Bold
-                Color: =RGBA(15, 15, 15, 1)
-                Overflow: =Overflow.Hidden
-
-            ServiceDescLabel:
-              Type: Label
-              Properties:
-                X: 18
-                Y: 36
-                Width: =Parent.Width - 150
-                Height: 40
-                Text: =ThisItem.Description
-                FontSize: 11
-                Color: =RGBA(100, 100, 100, 1)
-                Overflow: =Overflow.Hidden
-
-            # Category chip
-            CategoryChip:
-              Type: Label
-              Properties:
-                X: 18
-                Y: 78
-                Width: 80
-                Height: 18
-                Text: =ThisItem.Category
-                FontSize: 9
-                Color: =RGBA(0, 53, 107, 1)
-                Fill: =RGBA(0, 53, 107, 0.08)
-                BorderRadius: 9
-                Align: =Align.Center
-                PaddingLeft: 6
-                PaddingRight: 6
-
-            OpenFormButton:
-              Type: Button
-              Properties:
-                X: =Parent.Width - 128
-                Y: 28
-                Width: 112
-                Height: 36
-                Text: '"Open Form  →"'
-                FontSize: 12
-                FontWeight: =FontWeight.SemiBold
-                Color: =RGBA(255, 255, 255, 1)
-                Fill: =RGBA(0, 120, 212, 1)
-                HoverFill: =RGBA(0, 96, 180, 1)
-                BorderRadius: 8
-                BorderColor: =RGBA(0,0,0,0)
-                OnSelect: |
-                  =Set(selectedService, ThisItem);
-                  Set(showPopup, true)
-
-    # ==========================================================
-    # MODAL SCRIM
-    # ==========================================================
-    ModalScrim:
-      Type: Rectangle
-      Properties:
-        X: 0
-        Y: 0
-        Width: =Parent.Width
-        Height: =Parent.Height
-        Fill: =RGBA(0, 0, 0, 0.45)
-        Visible: =showPopup
-        OnSelect: =Set(showPopup, false)
-
-    # ==========================================================
-    # SERVICE DETAIL POPUP
-    # ==========================================================
-    ServicePopup:
-      Type: GroupContainer
-      Properties:
-        X: =Parent.Width / 2 - Min(200, Parent.Width / 2 - 20)
-        Y: =Parent.Height / 2 - 160
-        Width: =Min(400, Parent.Width - 40)
-        Height: 320
-        Fill: =RGBA(255, 255, 255, 1)
-        BorderRadius: 14
-        DropShadow: =DropShadow.ExtraLarge
-        Visible: =showPopup
-
-      Children:
-
-        # Coloured header band inside popup
-        PopupHeaderBand:
-          Type: Rectangle
-          Properties:
-            X: 0
-            Y: 0
-            Width: =Parent.Width
-            Height: 52
-            Fill: =RGBA(0, 53, 107, 1)
-            BorderRadius: 14           # top corners only — visual trick
-
-        PopupServiceName:
-          Type: Label
-          Properties:
-            X: 20
-            Y: 12
-            Width: =Parent.Width - 70
-            Height: 28
-            Text: =selectedService.ServiceName
-            FontSize: 14
-            FontWeight: =FontWeight.Bold
-            Color: =RGBA(255, 255, 255, 1)
-
-        PopupCloseBtn:
-          Type: Button
-          Properties:
-            X: =Parent.Width - 52
-            Y: 8
-            Width: 36
-            Height: 36
-            Text: '"✕"'
-            FontSize: 15
-            Color: =RGBA(255, 255, 255, 1)
-            Fill: =RGBA(255, 255, 255, 0.15)
-            HoverFill: =RGBA(255, 255, 255, 0.28)
-            BorderRadius: 18
-            BorderColor: =RGBA(0,0,0,0)
-            OnSelect: =Set(showPopup, false)
-
-        PopupCategoryChip:
-          Type: Label
-          Properties:
-            X: 20
-            Y: 64
-            Width: 90
-            Height: 20
-            Text: =selectedService.Category
-            FontSize: 10
-            Color: =RGBA(0, 53, 107, 1)
-            Fill: =RGBA(0, 53, 107, 0.1)
-            BorderRadius: 10
-            Align: =Align.Center
-
-        PopupDescription:
-          Type: Label
-          Properties:
-            X: 20
-            Y: 96
-            Width: =Parent.Width - 40
-            Height: 80
-            Text: =selectedService.Description
-            FontSize: 13
-            Color: =RGBA(50, 50, 50, 1)
-            Overflow: =Overflow.Hidden
-
-        PopupDivider:
-          Type: Rectangle
-          Properties:
-            X: 20
-            Y: 186
-            Width: =Parent.Width - 40
-            Height: 1
-            Fill: =RGBA(220, 222, 226, 1)
-
-        PopupOpenFormBtn:
-          Type: Button
-          Properties:
-            X: 20
-            Y: 200
-            Width: =Parent.Width - 40
-            Height: 44
-            Text: '"Open Request Form  →"'
-            FontSize: 13
-            FontWeight: =FontWeight.SemiBold
-            Color: =RGBA(255, 255, 255, 1)
-            Fill: =RGBA(0, 120, 212, 1)
-            HoverFill: =RGBA(0, 96, 180, 1)
-            BorderRadius: 8
-            BorderColor: =RGBA(0,0,0,0)
-            OnSelect: =Launch(selectedService.FormURL, {}, LaunchTarget.New)
-
-        PopupCancelBtn:
-          Type: Button
-          Properties:
-            X: 20
-            Y: 256
-            Width: =Parent.Width - 40
-            Height: 36
-            Text: '"Cancel"'
-            FontSize: 12
-            Color: =RGBA(80, 80, 80, 1)
-            Fill: =RGBA(240, 242, 245, 1)
-            HoverFill: =RGBA(224, 226, 230, 1)
-            BorderRadius: 8
-            BorderColor: =RGBA(0,0,0,0)
-            OnSelect: =Set(showPopup, false)
+  /generate Create an adaptive card JSON template for displaying incident
+  details with fields: number, short_description, state, assignee, SLA countdown.
