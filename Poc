@@ -1,43 +1,395 @@
-.App {
-  text-align: center;
-  margin-top: 50px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f2f5;
-  min-height: 100vh;
-  padding: 20px;
-}
+# Arrow Dashboard Metrics — Corrected and Normalised Report
 
-h1 {
-  color: #333;
-  margin-bottom: 30px;
-}
+Reporting date: 15 October 2026
 
-input, select {
-  padding: 12px 20px;
-  margin: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  width: 150px;
-}
+Normalisation rule applied: trailing hyphens (`-`) and arrows (`>`) caused by copying/exporting are removed. Values are treated as numbers, currency amounts or percentages as appropriate. Duplicate records and inconsistencies in labels or descriptions are retained and flagged. The unusual raw value `-0-0-` is left for verification because its intended numeric value cannot be determined confidently.
 
-button {
-  padding: 12px 24px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
-}
+## 1. Primary decline reasons
 
-button:hover {
-  background-color: #0056b3;
-}
+### 1.1 Primary decline reason
 
-h2 {
-  margin-top: 30px;
-  color: #444;
-}
+| Level 1                | Level 2       | Description                                                                | Corrected value |
+| ---------------------- | ------------- | -------------------------------------------------------------------------- | --------------- |
+| Primary Decline Reason | Affordability | Eligibility results where the main decline reason related to affordability | 29              |
+| Primary Decline Reason | Eligibility   | Eligibility results where the main decline reason related to eligibility   | 84              |
+
+Source note: `454` appeared before the Affordability record but was not labelled.
+
+### 1.2 Application decline groups
+
+| Level 1                    | Level 2                    | Description                                          | Corrected value |
+| -------------------------- | -------------------------- | ---------------------------------------------------- | --------------- |
+| Application Decline Groups | Fraud / Sanctions          | Decline reason related to Fraud / Sanctions          | 1               |
+| Application Decline Groups | Credit Underwriting Policy | Decline reason related to Credit Underwriting Policy | 52              |
+| Application Decline Groups | Affordability              | Decline reason related to Affordability              | 45              |
+| Application Decline Groups | Eligibility                | Decline reason related to Eligibility                | 111             |
+
+### 1.3 Application decline granular — Credit Underwriting Policy
+
+| Level 3 reason             | Corrected value | Notes                                   |
+| -------------------------- | --------------- | --------------------------------------- |
+| NOC                        | 3               | First occurrence                        |
+| NOC                        | 0               | Duplicate                               |
+| Min Credit limit           | 11              | First occurrence                        |
+| Adverse Indicators         | 0               | First occurrence                        |
+| Bankruptcy Rule            | 0               | First occurrence                        |
+| Capital PD                 | 14              | First occurrence                        |
+| CCJ                        | 0               | First occurrence                        |
+| Charge Off                 | 0               | First occurrence                        |
+| Default                    | 3               | First occurrence                        |
+| NOC                        | 0               | Additional duplicate                    |
+| Min Credit limit           | 11              | Additional duplicate                    |
+| Adverse Indicators         | 0               | Additional duplicate                    |
+| Bankruptcy Rule            | 0               | Additional duplicate                    |
+| Capital PD                 | 14              | Additional duplicate                    |
+| CCJ                        | 0               | Additional duplicate                    |
+| Charge Off                 | 0               | Additional duplicate                    |
+| Default                    | 3               | Additional duplicate                    |
+| Delinquency at Barclays    | 1               | —                                       |
+| Delinquency Elsewhere      | 6               | —                                       |
+| Forbearance                | 0               | —                                       |
+| HRAM                       | 17              | Original Level 3 label contained a typo |
+| Invalid address            | 0               | —                                       |
+| Over Limit (upfront)       | 0               | —                                       |
+| Persistent Debt 12m or 18m | 2               | —                                       |
+| Persistent Debt 36m        | 4               | —                                       |
+| Repayment plan             | 0               | —                                       |
+| RPS Cut off                | 40              | —                                       |
+
+### 1.4 Application decline granular — Affordability
+
+| Level 2       | Level 3    | Description                | Corrected value |
+| ------------- | ---------- | -------------------------- | --------------- |
+| Affordability | Affordable | Affordability – Affordable | 45              |
+
+### 1.5 Application decline granular — Fraud / Sanctions
+
+| Level 2         | Level 3                                  | Description                                          | Corrected value |
+| --------------- | ---------------------------------------- | ---------------------------------------------------- | --------------- |
+| Fraud/Sanctions | Fraud Referral / 1st Party Fraud         | Fraud / Sanctions – Fraud Referral / 1st Party Fraud | 0               |
+| Fraud/Sanctions | Sanctions / Spend Block / Exit Programme | Fraud / Sanctions – Exit Programme                   | 0               |
+| Fraud/Sanctions | KYC                                      | Fraud / Sanctions – KYC                              | 1               |
+
+### 1.6 Application decline granular — other reasons
+
+| Level 2               | Level 3                                        | Description                                                   | Corrected value |
+| --------------------- | ---------------------------------------------- | ------------------------------------------------------------- | --------------- |
+| RDS                   | RDS                                            | Description says Credit Underwriting Policy – RDS             | 0               |
+| Eligibility Criteria  | Active cards / Closed accounts / Closure Block | Description says Credit Underwriting Policy – Closed accounts | 26              |
+| Eligibility Criteria  | Missing Personal Details (RI11)                | Eligibility – Missing Personal Details (RI11)                 | 4               |
+| Eligibility Criteria  | Disputes                                       | Eligibility – Disputes                                        | 3               |
+| Eligibility Criteria  | Installment Plan                               | Eligibility – Installment Plan                                | 0               |
+| Eligibility Criteria  | Inactive Charge Off Multiple Active Cards      | Same reason                                                   | 27              |
+| Eligibility Criteria  | Product Held                                   | Same reason                                                   | 70              |
+| Eligibility Criteria  | Promo                                          | Same reason                                                   | 31              |
+| Journey Context Check | Existing Amazon Card Holder                    | Eligibility – Existing Amazon Card Holder                     | 0               |
+| Journey Context Check | Pushed into ETB                                | Eligibility – Pushed into ETB                                 | 0               |
+
+The RDS and Closed accounts descriptions do not match their Level 2 labels exactly.
+
+### 1.7 Post-appeal eligibility rerun declines
+
+| Level 2                    | Level 3                                  | Rule / description                                 | Corrected value |
+| -------------------------- | ---------------------------------------- | -------------------------------------------------- | --------------- |
+| Credit Underwriting Policy | Over Limit                               | Over Limit (ASA_RI1)                               | 0               |
+| Fraud/Sanctions            | Fraud Referral / 1st Party Fraud         | Fraud Referral / 1st Party Fraud (ASA_R17)         | 0               |
+| Fraud/Sanctions            | KYC                                      | KYC (ASA_RI9)                                      | 0               |
+| Fraud/Sanctions            | Sanctions / Spend Block / Exit Programme | Sanctions / Spend Block / Exit Programme (ASA_RI8) | 0               |
+| Eligibility Criteria       | Disputes                                 | Disputes (ASA_RI5)                                 | 0               |
+| Eligibility Criteria       | Installment Plan                         | Installment Plan (ASA_RI4)                         | 0               |
+| Eligibility Criteria       | Product Held                             | Product Held (ASA_R16)                             | 0               |
+| Eligibility Criteria       | Promo                                    | Promo (ASA_R13)                                    | 0               |
+| Eligibility Criteria       | Active Cards                             | Active Cards (ASA_RI2)                             | 0               |
+| Eligibility Criteria       | Closed Account                           | Closed Account (ASA_RI10)                          | 0               |
+
+## 2. Triumph disputes
+
+| Level 1          | Level 2    | Level 3                     | Status | Corrected value |
+| ---------------- | ---------- | --------------------------- | ------ | --------------- |
+| Triumph Disputes | Fraud      | Volume                      | TBC    | 0               |
+| Triumph Disputes | Fraud      | Value sent back in 5 days   | TBC    | £0.00           |
+| Triumph Disputes | Fraud      | Interest returned in 5 days | TBC    | 0               |
+| Triumph Disputes | Non-Fraud  | Volume                      | TBC    | 0               |
+| Triumph Disputes | Non-Fraud  | Value sent back in 5 days   | TBC    | £0.00           |
+| Triumph Disputes | Non-Fraud  | Interest returned in 5 days | TBC    | £0.00           |
+| Triumph Disputes | Section 75 | Volume                      | TBC    | 0               |
+| Non-Fraud        | —          | —                           | TBC    | 0               |
+| Fraud            | —          | —                           | TBC    | 0               |
+
+## 3. Quote funnel
+
+| Level 1 | Level 2           | Description                                                      | Corrected value |
+| ------- | ----------------- | ---------------------------------------------------------------- | --------------- |
+| Quote   | #quotes           | Number of quote applications received on reporting date          | 1,453           |
+| Quote   | Accept            | Quote applications with instant decision Accept                  | 352             |
+| Quote   | Decline           | Quote applications with instant decision Decline                 | 981             |
+| Quote   | Refer             | Quote applications with instant decision Unable to Quote (Refer) | 120             |
+| Quote   | Quote Accept Rate | Quote accept rate                                                | 24.23%          |
+| Quote   | Quote Refer Rate  | Quote refer rate                                                 | 8.26%           |
+
+## 4. Apply applications with a Quote Accept decision
+
+| Level 2                              | Description                                                                                                     | Corrected value |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------- | --------------- |
+| # Apply                              | Apply applications received where quote decision is Accept                                                      | 295             |
+| Instant Accept Decision Accept       | Quote decision Accept and Apply instant decision Accept or Counter Offer, including unsigned downsell contracts | 271             |
+| Instant Accept Decision Decline      | Quote decision Accept and Apply instant decision Decline                                                        | 6               |
+| Instant Accept Decision Refer        | Quote decision Accept and Apply instant decision Refer                                                          | 18              |
+| Full Application Instant Accept Rate | Formula: `[AS-008]/[AS-007] %`                                                                                  | 91.86%          |
+| Full Application Instant Refer Rate  | Formula: `[AS-010]/[AS-007]%`                                                                                   | 6.10%           |
+
+## 5. Apply applications with a Quote Decline decision
+
+| Level 2                         | Description                                                               | Corrected value |
+| ------------------------------- | ------------------------------------------------------------------------- | --------------- |
+| #Apply                          | Apply applications received where quote decision is Decline               | 23              |
+| Instant Accept Decision Accept  | Quote decision Decline and Apply instant decision Accept or Counter Offer | 0               |
+| Instant Accept Decision Decline | Quote decision Decline and Apply instant decision Decline                 | 22              |
+| Instant Accept Decision Refer   | Quote decision Decline and Apply instant decision Refer                   | 1               |
+
+The source contained two extra `0` lines before the description for Instant Accept Decision Decline.
+
+## 6. Apply applications with a Quote Refer decision
+
+| Level 2                         | Description                                                              | Corrected value |
+| ------------------------------- | ------------------------------------------------------------------------ | --------------- |
+| # Apply                         | Apply applications received where quote decision is Refer                | 83              |
+| Instant Accept Decision Accept  | Quote decision Refer and Apply instant decision Accept or Counter Offer  | 2               |
+| Instant Accept Decision Decline | Description says quote decision Refer and Apply instant decision Refer   | 14              |
+| Instant Accept Decision Refer   | Description says quote decision Refer and Apply instant decision Decline | 67              |
+
+The descriptions for the last two rows appear inconsistent with their Level 2 labels.
+
+## 7. Total Apply applications — instant decision
+
+| Level 2                                     | Description / formula                                                           | Corrected value |
+| ------------------------------------------- | ------------------------------------------------------------------------------- | --------------- |
+| #Apply                                      | Total Apply applications received on reporting date                             | 401             |
+| Accept                                      | Instant decision Accept or Counter Offer, including unsigned downsell contracts | 273             |
+| Decline                                     | Instant decision Decline                                                        | 42              |
+| Refer                                       | Instant decision Unable to Quote (Refer)                                        | 86              |
+| Apply Instant Decision Accept Rate          | `[AS-022]/[AS-021]%`                                                            | 68.08%          |
+| Apply Instant Decision Refer Rate           | `[AS-024]/[AS-021]%`                                                            | 21.45%          |
+| % Full Applications                         | `[AS-007]/[AS-002] %`                                                           | 83.81%          |
+| Full Conversion Rate                        | `[AS-008]/[AS-001] %`                                                           | 20.30%          |
+| Instant Decision Conversion Rate From Quote | `[AS-022]/[AS-001] %`                                                           | 18.79%          |
+
+Source notes:
+
+* % Full Applications: percentage of quote-accept applications converting to an Apply. The source warns this may not be wholly accurate due to Save and Resume functionality on Bapp.
+
+* Full Conversion Rate: approved full applications—quote decision Accept and Apply instant decision Accept (`[AS-008]`)—as a percentage of quote applications.
+
+* Instant Decision Conversion Rate From Quote: Apply instant Accept decisions (`[AS-022]`) as a percentage of quote applications received (`[AS-001]`). The source also notes the Save and Resume limitation.
+
+## 8. Apply referrals
+
+| Level 2                               | Description / formula                                                            | Corrected value |
+| ------------------------------------- | -------------------------------------------------------------------------------- | --------------- |
+| Referral → Accept                     | Cases from `[AS-024]` worked to an Accept decision after the application date    | 19              |
+| Referral → Decline                    | Cases from `[AS-024]` worked to a Decline decision after the application date    | 55              |
+| Outstanding Refer                     | Cases from `[AS-024]` still not decisioned, including cancelled or expired cases | 12              |
+| Referral Conversion Rate              | `[AS-030]/[AS-024] %`                                                            | 22.09%          |
+| Additional Conversion Rate From Quote | `[AS-030]/[AS-001]%`                                                             | 1.31%           |
+
+The source notes that the additional conversion rate may not be wholly accurate due to Save and Resume functionality on Bapp.
+
+## 9. Final Apply decision
+
+| Level 2                                              | Formula               | Description                                                          | Corrected value |
+| ---------------------------------------------------- | --------------------- | -------------------------------------------------------------------- | --------------- |
+| Accepts                                              | `[AS-022] + [AS-030]` | Final Accept or Counter Offer, including unsigned downsell contracts | 292             |
+| Decline                                              | `[AS-023]+[AS-031]`   | Final Decline                                                        | 97              |
+| Overall Full Conversion Rate From Quote Applications | `[AS-035]/[AS-001] %` | Total approved applications as a percentage of quote applications    | 20.10%          |
+
+The source notes that the overall full conversion rate may not be wholly accurate due to Save and Resume functionality on Bapp.
+
+## 10. Bookings and new accounts
+
+### 10.1 Booked accounts
+
+| Level 1 | Level 2                          | Description                                                                                                                                | Corrected value |
+| ------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
+| Booked  | Booked based on application date | Apply applications received on the reporting date and subsequently onboarded; PPE account created, not necessarily on the application date | 292             |
+| Booked  | CNV Accepts %                    | Booked accounts from an application date against Apply Accepts                                                                             | 100.00%         |
+| Booked  | Booked Accounts on Headline Rate | Booked accounts from an application date at the headline rate                                                                              | 246             |
+| Booked  | CNV Accepts at Headline%         | Total booked at headline rate versus total booked                                                                                          | 84.25%          |
+
+The source contained an unexpected `15` before the Level 3 group label for CNV Accepts %.
+
+### 10.2 New accounts
+
+| Level 1                                     | Description / formula                                       | Corrected value |
+| ------------------------------------------- | ----------------------------------------------------------- | --------------- |
+| New Accounts                                | Number of new accounts created on the reporting date        | 290             |
+| New Accounts at Headline Rate               | New accounts where the acquisition APR is the headline rate | 247             |
+| % New Accounts on Acquisition Headline Rate | `[AS-040]/[AS-039] %`                                       | 85.17%          |
+
+### 10.3 New accounts split by booked rate
+
+| Level 2                   | Description                                                 | Corrected value |
+| ------------------------- | ----------------------------------------------------------- | --------------- |
+| APR Rate Less Than 5      | Number of new accounts in the relevant acquisition APR band | 0               |
+| APR Between 25 And 29.999 | Number of new accounts in the relevant acquisition APR band | 247             |
+
+The source describes these APR bands as `< 5`, `>= 5 and < 10`, `>= 10 and < 15`, `>= 15 and < 20`, `>= 20 and < 25`, `>= 25 and < 30`, `>= 30 and < 35`, and `>= 35 and < 40`. The label `APR Between 25 And 29.999` differs slightly from the description's `>= 25 and < 30`.
+
+## 11. Credit limits and balance transfers
+
+### 11.1 Credit limit
+
+| Level 2                                | Description                                                                                                    | Corrected value |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------- |
+| Total Initial Exposure                 | Total acquisition credit limit for onboarded Arrow accounts (PPE contract created) during the reporting period | £1,352,680.00   |
+| Average Initial Credit Limit           | Average acquisition credit limit for onboarded Arrow accounts during the reporting period                      | £4,664.41       |
+| Min Initial Credit Limit (Contractual) | Minimum acquisition credit limit for onboarded Arrow accounts during the reporting period                      | £600.00         |
+
+### 11.2 Balance transfers
+
+| Level 2                                  | Description                                                                     | Corrected value |
+| ---------------------------------------- | ------------------------------------------------------------------------------- | --------------- |
+| # Balance Transfers (posting date of BT) | Number of Arrow accounts with a Balance Transfer In during the reporting period | 0               |
+| Total Balance Transfer                   | Amount of Balance Transfer In during the reporting period                       | £0.00           |
+| Average Balance Transfer                 | Average Balance Transfer In during the reporting period                         | £0.00           |
+
+### 11.3 Affordability-capped bookings
+
+| Level 1                               | Description                                                                                                                       | Corrected value |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| Affordability Limit Capped (Bookings) | Number of Arrow accounts onboarded during the reporting period where the acquisition credit limit was capped due to affordability | 25              |
+
+The source contained an unexpected `5` before the Level 1 group label.
+
+## 12. Average risk score
+
+### 12.1 Apply applications — based on applied date
+
+| Level 1            | Level 2                                    | Level 3                | Description                                                                                           | Value |
+| ------------------ | ------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------- | ----- |
+| Average Risk Score | Apply Applications (based on Applied Date) | Gen 16 - Open Market   | Average Gen 16 OM risk score for Apply applications received on the reporting date                    | 4.27  |
+| Average Risk Score | Apply Applications (based on Applied Date) | Gen 16 - Bank Eligible | Description refers to average Gen 12 Bank score for Apply applications received on the reporting date | 3.36  |
+| Average Risk Score | Apply Applications (based on Applied Date) | Total                  | Average risk score for Apply applications received on the reporting date                              | 4.13  |
+
+Data-quality note: the Bank Eligible Level 3 label says Gen 16, but the description refers to Gen 12.
+
+### 12.2 Booked accounts — based on booked date
+
+| Level 1            | Level 2                                | Level 3                | Description                                                                         | Value |
+| ------------------ | -------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------- | ----- |
+| Average Risk Score | Booked Accounts (based on Booked Date) | Gen 16 - Open Market   | Average Gen 16 OM risk score for new Arrow accounts created on the reporting date   | 4.00  |
+| Average Risk Score | Booked Accounts (based on Booked Date) | Gen 16 - Bank Eligible | Average Gen 16 Bank risk score for new Arrow accounts created on the reporting date | 3.35  |
+| Average Risk Score | Booked Accounts (based on Booked Date) | Total                  | Average risk score for new Arrow accounts created on the reporting date             | 3.89  |
+
+## 13. Risk segment distribution by applications
+
+Basis: Applied Date.
+
+| Level 1                                                           | Level 2              | Level 3      | Risk-score condition                        | Value |
+| ----------------------------------------------------------------- | -------------------- | ------------ | ------------------------------------------- | ----- |
+| Risk Segment Distribution by Applications (based on Applied Date) | Gen 16 - Open Market | 1. Super Low | Gen 16 Open Market Prime Risk Score `<= 21` | 82    |
+| Risk Segment Distribution by Applications (based on Applied Date) | Gen 16 - Open Market | 2. Low       | Score `> 21 and <= 35`                      | 19    |
+| Risk Segment Distribution by Applications (based on Applied Date) | Gen 16 - Open Market | 3. Medium    | Score `> 35 and <= 56`                      | 24    |
+| Risk Segment Distribution by Applications (based on Applied Date) | Gen 16 - Open Market | 4. High      | Score `> 56 and <= 61`                      | 5     |
+
+The original Level 3 label for the High segment appeared as `Grp. 4. High`.
+
+## 14. Risk segment distribution by bookings
+
+Basis: Booked Date.
+
+### 14.1 Gen 16 — Open Market
+
+| Level 3                          | Risk-score condition                                                                  | Value                |
+| -------------------------------- | ------------------------------------------------------------------------------------- | -------------------- |
+| 5. Mid Risk Downsell - Super Low | Open Market Access Risk Score `<= 73`                                                 | 0                    |
+| 5. Mid Risk Downsell - Low       | Open Market Access Risk Score `> 73 and <= 119`                                       | `-0-0-` — unresolved |
+| 6. Outside Eligibility           | Description says Gen 16 Open Market Outside Eligibility; condition appears incomplete | 126                  |
+
+The second row's raw value cannot safely be converted to a definite number. It needs checking against the original dashboard.
+
+### 14.2 Gen 16 — Bank
+
+| Level 3      | Risk-score condition                   | Value |
+| ------------ | -------------------------------------- | ----- |
+| 1. Super Low | Bank Prime Risk Score `<= 12`          | 15    |
+| 2. Low       | Bank Prime Risk Score `> 12 and <= 26` | 4     |
+| 3. Medium    | Bank Prime Risk Score `> 26 and <= 49` | 7     |
+| 4. High      | Bank Prime Risk Score `> 49 and <= 55` | 1     |
+
+## 15. Risk segment distribution by average limit — booked accounts
+
+Basis: Booked Date. These metrics represent the average acquisition credit limit for new accounts created on the reporting date, split by risk segment.
+
+### 15.1 Gen 16 — Open Market
+
+| Level 3                          | Risk-score condition                                    | Average credit limit |
+| -------------------------------- | ------------------------------------------------------- | -------------------- |
+| 1. Super Low                     | Open Market Prime Risk Score `<= 21`                    | €5,575.15            |
+| 2. Low                           | Open Market Prime Risk Score `> 21 and <= 35`           | £4,406.25            |
+| 3. Medium                        | Open Market Prime Risk Score `> 35 and <= 56`           | £3,238.24            |
+| 4. High                          | Open Market Prime Risk Score `> 56 and <= 61`           | £2,500.00            |
+| 5. Mid Risk Downsell - Super Low | Open Market Access Risk Score `<= 73`                   | £0.00                |
+| 5. Mid Risk Downsell - Low       | Open Market Access Risk Score `> 73 and <= 119`         | £0.00                |
+| 6. Outside Eligibility           | Description says Open Market Access Risk Score `<= 119` | £4,480.32            |
+
+Notes: The Super Low metric uses euros, while the other entries use pounds. The Outside Eligibility description's score condition may be inconsistent with its segment label. The original Super Low entry also contained an extra `3` before the Level 3 label and an extra `0` before the description.
+
+### 15.2 Gen 16 — Bank
+
+| Level 3                          | Risk-score condition                   | Average credit limit |
+| -------------------------------- | -------------------------------------- | -------------------- |
+| 1. Super Low                     | Bank Prime Risk Score `<= 12`          | £5,786.67            |
+| 2. Low                           | Bank Prime Risk Score `> 12 and <= 26` | £4,425.00            |
+| 3. Medium                        | Bank Prime Risk Score `> 26 and <= 49` | £5,571.43            |
+| 4. High                          | Bank Prime Risk Score `> 49 and <= 55` | £3,000.00            |
+| 5. Mid Risk Downsell - Super Low | Bank Access Risk Score `<= 83`         | £0.00                |
+| 5. Mid Risk Downsell - Low       | Bank Access Risk Score `<= 140`        | £0.00                |
+| 6. Outside Eligibility           | Bank Access Risk Score `<= 140`        | £3,134.38            |
+
+The original Level 2 label for the High segment appeared as `Gen 16-Bank`.
+
+### 15.3 Total — all risk segments
+
+| Level 3                | Description                                                                         | Average credit limit |
+| ---------------------- | ----------------------------------------------------------------------------------- | -------------------- |
+| 1. Super Low           | Average acquisition credit limit where the risk grouping is 1 - Super Low           | £5,613.37            |
+| 2. Low                 | Average acquisition credit limit where the risk grouping is 2 - Low                 | £4,410.00            |
+| 3. Medium              | Average acquisition credit limit where the risk grouping is 3 - Medium              | €3,918.75            |
+| 4. High                | Average acquisition credit limit where the risk grouping is 4 - High                | 2,583.33             |
+| 5. Mid Risk Downsell   | Average acquisition credit limit where the risk grouping is 5 - Mid Risk Downsell   | £0.00                |
+| 6. Outside Eligibility | Average acquisition credit limit where the risk grouping is 6 - Outside Eligibility | £4,328.66            |
+
+Notes: The Medium segment uses euros. The High segment's value was supplied without a currency symbol, so none has been added.
+
+## 16. Consolidated data-quality checks
+
+| Area                       | Item requiring verification                                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Primary decline reason     | Unlabelled value `454` before the Affordability entry                                                                                    |
+| Credit Underwriting Policy | Repeated granular entries, including NOC, Min Credit limit, Adverse Indicators, Bankruptcy Rule, Capital PD, CCJ, Charge Off and Default |
+| Decline classifications    | RDS and Closed accounts descriptions do not exactly match their Level 2 labels                                                           |
+| Quote Refer applications   | The descriptions for two decision categories appear inconsistent with their Level 2 labels                                               |
+| Risk scores                | Gen 16 - Bank Eligible application metric description refers to Gen 12                                                                   |
+| Risk segment bookings      | Open Market Outside Eligibility description appears incomplete                                                                           |
+| Average credit limits      | Mixed GBP/EUR currencies and one amount without a currency symbol                                                                        |
+| Raw value                  | `-0-0-` remains unresolved; confirm its numeric meaning against the source                                                               |
+| Booked-rate metrics        | Headline-rate figures and percentages should be checked against their underlying dashboard definitions                                   |
+| Date                       | All records use 15 October 2026                                                                                                          |
+
+## 17. Normalisation rules applied
+
+* Trailing hyphens and arrows are removed from values: `29-` → `29`, `83->` → `83`.
+
+* Currency values are cleaned without changing their amounts: `£1,352,680.00->>` → `£1,352,680.00`.
+
+* Percentages and decimal places are preserved.
+
+* Legitimate negative signs are not removed automatically.
+
+* Duplicate records are retained and flagged.
+
+* Inconsistent descriptions, labels, thresholds and currencies are highlighted rather than silently corrected.
+
+* The unresolved raw value `-0-0-` is not guessed.
+
+This is the corrected, normalised compilation of the supplied dashboard metrics for 15 October 2026.
