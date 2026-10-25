@@ -393,3 +393,99 @@ Notes: The Medium segment uses euros. The High segment's value was supplied with
 * The unresolved raw value `-0-0-` is not guessed.
 
 This is the corrected, normalised compilation of the supplied dashboard metrics for 15 October 2026.
+# Compiled data — 15–16 October 2026
+
+All values below are from the new data batch only. Trailing hyphens have been removed from numeric values. Duplicate entries are retained.
+
+## 1. Quote Refer Reason
+
+| Reporting date | Lvl 2 Grp              | Value |
+| -------------- | ---------------------- | ----- |
+| 2026-10-15     | 01. Pre-Filter Decline | 0     |
+| 2026-10-15     | 02. Fraud              | 0     |
+| 2026-10-15     | 03. CRA Derog Info     | 2     |
+| 2026-10-15     | 04. Compliance         | 0     |
+| 2026-10-15     | 05. Non-Confirmation   | 0     |
+| 2026-10-15     | 06. Existing Customer  | 0     |
+| 2026-10-15     | 07. Aff/Indebtedness   | 0     |
+| 2026-10-15     | 08. Score              | 2     |
+| 2026-10-15     | 09. MU                 | 2     |
+| 2026-10-15     | 10. Unmapped           | 105   |
+| 2026-10-16     | 08. Score              | 1     |
+| 2026-10-16     | 09. MU                 | 5     |
+| 2026-10-16     | 09. MU                 | 5     |
+| 2026-10-16     | 10. Unmapped           | 101   |
+
+## 2. Quote Decline Reason
+
+| Reporting date | Lvl 2 Grp              | Value |
+| -------------- | ---------------------- | ----- |
+| 2026-10-15     | 01. Pre-Filter Decline | 80    |
+| 2026-10-15     | 02. Fraud              | 0     |
+| 2026-10-15     | 03. CRA Derog Info     | 359   |
+| 2026-10-15     | 04. Compliance         | 0     |
+| 2026-10-15     | 05. Non-Confirmation   | 45    |
+| 2026-10-15     | 06. Existing Customer  | 19    |
+| 2026-10-15     | 07. Aff/Indebtedness   | 382   |
+| 2026-10-15     | 08. Score              | 384   |
+| 2026-10-15     | 09. MU                 | 0     |
+| 2026-10-15     | 09. MU                 | 0     |
+| 2026-10-15     | 10. Unmapped           | 94    |
+| 2026-10-16     | 01. Pre-Filter Decline | 75    |
+| 2026-10-16     | 02. Fraud              | 0     |
+| 2026-10-16     | 03. CRA Derog Info     | 342   |
+| 2026-10-16     | 04. Compliance         | 0     |
+| 2026-10-16     | 05. Non-Confirmation   | 54    |
+| 2026-10-16     | 06. Existing Customer  | 31    |
+| 2026-10-16     | 07. Aff/Indebtedness   | 385   |
+| 2026-10-16     | 08. Score              | 371   |
+| 2026-10-16     | 09. MU                 | 0     |
+| 2026-10-16     | 10. Unmapped           | 102   |
+
+## 3. Application Refer Reason
+
+| Reporting date | Lvl 2 Grp              | Value |
+| -------------- | ---------------------- | ----- |
+| 2026-10-15     | 01. Pre-Filter Decline | 0     |
+| 2026-10-15     | 02. Fraud              | 0     |
+| 2026-10-15     | 03. CRA Derog Info     | 7     |
+| 2026-10-15     | 04. Compliance         | 0     |
+| 2026-10-15     | 05. Non-Confirmation   | 5     |
+| 2026-10-15     | 06. Existing Customer  | 0     |
+| 2026-10-15     | 07. Aff/Indebtedness   | 1     |
+| 2026-10-16     | 01. Pre-Filter Decline | 0     |
+| 2026-10-16     | 02. Fraud              | 0     |
+| 2026-10-16     | 03. CRA Derog Info     | 2     |
+| 2026-10-16     | 04. Compliance         | 0     |
+| 2026-10-16     | 05. Non-Confirmation   | 3     |
+| 2026-10-16     | 06. Existing Customer  | 1     |
+| 2026-10-16     | 07. Aff/Indebtedness   | 1     |
+| 2026-10-16     | 08. Score              | 7     |
+| 2026-10-16     | 09. MU                 | 25    |
+| 2026-10-16     | 10. Unmapped           | 61    |
+
+## 4. Application Decline Reason
+
+| Reporting date | Lvl 2 Grp              | Value |
+| -------------- | ---------------------- | ----- |
+| 2026-10-16     | 01. Pre-Filter Decline | 3     |
+| 2026-10-16     | 02. Fraud              | 10    |
+| 2026-10-16     | 03. CRA Derog Info     | 13    |
+| 2026-10-16     | 04. Compliance         | 5     |
+| 2026-10-16     | 05. Non-Confirmation   | 17    |
+| 2026-10-16     | 06. Existing Customer  | 2     |
+| 2026-10-16     | 07. Aff/Indebtedness   | 19    |
+
+## 5. Data quality notes
+
+* Duplicate records retained: Quote Refer Reason — 16 October, MU = 5 (twice); Quote Decline Reason — 15 October, MU = 0 (twice).
+
+* Incomplete date: The 15 October Quote Refer Reason — Fraud record was submitted with `2026-10-`; its value was 0.
+
+* Additional text: The 15 October Quote Decline Reason — CRA Derog Info record included a standalone `A` after the value 359.
+
+* Additional text: The 15 October Application Refer Reason — Pre-Filter Decline record included a standalone `04` before its description; its recorded value was 0.
+
+* Descriptions: Quote-level metrics refer to Apply Quotes, while application-level metrics refer to Apply applications. Decline metrics also reference the final decision and decline-code mapping via Referral Code Long.
+
+* Missing records: No values were supplied for 15 October Application Decline Reason or for several categories on 16 October Quote Refer Reason. These have not been inferred or filled in.
